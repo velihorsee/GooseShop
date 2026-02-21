@@ -12,37 +12,70 @@
     --z-black: #1a1a1a;
     --z-border: 4px solid #000;
 }
+/* --- ТОТАЛЬНЕ ПЕРЕКРИТТЯ ФОНУ --- */
+html {
+    background-color: #ffffff !important;
+}
 
 /* --- 2. ТОТАЛЬНИЙ ЗУМЕРСЬКИЙ ФОН --- */
-html, body {
+body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    background-color: #fff !important;
+    /* Примусово прибираємо будь-який сірий колір */
+    background-color: #ffffff !important;
     font-family: 'Montserrat', sans-serif;
     color: var(--z-black);
     position: relative;
+    background-attachment: fixed;
 }
 
+    /* Шар з неоновими плямами (Понад білим фоном) */
     body::before {
         content: "";
         position: fixed;
         inset: 0;
         z-index: -2;
-        background: radial-gradient(circle at 15% 25%, rgba(0, 242, 254, 0.12) 0%, transparent 35%), radial-gradient(circle at 85% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 35%), #ffffff;
+        background: radial-gradient(circle at 15% 25%, rgba(0, 242, 254, 0.15) 0%, transparent 40%), radial-gradient(circle at 85% 75%, rgba(255, 0, 255, 0.12) 0%, transparent 40%), #ffffff !important;
+        pointer-events: none;
     }
 
+    /* Шар піксельної сітки (Поверх плям) */
     body::after {
         content: "";
         position: fixed;
         inset: 0;
         z-index: -1;
-        background-image: linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px);
+        background-image: linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px) !important;
         background-size: 50px 50px;
         pointer-events: none;
-        opacity: 0.8;
     }
-
+/* Вимикаємо фон у всіх системних контейнерів Blazor */
+.page, .z-gang-theme, main, article {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+.z-gang-theme::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: url('https://grainy-gradients.vercel.app/noise.svg');
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 50; /* Поверх усього контенту */
+}
+    .z-gang-theme::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('https://grainy-gradients.vercel.app/noise.svg');
+        opacity: 0.05;
+        pointer-events: none;
+        z-index: 50; /* Поверх усього контенту */
+    }
 .page, .z-gang-theme {
     background: transparent !important;
     position: relative;
