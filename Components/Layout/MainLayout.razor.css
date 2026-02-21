@@ -190,3 +190,45 @@
     margin: 10px;
     padding: 15px;
 }
+
+/* Повертаємо кольори для пунктів меню */
+.link-cyan:hover {
+    background: var(--z-cyan) !important;
+    color: #000 !important;
+    border: 3px solid #000 !important;
+    transform: translate(-5px, -5px);
+    box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
+}
+
+.link-green:hover {
+    background: var(--z-green) !important;
+    color: #000 !important;
+    border: 3px solid #000 !important;
+    transform: translate(-5px, -5px);
+    box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-green-dark) !important;
+}
+
+.link-red:hover {
+    background: var(--z-red) !important;
+    color: #fff !important;
+    border: 3px solid #000 !important;
+    transform: translate(-5px, -5px);
+    box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-red-dark) !important;
+}
+
+/* Хедер та Лого */
+.z-header {
+    background: #fff;
+    height: 80px;
+    border-bottom: 5px solid #000;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+}
+
+.z-logo {
+    font-size: 2rem;
+    font-weight: 950;
+    color: #000;
+    text-decoration: none;
+}

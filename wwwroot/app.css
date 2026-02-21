@@ -1,3 +1,27 @@
+
+
+:root {
+    --z-cyan: #00f2fe;
+    --z-cyan-dark: #0097a7;
+    --z-green: #39e75f;
+    --z-green-dark: #2d8d3c;
+    --z-red: #ff4d4d;
+    --z-red-dark: #b91d1d;
+    --z-yellow: #ffcc00;
+    --z-yellow-dark: #d4a017;
+    --z-black: #1a1a1a;
+}
+
+/* —п≥льн≥ класи т≥ней, щоб не писати њх всюди */
+.shadow-pixel {
+    box-shadow: 4px 4px 0px #000 !important;
+    border: 3px solid #000 !important;
+}
+
+.shadow-hard {
+    box-shadow: 12px 12px 0px #000 !important;
+    border: 8px solid #000 !important;
+}
 /* --- —“јЌƒј–“Ќ≤ ЌјЋјЎ“”¬јЌЌя BLAZOR “ј Ў–»‘“» --- */
 html, body {
     font-family: 'Montserrat', sans-serif; /* “в≥й ф≥рмовий шрифт */
