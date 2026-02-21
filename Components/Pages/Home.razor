@@ -69,14 +69,12 @@
 
                         @* 2. Блок дій (Ціна та Кнопка) *@
                         <div class="px-4 pb-4 d-flex justify-content-between align-items-center mt-auto">
-                            @* ТЕПЕР ЦІНА ТЕЖ ПОСИЛАННЯ *@
                             <a href="/product/@p.Id" class="text-decoration-none">
                                 <div class="z-price-pill shadow-pixel">
                                     @p.BasePrice <span class="small">ГРН</span>
                                 </div>
                             </a>
 
-                            @* КНОПКА КУПИТИ *@
                             <button class="z-buy-btn-full shadow-pixel" @onclick='() => Nav.NavigateTo($"/product/{p.Id}")'>
                                 КУПИТИ
                             </button>
