@@ -185,38 +185,6 @@ h1:focus {
 }
 
 
-/* ПАНЕЛЬ КОШИКА */
-.cart-sidebar {
-    position: fixed;
-    top: 0;
-    right: -450px; /* Схований за екраном */
-    width: 400px;
-    height: 100vh;
-    background: #fff;
-    z-index: 2000;
-    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border-left: 8px solid #000;
-}
-
-    .cart-sidebar.active {
-        right: 0;
-    }
-
-.cart-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(5px);
-    z-index: 1999;
-    display: none;
-}
-
-    .cart-overlay.active {
-        display: block;
-    }
 
 /* КАРТКА ТОВАРУ В КОШИКУ */
 .cart-item-img {
@@ -253,45 +221,43 @@ h1:focus {
         background: #fff;
     }
 
-/* ПЕРЕКРИТТЯ ФОНУ */
-.cart-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(4px);
-    z-index: 1999;
-    display: none;
-    opacity: 0;
-    transition: 0.3s;
-}
-
-    .cart-overlay.active {
-        display: block;
-        opacity: 1;
-    }
 
 /* БОКОВА ПАНЕЛЬ */
+/* ПАНЕЛЬ КОШИКА */
 .cart-sidebar {
-    position: fixed;
+    position: fixed; /* Обов'язково! Це вириває його з потоку сторінки */
     top: 0;
-    right: -450px;
+    right: -450px; /* Ховаємо його за правий край */
     width: 400px;
     height: 100vh;
     background: #fff;
-    z-index: 2000;
+    z-index: 2100; /* Має бути більше, ніж у хедера та оверлея */
     border-left: 8px solid #000;
     transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     flex-direction: column;
 }
 
+    /* Стан, коли кошик відкритий */
     .cart-sidebar.active {
-        right: 0;
+        right: 0; /* Виїжджає на екран */
     }
 
+/* ОВЕРЛЕЙ (затемнення фону) */
+.cart-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 2050;
+    display: none;
+}
+    .cart-overlay.active {
+        display: block;
+    }
 .cart-item-img {
     width: 60px;
     height: 60px;
