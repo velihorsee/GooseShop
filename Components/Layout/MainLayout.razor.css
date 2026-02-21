@@ -1,4 +1,4 @@
-/* --- СТРУКТУРА ТА ФОН --- */
+п»ї/* --- РЎРўР РЈРљРўРЈР Рђ РўРђ Р¤РћРќ --- */
 .z-gang-theme {
     background-color: #f0f0f0;
     min-height: 100vh;
@@ -6,7 +6,7 @@
     overflow-x: hidden;
 }
 
-/* Оверлей (Затемнення фону при відкритті меню) */
+/* РћРІРµСЂР»РµР№ (Р—Р°С‚РµРјРЅРµРЅРЅСЏ С„РѕРЅСѓ РїСЂРё РІС–РґРєСЂРёС‚С‚С– РјРµРЅСЋ) */
 .z-overlay {
     position: fixed;
     top: 0;
@@ -26,7 +26,7 @@
         opacity: 1;
     }
 
-/* --- ШАПКА (HEADER) --- */
+/* --- РЁРђРџРљРђ (HEADER) --- */
 .z-header {
     background: #fff;
     height: 80px;
@@ -48,7 +48,7 @@
     color: transparent;
 }
 
-/* Кнопка МЕНЮ */
+/* РљРЅРѕРїРєР° РњР•РќР® */
 .z-btn-menu {
     background: #000;
     color: #fff;
@@ -66,7 +66,7 @@
         box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
     }
 
-/* Навігаційні пігулки (Чашки/Футболки) */
+/* РќР°РІС–РіР°С†С–Р№РЅС– РїС–РіСѓР»РєРё (Р§Р°С€РєРё/Р¤СѓС‚Р±РѕР»РєРё) */
 .z-nav-pill {
     border: 3px solid #000;
     padding: 8px 20px;
@@ -91,7 +91,7 @@
     box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-yellow-dark) !important;
 }
 
-/* Кошик у хедері */
+/* РљРѕС€РёРє Сѓ С…РµРґРµСЂС– */
 .z-cart-btn {
     background: #fff;
     border: 3px solid #000;
@@ -105,7 +105,7 @@
         box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-green-dark) !important;
     }
 
-/* --- БОКОВЕ МЕНЮ (SIDEBAR) --- */
+/* --- Р‘РћРљРћР’Р• РњР•РќР® (SIDEBAR) --- */
 .z-sidebar {
     position: fixed;
     top: 0;
@@ -124,7 +124,7 @@
         left: 0;
     }
 
-/* Посилання в меню */
+/* РџРѕСЃРёР»Р°РЅРЅСЏ РІ РјРµРЅСЋ */
 .z-link {
     display: flex;
     align-items: center;
@@ -158,7 +158,7 @@
     box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-red-dark) !important;
 }
 
-/* Соцмережі */
+/* РЎРѕС†РјРµСЂРµР¶С– */
 .z-soc-icon {
     width: 48px;
     height: 48px;
@@ -175,7 +175,7 @@
         transform: translate(-3px, -3px);
     }
 
-/* --- ДОПОМІЖНІ КЛАСИ --- */
+/* --- Р”РћРџРћРњР†Р–РќР† РљР›РђРЎР --- */
 .z-label {
     font-size: 0.75rem;
     font-weight: 900;
@@ -191,7 +191,7 @@
     padding: 15px;
 }
 
-/* Повертаємо кольори для пунктів меню */
+/* РџРѕРІРµСЂС‚Р°С”РјРѕ РєРѕР»СЊРѕСЂРё РґР»СЏ РїСѓРЅРєС‚С–РІ РјРµРЅСЋ */
 .link-cyan:hover {
     background: var(--z-cyan) !important;
     color: #000 !important;
@@ -216,7 +216,7 @@
     box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-red-dark) !important;
 }
 
-/* Хедер та Лого */
+/* РҐРµРґРµСЂ С‚Р° Р›РѕРіРѕ */
 .z-header {
     background: #fff;
     height: 80px;
@@ -232,3 +232,38 @@
     color: #000;
     text-decoration: none;
 }
+
+/* РљРЅРѕРїРєР° Р·Р°РєСЂРёС‚С‚СЏ (вњ•) */
+.z-close-btn-pixel {
+    background: #000;
+    color: #fff;
+    border: 3px solid #000;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 950;
+    transition: 0.1s;
+}
+    .z-close-btn-pixel:hover {
+        background: var(--z-red) !important;
+        transform: translate(-4px, -4px) rotate(90deg) !important;
+        box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-red-dark) !important;
+    }
+
+/* РЎРѕС†РјРµСЂРµР¶С– РІ С…РµРґРµСЂС– */
+.z-header-icon {
+    font-size: 1.5rem;
+    color: #000;
+    transition: 0.1s;
+    padding: 5px;
+    border: 3px solid transparent;
+}
+
+    .z-header-icon:hover {
+        background: var(--z-cyan) !important;
+        border-color: #000 !important;
+        transform: translate(-3px, -3px) !important;
+        box-shadow: 4px 4px 0px #000, 6px 6px 0px var(--z-cyan-dark) !important;
+    }

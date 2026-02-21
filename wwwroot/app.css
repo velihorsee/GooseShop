@@ -163,3 +163,26 @@ a, .btn-link {
     text-align: center;
     text-decoration: none;
 }
+
+/* Спільні анімації, які мають бути доступні всюди */
+@keyframes bannerIntro {
+    0% {
+        transform: scale(0.9) translateY(50px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes floatSymbols {
+    from {
+        transform: translateX(50%);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}

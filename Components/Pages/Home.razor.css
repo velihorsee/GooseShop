@@ -1,13 +1,22 @@
-/* --- �����-����� --- */
+﻿/* --- ГЕРОЙ-БАНЕР --- */
 .z-hero-card {
     background: var(--z-cyan);
     border: 8px solid #000;
-    overflow: hidden;
-    position: relative;
     box-shadow: 12px 12px 0px #000;
-    animation: bannerIntro 1s cubic-bezier(0.2, 1, 0.3, 1);
+    animation: bannerIntro 1s cubic-bezier(0.2, 1, 0.3, 1); /* ПОВЕРНУЛИ! */
+    position: relative;
+    overflow: hidden;
 }
-
+    .z-hero-card::before {
+        content: "⚡ 🔥 🦢 🍌 ✨ ⚡ 🔥 🦢 🍌 ✨";
+        position: absolute;
+        font-size: 2.5rem;
+        width: 200%;
+        opacity: 0.15;
+        white-space: nowrap;
+        animation: floatSymbols 20s linear infinite; /* ПОВЕРНУЛИ СИМВОЛИ! */
+        top: 15%;
+    }
 .outline-hero {
     -webkit-text-stroke: 2px #000;
     color: white;
@@ -22,7 +31,7 @@
     text-transform: uppercase;
 }
 
-/* --- ������ ����в� --- */
+/* --- КАРТКИ ТОВАРІВ --- */
 .z-item-card {
     background: #fff;
     border: 6px solid #000 !important;
@@ -55,7 +64,7 @@
     transform: scale(1.1);
 }
 
-/* --- ֲ�� �� ������ --- */
+/* --- ЦІНА ТА КНОПКИ --- */
 .z-price-pill {
     background: var(--z-yellow);
     padding: 5px 15px;
@@ -83,7 +92,7 @@
         transform: scale(1.15) rotate(-10deg);
     }
 
-/* --- �Ͳ��ֲ� --- */
+/* --- АНІМАЦІЇ --- */
 @keyframes bannerIntro {
     0% {
         transform: scale(0.9) translateY(50px);
