@@ -119,3 +119,29 @@ html, body {
         background: var(--z-yellow);
         color: #000;
     }
+
+
+/* Фіксуємо розмір картинок у картках */
+.z-img-box {
+    height: 280px; /* Однакова висота для всіх фото */
+    overflow: hidden;
+    border-bottom: 6px solid #000;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .z-img-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Фото заповнює блок без розтягування */
+    }
+
+/* Вирівнюємо контент картки */
+.z-item-card .p-4 {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}

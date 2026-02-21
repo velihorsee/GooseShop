@@ -55,3 +55,39 @@
     /* Початковий стан для роботи JS-скрипта */
     transition: transform 0.1s ease-out;
 }
+
+
+/*Кнопки баннера */
+/* Повертаємо кнопки баннера */
+.z-hero-actions .z-btn {
+    padding: 15px 35px;
+    font-size: 1.1rem;
+    border: 4px solid #000;
+    font-weight: 950;
+    transition: 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.z-btn-cyan {
+    background: var(--z-cyan) !important;
+    color: #000 !important;
+}
+
+.z-btn-yellow {
+    background: var(--z-yellow) !important;
+    color: #000 !important;
+}
+
+.z-btn:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 8px 8px 0px #000 !important;
+}
+
+/* Фікс карток, щоб вони не "їхали" */
+.z-item-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
+    border: 6px solid #000 !important;
+    transition: 0.2s ease-in-out;
+}
