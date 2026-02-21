@@ -1,34 +1,33 @@
 ﻿/* --- ГЕРОЙ-БАНЕР (ЗУМЕР-РЕДАКЦІЯ) --- */
-. /* --- ГЕРОЙ-БАНЕР (БЕЗ ГЛІТЧА, ПЛАВНИЙ ВЛІТ) --- */
+ /* --- ГЕРОЙ-БАНЕР (БЕЗ ГЛІТЧА, ПЛАВНИЙ ВЛІТ) --- */
+/* --- КИСЛОТНИЙ ГЕРОЙ-БАНЕР --- */
 .z-hero-card {
-    background: var(--z-cyan) !important;
+    /* Робимо фон максимально насиченим Cyan */
+    background: #00f2fe !important;
     border: 8px solid #000 !important;
-    box-shadow: 15px 15px 0px #000;
+    box-shadow: 20px 20px 0px #000;
     position: relative;
     overflow: hidden;
     min-height: 450px;
     display: flex;
     align-items: center;
-    /* Плавна анімація замість steps() */
     animation: bannerIntro 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     z-index: 10;
 }
 
 /* Символи на фоні банера */
-.z-hero-card::before {
-    content: "⚡ 🔥 🦢 🍌 ✨ ⚡ 🔥 🦢 🍌 ✨ ⚡ 🔥 🦢 🍌 ✨";
-    position: absolute;
-    font-size: 3rem;
-    width: 200%;
-    opacity: 0.1;
-    white-space: nowrap;
-    animation: floatSymbols 25s linear infinite; /* Уповільнив для плавності */
-    top: 15%;
-    left: 0;
-    z-index: 1;
-    pointer-events: none;
-    color: #000;
-}
+    .z-hero-card::before {
+        content: "⚡ 🔥 🦢 🍌 ✨ ⚡ 🔥 🦢 🍌 ✨";
+        position: absolute;
+        font-size: 3.5rem;
+        width: 200%;
+        opacity: 0.2; /* Трохи яскравіше, щоб їх було видно */
+        white-space: nowrap;
+        animation: floatSymbols 20s linear infinite;
+        top: 20%;
+        color: #000;
+        font-weight: 900;
+    }
 
     .z-hero-card .row {
         position: relative;
@@ -36,11 +35,54 @@
         width: 100%;
     }
 
+/* Кнопка "ХОЧУ ЧАШКУ" - робимо її неоново-рожевою або ще яскравішою */
+.z-btn-cyan {
+    background: #ff00ff !important; /* Пурпуровий хайп */
+    color: #fff !important;
+}
+    .z-btn-cyan:hover {
+        background: #00f2fe !important;
+        color: #000 !important;
+        transform: translate(-4px, -4px);
+        box-shadow: 10px 10px 0px #000 !important;
+    }
+/* Кнопка "КАТАЛОГ" - робимо соковито-жовтою */
+.z-btn-yellow {
+    background: #ffcc00 !important;
+    color: #000 !important;
+}
+    .z-btn-yellow:hover {
+        background: #39e75f !important; /* Зелений при наведенні */
+        transform: translate(-4px, -4px);
+        box-shadow: 10px 10px 0px #000 !important;
+    }
+.z-hero-actions .z-btn {
+    font-size: 1.2rem !important;
+    padding: 15px 30px !important;
+    border: 4px solid #000 !important;
+    font-weight: 950 !important;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+    box-shadow: 6px 6px 0px #000;
+}
+
+/* Текст в банері */
 .outline-hero {
-    -webkit-text-stroke: 2px #000;
+    -webkit-text-stroke: 3px #000; /* Товстіша обводка */
     color: #fff;
     font-weight: 950;
-    text-shadow: 4px 4px 0px #000;
+    text-shadow: 6px 6px 0px #000;
+}
+/* Блок "ТОП ДРОПИ" */
+.z-highlight {
+    background: #ffcc00 !important;
+    color: #000;
+    padding: 10px 30px;
+    border: 6px solid #000;
+    transform: rotate(-2deg);
+    display: inline-block;
+    box-shadow: 10px 10px 0px #000;
+    font-weight: 950;
 }
 
 /* Головний гусак у банері */

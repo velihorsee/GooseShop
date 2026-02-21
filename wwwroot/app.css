@@ -120,12 +120,16 @@
 
 /* Клас для падаючих об'єктів */
 .falling-goose {
-    position: fixed;
+    position: absolute;
     top: -50px;
     pointer-events: none;
-    z-index: 9999;
-    font-size: 2rem;
-    animation: fall 5s linear forwards;
+    z-index: 15;
+    font-size: 2.5rem;
+    user-select: none;
+    will-change: transform, top;
+    /* Центруємо точку росту, щоб він розширювався рівномірно */
+    transform-origin: center center;
+    transition: filter 0.2s ease;
 }
 
 /* Додатковий глітч-ефект для тексту (опціонально) */

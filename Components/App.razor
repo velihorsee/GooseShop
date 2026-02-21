@@ -48,72 +48,72 @@
             const banner = document.querySelector('.z-hero-card');
             if (!banner) return;
 
+            // Глобальні змінні для миші, щоб не спамити лісенерами
+            let mX = 0;
+            let mY = 0;
+            window.addEventListener('mousemove', (e) => {
+                const rect = banner.getBoundingClientRect();
+                mX = e.clientX - rect.left;
+                mY = e.clientY - rect.top;
+            });
+
             function createFallingGoose() {
                 const goose = document.createElement('div');
                 goose.className = 'falling-goose';
                 goose.innerHTML = '🦢';
 
-                // Початкові фізичні показники
                 let curX = Math.random() * banner.offsetWidth;
                 let curY = -50;
-                let targetOffsetX = 0; // На скільки гусак відхилився через страх
+                let speedY = 0.8 + Math.random() * 1.0; // Повільніше, щоб встигнути "відгодувати"
+                let scale = 1.0;
+                let targetOffsetX = 0;
                 let targetOffsetY = 0;
-                let speedY = 1.0 + Math.random() * 1.5; // Трішки повільніше для плавності
-                let rotation = 0;
 
                 goose.style.left = curX + 'px';
-                goose.style.position = 'absolute';
                 banner.appendChild(goose);
 
-                const onMouseMove = (e) => {
-                    const rect = banner.getBoundingClientRect();
-                    const mouseX = e.clientX - rect.left;
-                    const mouseY = e.clientY - rect.top;
-
-                    // Розраховуємо дистанцію від курсору до поточної позиції гусака
-                    const distX = (curX + targetOffsetX) - mouseX;
-                    const distY = (curY + targetOffsetY) - mouseY;
-                    const dist = Math.sqrt(distX * distX + distY * distY);
-
-                    if (dist < 120) { // Радіус переляку
-                        const angle = Math.atan2(distY, distX);
-                        const force = (120 - dist) / 120; // Чим ближче мишка, тим сильніший поштовх
-
-                        // Задаємо ціль для відскоку
-                        targetOffsetX += Math.cos(angle) * 50 * force;
-                        targetOffsetY += Math.sin(angle) * 50 * force;
-                        rotation = angle * (180 / Math.PI) + 90; // Повертаємо гусака в бік втечі
-                    }
-                };
-
-                banner.addEventListener('mousemove', onMouseMove);
-
                 const update = () => {
-                    // Падіння вниз
-                    curY += speedY;
+                    // Дистанція до миші
+                    const dx = (curX + targetOffsetX) - mX;
+                    const dy = (curY + targetOffsetY) - mY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
 
-                    // ПЛАВНЕ ПОВЕРНЕННЯ (Lerp):
-                    // Відхилення targetOffset завжди намагається повернутися до 0 (спокою)
+                    if (dist < 180) { // Радіус впливу
+                        const angle = Math.atan2(dy, dx);
+                        const force = (180 - dist) / 180;
+
+                        // Гусак тікає
+                        targetOffsetX += Math.cos(angle) * 12 * force;
+                        targetOffsetY += Math.sin(angle) * 12 * force;
+
+                        // ГУСАК РОСТЕ!
+                        scale += 0.03;
+                        if (scale > 6) scale = 6; // Максимальний розмір
+                    }
+
+                    curY += speedY;
                     targetOffsetX *= 0.92;
                     targetOffsetY *= 0.92;
 
-                    // Фінальна позиція = базовий шлях + плавне відхилення
-                    goose.style.top = (curY + targetOffsetY) + 'px';
-                    goose.style.left = (curX + targetOffsetX) + 'px';
-                    goose.style.transform = `rotate(${rotation}deg) scale(${1 + Math.abs(targetOffsetX)/100})`;
+                    // Ефект "люті": чим більший гусак, тим червоніший
+                    // filter: hue-rotate змінює колір емодзі
+                    const anger = Math.min((scale - 1) * 40, 150);
+
+                    goose.style.transform = `translate(${targetOffsetX}px, ${targetOffsetY}px) scale(${scale})`;
+                    goose.style.top = curY + 'px';
+                    goose.style.filter = `hue-rotate(-${anger}deg) drop-shadow(0 0 ${scale * 2}px rgba(255,0,0,0.5))`;
 
                     if (curY < banner.offsetHeight + 100) {
                         requestAnimationFrame(update);
                     } else {
-                        banner.removeEventListener('mousemove', onMouseMove);
                         goose.remove();
                     }
                 };
-                update();
+
+                requestAnimationFrame(update);
             }
 
-            // Створюємо гусака кожні 2.5 секунди, щоб не захаращувати екран
-            setInterval(createFallingGoose, 2500);
+            setInterval(createFallingGoose, 1800);
         };
 
         // 4. РОЗУМНИЙ ГУСАК-ГЕРОЙ (Тікає і повертається на місце)
@@ -190,7 +190,6 @@
 
                     @* ПІКСЕЛЬНЕ ПОЛЕ ВВОДУ ТА КНОПКА *@
                     <div class="z-subscription-box">
-                        <h4 class="text-white fw-black mb-2">НОВИЙ ДРОП</h4>
                         <input type="email" class="z-input-pixel" placeholder="ТВІЙ EMAIL..." />
                         <button class="z-btn z-action-btn w-100">
                             ВЛІТАЙ У ДРОПИ <i class="bi bi-fire ms-2"></i>
