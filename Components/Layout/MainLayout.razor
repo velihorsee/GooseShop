@@ -1,0 +1,132 @@
+﻿@inherits LayoutComponentBase
+@using GooseShop.Services
+@implements IDisposable
+@inject CartService CartService
+@inject AuthService AuthService
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<div class="page z-gang-theme">
+    @* --- ОВЕРЛЕЙ --- *@
+    <div id="sidebarOverlay" class="z-overlay" onclick="toggleSidebar()"></div>
+
+    @* --- БОКОВЕ МЕНЮ (SIDEBAR) --- *@
+    <div id="sidebarMenu" class="z-sidebar shadow-hard">
+        <div class="sidebar-header border-bottom-bold d-flex justify-content-between align-items-center p-4">
+            <span class="fw-black fs-5">ГУСЬ-ГЕНГ 🦢</span>
+            @* Кнопка закриття - Червоний блок *@
+            <button class="z-close-btn-pixel shadow-pixel-block" onclick="toggleSidebar()">✕</button>
+        </div>
+
+        <div class="sidebar-body p-3 d-flex flex-column h-100">
+            <div class="menu-section mb-4">
+                <p class="z-label px-2">ТВІЙ АККАУНТ</p>
+                <div class="d-grid gap-1">
+                    @if (!AuthService.IsLoggedIn)
+                    {
+                        <a href="/login" class="z-link link-cyan text-decoration-none">
+                            <i class="bi bi-person-circle me-2"></i>Увійти
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="px-2 mb-2 small fw-bold text-muted text-uppercase">@AuthService.CurrentUser?.FullName</div>
+                        <a href="/profile" class="z-link link-cyan text-decoration-none">
+                            <i class="bi bi-bag-check me-2"></i>Мої замовлення
+                        </a>
+                        <button class="z-link link-red border-0 bg-transparent text-start w-100" @onclick="Logout">
+                            <i class="bi bi-box-arrow-left me-2"></i>Вийти
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div class="menu-section mb-4">
+                <p class="z-label px-2">КАТАЛОГ</p>
+                <div class="d-grid gap-1">
+                    <a href="/" class="z-link link-green text-decoration-none">
+                        <i class="bi bi-house me-2"></i>Головна
+                    </a>
+                    <a href="/category/cups" class="z-link link-green text-decoration-none">
+                        <i class="bi bi-cup-hot me-2"></i>Чашки
+                    </a>
+                    <a href="/category/tshirts" class="z-link link-green text-decoration-none">
+                        <i class="bi bi-person-badge me-2"></i>Футболки
+                    </a>
+                </div>
+            </div>
+
+            @if (AuthService.IsLoggedIn && AuthService.CurrentUser?.Role == "Admin")
+            {
+                <div class="menu-section z-admin-card shadow-hard-sm mx-2 p-3">
+                    <p class="z-label text-white mb-2">РЕЖИМ БОСА</p>
+                    <a href="/admin" class="z-link link-cyan text-white py-1 small text-decoration-none">ТОВАРИ</a>
+                    <a href="/admin/orders" class="z-link link-cyan text-white py-1 small text-decoration-none">ЗАМОВЛЕННЯ</a>
+                </div>
+            }
+
+            <div class="menu-section mt-auto pt-3 border-top-bold">
+                <p class="z-label px-2">ПРИЄДНУЙСЯ</p>
+                <div class="d-flex gap-3 px-2 pb-3">
+                    <a href="https://t.me/goose_gang" class="z-soc-icon link-cyan shadow-pixel-block"><i class="bi bi-telegram"></i></a>
+                    <a href="#" class="z-soc-icon link-green shadow-pixel-block"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="z-soc-icon link-red shadow-pixel-block"><i class="bi bi-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        @* --- ШАПКА (HEADER) --- *@
+        <header class="z-header sticky-top">
+            <div class="container-fluid d-flex align-items-center justify-content-between h-100 px-lg-5">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="z-btn-menu shadow-pixel" onclick="toggleSidebar()">МЕНЮ</button>
+                    <a class="z-logo fw-black text-decoration-none text-dark" href="/">ГУСЬ<span class="text-outline">ШОП</span></a>
+                </div>
+
+                <div class="d-none d-lg-flex gap-4">
+                    <a href="/constructor/1" class="z-nav-pill btn-cyan shadow-pixel-block text-decoration-none px-4 py-2 fs-5">ЧАШКА 3D</a>
+                    <a href="/constructor/2" class="z-nav-pill btn-yellow shadow-pixel-block text-decoration-none px-4 py-2 fs-5">ФУТБОЛКА 3D</a>
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    <div class="d-none d-md-flex gap-2 me-2">
+                        <a href="#" class="z-header-icon text-dark"><i class="bi bi-telegram"></i></a>
+                        <a href="#" class="z-header-icon text-dark"><i class="bi bi-instagram"></i></a>
+                    </div>
+                    <div class="vr d-none d-md-block me-2" style="height: 30px; border-left: 3px solid #000;"></div>
+                    <a href="/cart" class="z-cart-btn shadow-pixel-block text-decoration-none">
+                        🛒 <span class="ms-1 fw-black">@CartService.Items.Count</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <article class="content">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Підписка на оновлення сервісів
+        CartService.OnChange += StateHasChanged;
+        AuthService.OnChange += StateHasChanged;
+    }
+
+    private void Logout()
+    {
+        AuthService.Logout();
+        Nav.NavigateTo("/");
+    }
+
+    public void Dispose()
+    {
+        // Відписка для уникнення Memory Leak
+        CartService.OnChange -= StateHasChanged;
+        AuthService.OnChange -= StateHasChanged;
+    }
+}

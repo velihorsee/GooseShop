@@ -1,0 +1,126 @@
+﻿@page "/product/{Id:int}"
+@rendermode InteractiveServer
+@using GooseShop.Models
+@using GooseShop.Data
+@using GooseShop.Services
+@using Microsoft.EntityFrameworkCore
+@inject CartService CartService
+@inject NavigationManager Nav
+@inject AppDbContext DbContext
+
+<div class="container mt-5">
+    @if (product == null)
+    {
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p>Завантаження гусака...</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-6 text-center">
+                <img src="/@product.ImageUrl" class="img-fluid rounded shadow-lg" style="max-height: 500px; width: 100%; object-fit: cover;" alt="@product.Name" />
+            </div>
+
+            <div class="col-md-6">
+                <div class="ps-md-4">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/">Каталог</a></li>
+                            <li class="breadcrumb-item active">@product.Name</li>
+                        </ol>
+                    </nav>
+
+                    <h1 class="display-5 fw-bold">@product.Name</h1>
+                    <p class="lead text-muted">@product.Description</p>
+
+                    <div class="my-4">
+                        <h3 class="text-primary fw-bold">@product.BasePrice.ToString("N2") грн</h3>
+                        <span class="badge bg-success">В наявності</span>
+                    </div>
+
+                    <div class="card border-0 bg-light p-4 rounded-4 shadow-sm">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Кількість:</label>
+                            <div class="input-group" style="max-width: 160px;">
+                                <button class="btn btn-outline-secondary" @onclick="() => ChangeQuantity(-1)">-</button>
+                                <input type="number" class="form-control text-center" @bind="quantity" min="1" />
+                                <button class="btn btn-outline-secondary" @onclick="() => ChangeQuantity(1)">+</button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary btn-lg w-100 py-3 fw-bold shadow-sm mb-3" @onclick="AddToCart">
+                            🛒 ДОДАТИ В КОШИК (@(product.BasePrice* quantity) грн)
+                        </button>
+
+                        @if (hasConstructor)
+                        {
+                            <div class="text-center mt-2 border-top pt-3">
+                                <p class="small text-muted mb-2">Або створіть свій унікальний стиль:</p>
+                                <button class="btn btn-outline-warning btn-lg w-100 py-3 fw-bold shadow-sm" @onclick="GoToConstructor">
+                                    🎨 ВІДКРИТИ 3D КОНСТРУКТОР
+                                </button>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mt-4 row text-center text-muted small">
+                        <div class="col-4">
+                            <i class="bi bi-truck d-block fs-4 text-primary"></i> Доставка 1-2 дні
+                        </div>
+                        <div class="col-4">
+                            <i class="bi bi-shield-check d-block fs-4 text-primary"></i> Гарантія якості
+                        </div>
+                        <div class="col-4">
+                            <i class="bi bi-arrow-repeat d-block fs-4 text-primary"></i> Легке повернення
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Product? product;
+    private int quantity = 1;
+    private bool hasConstructor = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        product = await DbContext.Products
+            .Include(p => p.Category)
+            .FirstOrDefaultAsync(p => p.Id == Id);
+
+        if (product != null)
+        {
+            // Перевіряємо наявність конструктора в базі
+            hasConstructor = await DbContext.ProductConstructors.AnyAsync(c => c.ProductId == Id);
+
+            // Якщо ви ще не зробили міграцію, можете розкоментувати рядок нижче для тесту:
+            // hasConstructor = true;
+        }
+    }
+
+    private void ChangeQuantity(int delta)
+    {
+        quantity = Math.Max(1, quantity + delta);
+    }
+
+    private void AddToCart()
+    {
+        if (product != null)
+        {
+            // ПЕРЕДАЄМО ПУСТИЙ РЯДОК, щоб кошик бачив, що дизайну НЕМАЄ
+            CartService.AddToCart(product, string.Empty, null, quantity);
+            Nav.NavigateTo("/cart");
+        }
+    }
+
+    private void GoToConstructor()
+    {
+        Nav.NavigateTo($"/constructor/{Id}");
+    }
+}

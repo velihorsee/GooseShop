@@ -1,0 +1,41 @@
+﻿@page "/login"
+@using Microsoft.AspNetCore.Components.Web
+@using GooseShop.Services
+@inject AuthService AuthService
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4 card shadow p-4">
+            <h3 class="text-center mb-4">Вхід у GooseShop 🦢</h3>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input @bind="email" type="email" class="form-control" placeholder="vash@email.com" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Пароль</label>
+                <input @bind="password" type="password" class="form-control" />
+            </div>
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <div class="alert alert-danger">@error</div>
+            }
+            <button class="btn btn-primary w-100" @onclick="HandleLogin">Увійти</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string email = "";
+    private string password = "";
+    private string error = "";
+
+    private async Task HandleLogin()
+    {
+        if (await AuthService.Login(email, password))
+            Nav.NavigateTo("/profile");
+        else
+            error = "Невірний email або пароль";
+    }
+}

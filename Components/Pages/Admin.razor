@@ -1,0 +1,148 @@
+﻿@page "/admin"
+@using GooseShop.Models
+@using GooseShop.Data
+@using GooseShop.Services
+@using Microsoft.AspNetCore.Hosting
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject IWebHostEnvironment Environment
+@inject AuthService AuthService
+@inject NavigationManager Nav
+
+<div class="container mt-4">
+    @if (AuthService.CurrentUser?.Role != "Admin")
+    {
+        <div class="alert alert-danger">У вас немає прав доступу до цієї сторінки.</div>
+    }
+    else
+    {
+        <h3>Панель адміністратора 🦢</h3>
+        <hr />
+
+        <div class="row">
+            <div class="col-md-5">
+                <div class="card shadow p-4">
+                    <h4>Додати новий товар 🦆</h4>
+                    <div class="mb-3">
+                        <label class="form-label">Назва товару</label>
+                        <input @bind="newProduct.Name" class="form-control" placeholder="Напр: Чашка з гусаком" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ціна (грн)</label>
+                        <input @bind="newProduct.BasePrice" type="number" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Категорія</label>
+                        <select @bind="newProduct.CategoryId" class="form-control">
+                            <option value="1">Чашки</option>
+                            <option value="2">Футболки</option>
+                            <option value="3">Стікери</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Зображення товару</label>
+                        <InputFile OnChange="LoadFiles" class="form-control" />
+                        @if (!string.IsNullOrEmpty(newProduct.ImageUrl))
+                        {
+                            <div class="mt-2">
+                                <img src="@newProduct.ImageUrl" width="100" class="img-thumbnail" />
+                            </div>
+                        }
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(statusMessage))
+                    {
+                        <div class="alert alert-info">@statusMessage</div>
+                    }
+
+                    <button class="btn btn-success w-100" @onclick="SaveProduct" disabled="@isUploading">
+                        @if (isUploading)
+                        {
+                            <span>Завантаження...</span>
+                        }
+                        else
+                        {
+
+                            <span>Зберегти в базу</span>
+                        }
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <h4>Поточні товари</h4>
+                <div class="alert alert-secondary">Список товарів з'явиться тут пізніше...</div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private Product newProduct = new() { CategoryId = 1, Name = "", ImageUrl = "" };
+    private string statusMessage = "";
+    private bool isUploading = false;
+
+    protected override void OnInitialized()
+    {
+        // Перевірка ролі при ініціалізації
+        if (AuthService.CurrentUser?.Role != "Admin")
+        {
+            Nav.NavigateTo("/login");
+        }
+    }
+
+    private async Task SaveProduct()
+    {
+        if (string.IsNullOrWhiteSpace(newProduct.Name) || newProduct.BasePrice <= 0)
+        {
+            statusMessage = "Будь ласка, заповніть назву та ціну!";
+            return;
+        }
+
+        try
+        {
+            using var context = DbFactory.CreateDbContext();
+            context.Products.Add(newProduct);
+            await context.SaveChangesAsync();
+
+            statusMessage = "Товар успішно додано! ✅";
+            newProduct = new() { CategoryId = 1, Name = "", ImageUrl = "" };
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Помилка: {ex.Message}";
+        }
+    }
+
+    private async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        isUploading = true;
+        statusMessage = "Завантаження фото...";
+
+        try
+        {
+            var file = e.File;
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.Name);
+
+            // Створюємо папку images, якщо її немає
+            var imagesPath = Path.Combine(Environment.WebRootPath, "images");
+            if (!Directory.Exists(imagesPath)) Directory.CreateDirectory(imagesPath);
+
+            var path = Path.Combine(imagesPath, fileName);
+
+            await using FileStream fs = new(path, FileMode.Create);
+            await file.OpenReadStream(maxAllowedSize: 1024 * 1024 * 10).CopyToAsync(fs);
+
+            newProduct.ImageUrl = $"images/{fileName}";
+            statusMessage = "Фото завантажено 📸";
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Помилка завантаження: {ex.Message}";
+        }
+        finally
+        {
+            isUploading = false;
+        }
+    }
+}

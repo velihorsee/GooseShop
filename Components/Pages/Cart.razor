@@ -1,0 +1,156 @@
+﻿@page "/cart"
+@rendermode InteractiveServer
+@using GooseShop.Services
+@using System.Text.Json
+@inject CartService CartService
+@using GooseShop.Models
+@inject NavigationManager Nav
+@implements IDisposable
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Ваш кошик 🛒</h2>
+        @if (CartService.Items.Any())
+        {
+            <button class="btn btn-outline-secondary btn-sm" @onclick="CartService.ClearCart">Очистити кошик</button>
+        }
+    </div>
+
+    @if (!CartService.Items.Any())
+    {
+        <div class="alert alert-info shadow-sm">Кошик порожній. Час вибрати гусака!</div>
+        <a href="/" class="btn btn-primary shadow">До каталогу</a>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm rounded">
+            <table class="table align-middle bg-white">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Товар</th>
+                        <th>Ваш дизайн</th>
+                        <th style="width: 130px;">Кількість</th>
+                        <th>Ціна</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in CartService.Items)
+                    {
+                        var config = GetConfig(item.CustomConfigurationJson);
+
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="/@item.Product.ImageUrl" style="width: 50px; border-radius: 5px; margin-right: 10px;" />
+                                    <div>
+                                        <strong>@item.Product.Name</strong>
+                                        @if (!string.IsNullOrEmpty(item.CustomConfigurationJson) && item.CustomConfigurationJson != "{}")
+                                        {
+                                            <span class="badge bg-info">Індивідуальний дизайн</span>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.UserUploadedImageUrl))
+                                        {
+                                            <div class="mt-1">
+                                                <span class="badge bg-info text-dark" style="font-size: 0.7rem;">
+                                                    <i class="bi bi-image"></i> Фото додано
+                                                </span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="design-preview p-2 border rounded bg-light" style="font-size: 0.85rem;">
+                                    <div class="@config?.Font"><strong>Текст:</strong> "@(config?.Text ?? "—")"</div>
+                                    <div class="d-flex align-items-center mt-1">
+                                        <strong>Колір:</strong>
+                                        <div class="ms-2 shadow-sm" style="width: 12px; height: 12px; background-color: @config?.Color; border-radius: 50%; border: 1px solid #ccc;"></div>
+                                        <span class="ms-2"><strong>Розмір:</strong> @(config?.Size)px</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group input-group-sm">
+                                    <button class="btn btn-outline-secondary" @onclick="() => UpdateQuantity(item, -1)">-</button>
+                                    <input type="number" class="form-control text-center"
+                                           value="@item.Quantity"
+                                           @onchange="@((e) => SetQuantity(item, e))" min="1" />
+                                    <button class="btn btn-outline-secondary" @onclick="() => UpdateQuantity(item, 1)">+</button>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-nowrap">@item.TotalPrice.ToString("N2") грн</span>
+                                <div class="text-muted small">@item.Product.BasePrice.ToString("N2") за шт.</div>
+                            </td>
+                            <td>
+                                <button class="btn btn-outline-danger btn-sm border-0" @onclick="() => CartService.RemoveItem(item)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-end mt-4 p-4 bg-white border rounded shadow-sm">
+            <h4 class="mb-3">Всього до сплати: <span class="text-primary fw-bold">@CartService.GetTotal().ToString("N2") грн</span></h4>
+            <div class="d-flex justify-content-end gap-2">
+                <a href="/" class="btn btn-outline-primary px-4">Продовжити покупки</a>
+                <a href="/checkout" class="btn btn-success btn-lg px-5 fw-bold shadow">Оформити замовлення 🚀</a>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+
+    private class DesignConfig
+    {
+        public string Text { get; set; } = "";
+        public string Color { get; set; } = "#000000";
+        public int Size { get; set; }
+        public string Font { get; set; } = "";
+    }
+
+    private DesignConfig? GetConfig(string json)
+    {
+        if (string.IsNullOrWhiteSpace(json)) return new DesignConfig();
+        try
+        {
+            return JsonSerializer.Deserialize<DesignConfig>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        catch
+        {
+            return new DesignConfig { Text = "Стандарт" };
+        }
+    }
+
+    // Видалив повний шлях до моделі, щоб код був чистішим (якщо @using GooseShop.Models додано зверху)
+    // Тепер CartItem буде розпізнано автоматично
+    private void UpdateQuantity(CartItem item, int delta)
+    {
+        item.Quantity = Math.Max(1, item.Quantity + delta);
+        CartService.NotifyStateChanged();
+    }
+
+    private void SetQuantity(CartItem item, ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int val))
+        {
+            item.Quantity = Math.Max(1, val);
+            CartService.NotifyStateChanged();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        CartService.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        CartService.OnChange -= StateHasChanged;
+    }
+}

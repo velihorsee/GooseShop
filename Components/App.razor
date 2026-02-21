@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="GooseShop.styles.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <HeadOutlet @rendermode="InteractiveServer" />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Comfortaa:wght@700&family=Lobster&family=Montserrat:wght@900&display=swap" rel="stylesheet">
+
+    @* Бібліотеки 3D та іконки *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/geometries/DecalGeometry.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <script src="js/constructor.js"></script>
+</head>
+
+<body>
+    <Routes @rendermode="InteractiveServer" />
+    <script src="_framework/blazor.web.js"></script>
+
+
+    <script>
+        // 1. Відкриття/Закриття бокового меню
+        window.toggleSidebar = () => {
+            const sidebar = document.getElementById("sidebarMenu");
+            if (sidebar) sidebar.classList.toggle("active");
+        };
+
+        // 2. Плавний скрол до каталогу
+        window.scrollToElement = (elementId) => {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        };
+
+        // 3. Інтерактивний ГУСЯЧИЙ ДОЩ (Гусаки падають і тікають від мишки)
+        window.initGooseRain = () => {
+            const banner = document.querySelector('.z-hero-card');
+            if (!banner) return;
+
+            function createFallingGoose() {
+                const goose = document.createElement('div');
+                goose.className = 'falling-goose';
+                goose.innerHTML = '🦢';
+
+                let posX = Math.random() * banner.offsetWidth;
+                let posY = -50;
+                let speedY = 1.5 + Math.random() * 2;
+
+                goose.style.left = posX + 'px';
+                banner.appendChild(goose);
+
+                // Логіка втікання окремого маленького гусака
+                const onMouseMove = (e) => {
+                    const rect = banner.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    const mouseY = e.clientY - rect.top;
+
+                    const dist = Math.sqrt((mouseX - posX)**2 + (mouseY - posY)**2);
+
+                    if (dist < 100) {
+                        posX += (posX - mouseX) * 0.15;
+                        posY += (posY - mouseY) * 0.15;
+                        goose.style.transform = `scale(1.5) rotate(${posX}deg)`;
+                    }
+                };
+
+                banner.addEventListener('mousemove', onMouseMove);
+
+                const update = () => {
+                    posY += speedY;
+                    goose.style.top = posY + 'px';
+                    goose.style.left = posX + 'px';
+
+                    if (posY < banner.offsetHeight + 100) {
+                        requestAnimationFrame(update);
+                    } else {
+                        banner.removeEventListener('mousemove', onMouseMove);
+                        goose.remove();
+                    }
+                };
+                update();
+            }
+
+            setInterval(createFallingGoose, 2000); // Новий гусак кожні 2 секунди
+        };
+
+        // 4. РОЗУМНИЙ ГУСАК-ГЕРОЙ (Тікає і повертається на місце)
+        window.initSmartGoose = (elementId) => {
+            const goose = document.getElementById(elementId);
+            if (!goose) return;
+
+            let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+            let isScared = false;
+
+            document.addEventListener('mousemove', (e) => {
+                const gooseRect = goose.getBoundingClientRect();
+                const gooseCenterX = gooseRect.left + gooseRect.width / 2;
+                const gooseCenterY = gooseRect.top + gooseRect.height / 2;
+
+                const distX = e.clientX - gooseCenterX;
+                const distY = e.clientY - gooseCenterY;
+                const distance = Math.sqrt(distX * distX + distY * distY);
+
+                if (distance < 150) {
+                    isScared = true;
+                    const angle = Math.atan2(distY, distX);
+                    targetX = -Math.cos(angle) * 120;
+                    targetY = -Math.sin(angle) * 120;
+                    goose.style.filter = "drop-shadow(20px 20px 0px rgba(255,0,0,0.3))";
+                } else {
+                    isScared = false;
+                    targetX = 0;
+                    targetY = 0;
+                    goose.style.filter = "drop-shadow(15px 15px 0px rgba(0,0,0,0.1))";
+                }
+            });
+
+            function animate() {
+                const speed = isScared ? 0.15 : 0.05;
+                currentX += (targetX - currentX) * speed;
+                currentY += (targetY - currentY) * speed;
+                goose.style.transform = `translate(${currentX}px, ${currentY}px) rotate(${currentX * 0.3}deg)`;
+                requestAnimationFrame(animate);
+            }
+            animate();
+        };
+    </script>
+</body>
+
+</html>

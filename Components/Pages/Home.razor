@@ -1,0 +1,299 @@
+﻿@page "/"
+@using GooseShop.Models
+@using GooseShop.Services
+@inject ProductService ProductService
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+@* --- ЕПІЧНИЙ ХАЙП-БАННЕР --- *@
+<div class="container-fluid px-lg-5 mt-4">
+    <div class="z-hero-card">
+        <div class="row align-items-center g-0">
+            <div class="col-lg-7 p-4 p-md-5">
+                <div class="z-badge mb-3 shadow-pixel">#ГУСЬ_ГЕНГ_2026 🦢</div>
+                <h1 class="fw-black display-2 text-uppercase m-0 lh-1">
+                    ТВІЙ МЕРЧ — <br /> <span class="text-white outline-hero">ТВІЙ ВАЙБ.</span>
+                </h1>
+                <p class="fs-4 fw-bold mt-3 text-dark">Створи унікальну чашку або футболку за 30 секунд. 🍌</p>
+                <div class="mt-4 d-flex gap-3 flex-wrap">
+                    <button class="z-action-btn shadow-pixel" @onclick='() => Nav.NavigateTo("/constructor/1")'>ХОЧУ ЧАШКУ</button>
+                    <button class="z-secondary-btn shadow-pixel" @onclick='() => ScrollTo("product-catalog")'>КАТАЛОГ</button>
+                </div>
+            </div>
+
+            @* Головний гусак з ID для JS-інтерактиву *@
+            <div class="col-lg-5 text-center py-4" style="position: relative; min-height: 350px;">
+                <img id="heroGoose" src="images/hero-goose.png" class="z-goose-main" alt="Goose Hero" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@* --- КАТАЛОГ ТОВАРІВ --- *@
+<div class="container-fluid px-lg-5 my-5 pt-5" id="product-catalog">
+    <h2 class="fw-black display-4 text-uppercase mb-5">ТОП <span class="z-highlight px-3 shadow-pixel">ДРОПИ</span></h2>
+
+    @if (pagedProducts == null)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-dark" style="width: 3rem; height: 3rem; border-width: 0.5rem;"></div>
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-5">
+            @foreach (var p in pagedProducts)
+            {
+                <div class="col">
+                    <div class="z-item-card shadow-pixel">
+                        <div class="z-img-box">
+                            @{
+                                var img = string.IsNullOrEmpty(p.ImageUrl) ? "images/placeholder.jpg" : p.ImageUrl.TrimStart('/');
+                            }
+                            <img src="/@img" onerror="this.src='/images/placeholder.jpg';" />
+                        </div>
+                        <div class="p-4 bg-white">
+                            <h4 class="fw-black text-uppercase text-truncate mb-1">@p.Name</h4>
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <div class="z-price-pill shadow-pixel">
+                                    <span class="small opacity-75">₴</span> @p.BasePrice
+                                </div>
+                                <button class="z-buy-btn shadow-pixel" @onclick='() => Nav.NavigateTo($"/product/{p.Id}")'>
+                                    <i class="bi bi-arrow-right-short"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    :root {
+        --z-cyan: #00f2fe;
+        --z-cyan-dark: #0097a7;
+        --z-yellow: #ffcc00;
+        --z-yellow-dark: #d4a017;
+        --z-green: #39e75f;
+        --z-green-dark: #2d8d3c;
+        --z-red: #ff4d4d;
+        --z-red-dark: #b91d1d;
+    }
+
+    .fw-black {
+        font-weight: 950;
+    }
+
+    .shadow-pixel {
+        box-shadow: 4px 4px 0px #000;
+        transition: 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 3px solid #000;
+    }
+
+    /* БАННЕР */
+    .z-hero-card {
+        background: var(--z-cyan);
+        border: 8px solid #000;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 12px 12px 0px #000;
+        cursor: crosshair;
+        animation: bannerIntro 1s cubic-bezier(0.2, 1, 0.3, 1);
+    }
+
+        .z-hero-card::before {
+            content: "⚡ 🔥 🦢 🍌 ✨ ⚡ 🔥 🦢 🍌 ✨";
+            position: absolute;
+            font-size: 2.5rem;
+            width: 200%;
+            opacity: 0.15;
+            white-space: nowrap;
+            animation: floatSymbols 20s linear infinite;
+            pointer-events: none;
+            top: 15%;
+            z-index: 0;
+        }
+
+    .outline-hero {
+        -webkit-text-stroke: 2px #000;
+        animation: glitchText 3s infinite;
+        display: inline-block;
+    }
+
+    /* ГУСАКИ */
+    .z-goose-main {
+        width: 320px;
+        z-index: 10;
+        will-change: transform;
+        transition: filter 0.3s ease;
+        filter: drop-shadow(15px 15px 0px rgba(0,0,0,0.1));
+    }
+
+    .falling-goose {
+        position: absolute;
+        font-size: 2rem;
+        z-index: 5;
+        pointer-events: none;
+        user-select: none;
+        filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.2));
+    }
+
+    /* ХОВЕРИ (3D ЕФЕКТ) */
+    .z-action-btn:hover {
+        background: #fff !important;
+        color: #000 !important;
+        transform: translate(-6px, -6px) scale(1.05);
+        box-shadow: 6px 6px 0px #000, 12px 12px 0px var(--z-yellow-dark) !important;
+    }
+
+    .z-secondary-btn:hover {
+        background: var(--z-green) !important;
+        transform: translate(-6px, -6px);
+        box-shadow: 6px 6px 0px #000, 12px 12px 0px var(--z-green-dark) !important;
+    }
+
+    .z-item-card:hover {
+        transform: translate(-10px, -10px) rotate(1deg) !important;
+        box-shadow: 10px 10px 0px #000, 18px 18px 0px var(--z-green-dark) !important;
+    }
+
+    /* АНІМАЦІЇ */
+    @@keyframes bannerIntro {
+        0% {
+            transform: scale(0.8) translateY(100px);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @@keyframes floatSymbols {
+        from {
+            transform: translateX(50%);
+        }
+
+        to {
+            transform: translateX(-100%);
+        }
+    }
+
+    @@keyframes glitchText {
+        0%, 100% {
+            transform: skew(0deg);
+        }
+
+        20% {
+            transform: skew(-5deg);
+            color: var(--z-yellow);
+        }
+
+        25% {
+            transform: skew(5deg);
+        }
+    }
+
+    @@keyframes badgeVibe {
+        0%, 100% {
+            transform: rotate(-3deg) scale(1);
+        }
+
+        50% {
+            transform: rotate(5deg) scale(1.1);
+            background: var(--z-red);
+        }
+    }
+    /* ФОТО ТОВАРУ */
+    .z-img-box {
+        height: 280px;
+        overflow: hidden;
+        border-bottom: 5px solid #000;
+        background: #f8f8f8;
+        position: relative;
+    }
+
+        .z-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+    /* ЕФЕКТ ПРИ НАВЕДЕННІ НА КАРТКУ */
+    .z-item-card:hover {
+        transform: translate(-10px, -10px) rotate(1deg) !important;
+        /* Чорна тінь + Зелена грань блоку */
+        box-shadow: 10px 10px 0px #000, 18px 18px 0px var(--z-green-dark) !important;
+        border-color: #000 !important;
+    }
+
+        .z-item-card:hover img {
+            transform: scale(1.1) rotate(-2deg);
+        }
+
+    /* ЦІННИК (ЗОЛОТИЙ ЗЛИТОК) */
+    .z-price-pill {
+        background: var(--z-cyan);
+        border: 3px solid #000;
+        padding: 6px 15px;
+        font-weight: 950;
+        font-size: 1.1rem;
+        transition: 0.2s;
+    }
+
+    .z-item-card:hover .z-price-pill {
+        background: var(--z-yellow) !important;
+        transform: translate(-4px, -4px) rotate(5deg);
+        box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-yellow-dark) !important;
+    }
+
+    /* КНОПКА ПЕРЕХОДУ */
+    .z-buy-btn {
+        background: #000;
+        color: #fff;
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+    }
+
+        .z-buy-btn:hover {
+            background: var(--z-green) !important;
+            color: #000 !important;
+            transform: scale(1.1) rotate(-10deg);
+            box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-green-dark) !important;
+        }
+</style>
+
+@code {
+    private List<Product>? allProducts;
+    private List<Product>? pagedProducts;
+    private int pageSize = 20;
+
+    protected override async Task OnInitializedAsync()
+    {
+        allProducts = await ProductService.GetAllProductsAsync();
+        UpdatePagedResults();
+    }
+
+    private void UpdatePagedResults() => pagedProducts = allProducts?.Take(pageSize).ToList();
+
+    private async Task ScrollTo(string id) => await JS.InvokeVoidAsync("scrollToElement", id);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Запуск інтерактивних функцій з App.razor
+            await JS.InvokeVoidAsync("initGooseRain");
+            await JS.InvokeVoidAsync("initSmartGoose", "heroGoose");
+        }
+    }
+}

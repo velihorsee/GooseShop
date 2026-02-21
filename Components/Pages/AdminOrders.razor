@@ -1,0 +1,265 @@
+﻿@page "/admin/orders"
+@rendermode InteractiveServer
+@using GooseShop.Data
+@using GooseShop.Services
+@using GooseShop.Models
+@using Microsoft.EntityFrameworkCore
+@using System.Text.Json
+@using Microsoft.AspNetCore.Hosting
+@inject IWebHostEnvironment Env
+@inject NavigationManager Nav
+@inject AppDbContext DbContext
+@inject AdminService AdminService
+@inject EmailService EmailService
+@inject IJSRuntime JS
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Керування замовленнями 🦢</h2>
+        <span class="badge bg-primary">Відображено: @(orders?.Count ?? 0)</span>
+    </div>
+
+    @if (allOrders == null)
+    {
+        <div class="text-center"><div class="spinner-border text-primary"></div></div>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm rounded">
+            @* Блок фільтрації *@
+            <div class="row mb-3 g-2 p-2">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="Пошук (Ім'я, телефон, ID)..." @oninput="SearchOrders" />
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" @onchange="FilterByStatus">
+                        <option value="all">Усі замовлення</option>
+                        <option value="new">Тільки нові</option>
+                        <option value="completed">Виконані</option>
+                    </select>
+                </div>
+            </div>
+
+            <table class="table table-hover align-middle bg-white">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Дата</th>
+                        <th>Клієнт</th>
+                        <th>Сума</th>
+                        <th>Статус</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in orders ?? new())
+                    {
+                        <tr>
+                            <td>#@order.Id</td>
+                            <td>@order.OrderDate.ToString("dd.MM HH:mm")</td>
+                            <td>
+                                <div><strong>@order.CustomerName</strong></div>
+                                <small class="text-muted">@order.Phone</small>
+                            </td>
+                            <td><strong>@order.TotalAmount.ToString("N0") грн</strong></td>
+                            <td>
+                                @if (order.IsCompleted)
+                                {
+                                    <span class="badge bg-success">Виконано</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">Нове</span>
+                                }
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" @onclick="() => ToggleDetails(order.Id)">Деталі</button>
+                                <button class="btn btn-sm @(order.IsCompleted ? "btn-secondary" : "btn-success") ms-2"
+                                        @onclick="() => UpdateStatus(order)">
+                                    @(order.IsCompleted ? "Відмінити" : "Готово")
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger ms-2"
+                                        @onclick="() => DeleteOrder(order)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @if (expandedOrderId == order.Id)
+                        {
+                            <tr class="table-light">
+                                <td colspan="6">
+                                    <div class="p-3 border rounded shadow-sm bg-white">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h6>Файли для друку:</h6>
+                                                @{
+                                                    // Розпарсимо JSON, щоб отримати список картинок
+                                                    var itemsWithDesign = order.OrderItems.Where(i => !string.IsNullOrEmpty(i.CustomConfigurationJson));
+                                                }
+
+                                                @foreach (var item in itemsWithDesign)
+                                                {
+                                                    var config = GetConfig(item.CustomConfigurationJson);
+                                                    // Якщо у нас збережений стан Three.js, витягнемо посилання на картинки з нього
+                                                    var layers = string.IsNullOrEmpty(config?.State)
+                                                    ? new List<string>()
+                                                    : JsonDocument.Parse(config.State).RootElement.EnumerateArray()
+                                                    .Select(x => x.GetProperty("img").GetString()).ToList();
+
+                                                    @foreach (var imgUrl in layers)
+                                                    {
+                                                        <div class="d-flex align-items-center mb-2 p-2 border rounded">
+                                                            <img src="@imgUrl" style="width: 50px; height: 50px; object-fit: cover;" class="me-2 rounded" />
+                                                            <div class="flex-grow-1 small text-truncate">@imgUrl</div>
+                                                            <a href="@imgUrl" target="_blank" download class="btn btn-sm btn-primary">
+                                                                <i class="bi bi-download"></i>
+                                                            </a>
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+
+                                            <div class="col-md-6 text-center">
+                                                <div id="admin-three-@order.Id" style="height: 350px; width: 100%;" class="bg-light rounded border"></div>
+                                                <small class="text-muted">3D прев'ю розташування</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@code {
+    private List<Order>? allOrders; // Всі дані
+    private List<Order>? orders;    // Відфільтровані дані
+    private int expandedOrderId = -1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AdminService.IsAuthenticated)
+        {
+            Nav.NavigateTo("/admin/login");
+            return;
+        }
+        await LoadOrders();
+    }
+
+    private async Task LoadOrders()
+    {
+        allOrders = await DbContext.Orders
+            .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.Product)
+            .OrderByDescending(o => o.OrderDate)
+            .ToListAsync();
+        orders = allOrders;
+    }
+
+    private void SearchOrders(ChangeEventArgs e)
+    {
+        var query = e.Value?.ToString()?.ToLower() ?? "";
+        orders = allOrders?.Where(o =>
+            o.CustomerName.ToLower().Contains(query) ||
+            o.Phone.Contains(query) ||
+            o.Id.ToString().Contains(query)
+        ).ToList();
+    }
+
+    private void FilterByStatus(ChangeEventArgs e)
+    {
+        var status = e.Value?.ToString();
+        if (status == "all") orders = allOrders;
+        else if (status == "new") orders = allOrders?.Where(o => !o.IsCompleted).ToList();
+        else if (status == "completed") orders = allOrders?.Where(o => o.IsCompleted).ToList();
+    }
+
+    private async Task ToggleDetails(int orderId)
+    {
+        if (expandedOrderId == orderId) { expandedOrderId = -1; return; }
+
+        expandedOrderId = orderId;
+        var order = allOrders?.FirstOrDefault(o => o.Id == orderId);
+        var firstItem = order?.OrderItems.FirstOrDefault();
+
+        if (firstItem != null)
+        {
+            // Чекаємо, щоб DOM оновився
+            await Task.Yield();
+            await Task.Delay(200);
+
+            // Ініціалізуємо 3D (переконайтеся, що шлях до моделі правильний)
+            await JS.InvokeVoidAsync("init3DConstructor", $"admin-three-{orderId}", "/models/cup.glb");
+
+            var config = GetConfig(firstItem.CustomConfigurationJson);
+            if (!string.IsNullOrEmpty(config?.State))
+            {
+                // Передаємо JSON зі станом наклейок
+                await JS.InvokeVoidAsync("loadClientDesign", config.State);
+            }
+        }
+    }
+
+    private async Task UpdateStatus(Order order)
+    {
+        order.IsCompleted = !order.IsCompleted;
+        await DbContext.SaveChangesAsync();
+
+        if (order.IsCompleted)
+        {
+            try
+            {
+                await EmailService.SendOrderReadyEmail(order);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Email error: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task DeleteOrder(Order order)
+    {
+        bool confirmed = await JS.InvokeAsync<bool>("confirm", "Видалити замовлення?");
+        if (confirmed)
+        {
+            foreach (var item in order.OrderItems)
+            {
+                if (!string.IsNullOrEmpty(item.UserUploadedImageUrl))
+                {
+                    var filePath = Path.Combine(Env.WebRootPath, item.UserUploadedImageUrl.TrimStart('/'));
+                    if (File.Exists(filePath)) File.Delete(filePath);
+                }
+            }
+            DbContext.Orders.Remove(order);
+            await DbContext.SaveChangesAsync();
+            allOrders?.Remove(order);
+            orders?.Remove(order);
+        }
+    }
+
+    private DesignConfig? GetConfig(string json)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<DesignConfig>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        catch
+        {
+            return new DesignConfig { Text = "Помилка конфігурації" };
+        }
+    }
+
+    public class DesignConfig
+    {
+        public string Text { get; set; } = "";
+        public string Color { get; set; } = "#000000";
+        public int Size { get; set; } = 16;
+        public string Font { get; set; } = "font-montserrat";
+        public string State { get; set; } = ""; // Це той самий JSON з координатами декалей
+    }
+}

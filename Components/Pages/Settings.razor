@@ -1,0 +1,133 @@
+﻿@page "/admin/settings"
+@using GooseShop.Data
+@using GooseShop.Services
+@using GooseShop.Models
+@using Microsoft.EntityFrameworkCore
+@inject NovaPoshtaService NP
+@inject AppDbContext DbContext
+@inject NavigationManager Nav
+
+<div class="container mt-4">
+    <div class="d-flex align-items-center mb-4">
+        <button class="btn btn-outline-secondary me-3" @onclick='() => Nav.NavigateTo("/admin")'>
+            <i class="bi bi-arrow-left"></i>
+        </button>
+        <h3 class="mb-0">Налаштування магазину ⚙️</h3>
+    </div>
+
+    <div class="card p-4 shadow-sm border-0">
+        <h5 class="mb-3">Синхронізація з Новою Поштою</h5>
+        <p class="text-muted">
+            Цей процес завантажує всі діючі відділення та поштомати у локальну базу даних для миттєвого пошуку під час оформлення замовлення.
+        </p>
+
+        <div class="alert @(lastUpdate == "Ніколи" ? "alert-warning" : "alert-light border") mb-4">
+            <i class="bi bi-clock-history me-2"></i>
+            Останнє оновлення бази: <strong>@lastUpdate</strong>
+        </div>
+
+        @if (isUpdating)
+        {
+            <div class="alert alert-info shadow-sm">
+                <div class="d-flex align-items-center">
+                    <div class="spinner-border text-primary me-3" role="status"></div>
+                    <div>
+                        <div class="fw-bold">Триває оновлення бази даних...</div>
+                        <small>Завантажено та оброблено: @processedCount записів</small>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <button class="btn btn-primary btn-lg" @onclick="SyncWarehouses" disabled="@isUpdating">
+            @if (isUpdating)
+            {
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                <span>Зачекайте...</span>
+            }
+            else
+            {
+                <i class="bi bi-arrow-repeat me-2"></i>
+                <span>Оновити базу відділень</span>
+            }
+        </button>
+    </div>
+</div>
+
+@code {
+    private string lastUpdate = "Ніколи";
+    private bool isUpdating = false;
+    private int processedCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Microsoft.EntityFrameworkCore дозволяє використовувати FirstOrDefaultAsync
+        var config = await DbContext.AppConfigs.FirstOrDefaultAsync(c => c.Key == "NP_LastUpdate");
+        lastUpdate = config?.Value ?? "Ніколи";
+    }
+
+    private async Task SyncWarehouses()
+    {
+        isUpdating = true;
+        processedCount = 0;
+        StateHasChanged();
+
+        try
+        {
+            // 1. Отримуємо ВСІ відділення через API
+            var allWarehouses = await NP.GetAllWarehouses();
+
+            if (allWarehouses != null && allWarehouses.Any())
+            {
+                // 2. Очищаємо стару базу
+                // Використовуємо ExecuteDeleteAsync для миттєвого очищення великої таблиці (EF Core 7+)
+                await DbContext.CachedWarehouses.ExecuteDeleteAsync();
+
+                // 3. Додаємо нові
+                foreach (var wh in allWarehouses)
+                {
+                    DbContext.CachedWarehouses.Add(new CachedWarehouse
+                    {
+                        CityRef = wh.CityRef,
+                        Ref = wh.Ref,
+                        Description = wh.Description,
+                        // Логіка визначення типу
+                        Type = wh.Description.Contains("Поштомат", StringComparison.OrdinalIgnoreCase)
+                               ? "Postomat" : "Warehouse"
+                    });
+
+                    processedCount++;
+
+                    // Зберігаємо пачками по 1000 для стабільності пам'яті
+                    if (processedCount % 1000 == 0)
+                    {
+                        await DbContext.SaveChangesAsync();
+                        StateHasChanged(); // Оновлюємо лічильник на екрані
+                    }
+                }
+
+                await DbContext.SaveChangesAsync();
+
+                // 4. Оновлюємо дату оновлення
+                var config = await DbContext.AppConfigs.FirstOrDefaultAsync(c => c.Key == "NP_LastUpdate")
+                             ?? new AppConfig { Key = "NP_LastUpdate" };
+
+                config.Value = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
+
+                if (config.Id == 0) DbContext.AppConfigs.Add(config);
+                await DbContext.SaveChangesAsync();
+
+                lastUpdate = config.Value;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Помилка синхронізації: {ex.Message}");
+        }
+        finally
+        {
+            isUpdating = false;
+            StateHasChanged();
+        }
+    }
+}

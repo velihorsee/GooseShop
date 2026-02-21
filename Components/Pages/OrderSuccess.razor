@@ -1,0 +1,43 @@
+﻿@page "/order-success"
+@inject NavigationManager Nav
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card shadow-lg border-0 p-5">
+                <div class="mb-4">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                </div>
+                <h2 class="fw-bold mb-3">Дякуємо за ваше замовлення! 🦢</h2>
+                <p class="text-muted fs-5">
+                    Ми вже отримали ваші дані та почали готувати замовлення до відправки.
+                    Найближчим часом ми зв'яжемося з вами для підтвердження.
+                </p>
+
+                <div class="bg-light p-4 rounded-3 my-4">
+                    <p class="mb-1 text-secondary">Копію деталей замовлення ми надіслали на ваш Email.</p>
+                    <small class="text-muted">Перевірте папку "Спам", якщо лист не надійшов протягом 5 хвилин.</small>
+                </div>
+
+                <div class="d-grid gap-2 d-md-block">
+                    <button class="btn btn-primary btn-lg px-5" @onclick='() => Nav.NavigateTo("/")'>
+                        <i class="bi bi-house-door me-2"></i> На головну
+                    </button>
+                    <button class="btn btn-outline-secondary btn-lg px-5" @onclick='() => Nav.NavigateTo("/catalog")'>
+                        Продовжити покупки
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .card {
+        border-radius: 20px;
+    }
+</style>
