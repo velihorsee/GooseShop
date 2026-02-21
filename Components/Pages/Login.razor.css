@@ -1,83 +1,141 @@
+﻿/* --- ВЕСЕЛИЙ АНІМОВАНИЙ ФОН --- */
 .z-auth-container {
-    min-height: 80vh;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background: radial-gradient(circle at center, #f0f0f0 0%, #e0e0e0 100%);
+    background: var(--z-black); /* Темний фон для контрасту */
+    position: relative;
+    overflow: hidden;
 }
+
+    /* Додаємо плаваючі елементи на фоні */
+    .z-auth-container::before {
+        content: "🦢 🔥 ⚡ 🎒 🦢 ✨ 🎒 🔥 🦢";
+        position: absolute;
+        font-size: 3rem;
+        line-height: 1.5;
+        width: 200%;
+        color: rgba(255, 255, 255, 0.07);
+        white-space: nowrap;
+        animation: floatSymbols 15s linear infinite;
+        top: 10%;
+        pointer-events: none;
+        z-index: 1;
+    }
 
 .z-auth-box {
     background: #fff;
-    border: 6px solid #000;
+    border: 8px solid #000;
     width: 100%;
     max-width: 450px;
-    animation: bannerIntro 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    z-index: 5;
+    /* Трохи нахиляємо форму для фану */
+    transform: rotate(-1deg);
+    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: bannerIntro 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* ����� ���� */
+    .z-auth-box:hover {
+        transform: rotate(0deg) scale(1.02);
+    }
+
+/* --- ТАБИ (БІЛЬШЕ КОЛЬОРУ) --- */
 .z-tab-btn {
     flex: 1;
-    background: #f0f0f0;
+    background: #e0e0e0;
     border: none;
-    padding: 15px;
+    padding: 20px;
     font-weight: 950;
-    font-size: 0.9rem;
+    font-size: 1rem;
     transition: 0.2s;
-    border-bottom: 6px solid #000;
-    color: #888;
+    border-bottom: 8px solid #000;
+    color: #555;
+    text-transform: uppercase;
 }
 
-    .z-tab-btn.active {
-        background: #fff;
-        color: #000;
-        border-bottom: none;
-    }
-
     .z-tab-btn:first-child {
-        border-right: 6px solid #000;
+        border-right: 8px solid #000;
     }
 
-/* ������ */
+    .z-tab-btn.active:first-child {
+        background: var(--z-cyan) !important;
+        color: #000;
+    }
+
+    .z-tab-btn.active:last-child {
+        background: var(--z-yellow) !important;
+        color: #000;
+    }
+
+    .z-tab-btn.active {
+        border-bottom: none;
+        transform: translateY(-2px);
+    }
+
+/* --- ІНПУТИ (АКЦЕНТ НА ФОКУС) --- */
 .z-label {
     display: block;
     font-weight: 900;
     text-transform: uppercase;
-    font-size: 0.8rem;
-    margin-bottom: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    color: #000;
 }
 
 .z-input {
-    border: 4px solid #000;
-    padding: 12px 15px;
-    font-weight: 700;
+    border: 5px solid #000;
+    padding: 15px;
+    font-weight: 800;
     outline: none;
     transition: 0.2s;
+    background: #fafafa;
 }
 
     .z-input:focus {
-        transform: translate(-2px, -2px);
-        box-shadow: 6px 6px 0px var(--z-cyan) !important;
+        background: #fff;
+        transform: translate(-4px, -4px);
+        box-shadow: 8px 8px 0px var(--z-pink) !important; /* Рожевий фокус для веселощів */
     }
 
-/* ������������ */
+/* --- ВЕСЕЛА ПОМИЛКА --- */
 .z-alert {
     background: var(--z-red);
     color: #fff;
-    border: 3px solid #000;
-    padding: 10px;
-    font-weight: 800;
+    border: 4px solid #000;
+    padding: 12px;
+    font-weight: 900;
     text-align: center;
     text-transform: uppercase;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
+    box-shadow: 6px 6px 0px #000;
+    animation: shake 0.4s;
 }
 
-/* ������ �������������� � app.css, ��� ��� �� ������ ����� */
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* Кнопка входу */
 .z-btn {
-    font-size: 1.1rem;
-    letter-spacing: 1px;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    padding: 18px !important;
+    border-width: 5px !important;
 }
 
 .border-bottom-bold {
-    border-bottom: 6px solid #000;
+    border-bottom: 8px solid #000;
 }
