@@ -1,12 +1,17 @@
-﻿/* --- ГЕРОЙ-БАНЕР --- */
+﻿/* --- ГЕРОЙ-БАНЕР (ВЕРХНЯ ЧАСТИНА) --- */
 .z-hero-card {
     background: var(--z-cyan);
     border: 8px solid #000;
     box-shadow: 12px 12px 0px #000;
-    animation: bannerIntro 1s cubic-bezier(0.2, 1, 0.3, 1); /* ПОВЕРНУЛИ! */
     position: relative;
     overflow: hidden;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    animation: bannerIntro 1s cubic-bezier(0.2, 1, 0.3, 1);
 }
+
+    /* Символи, що літають на фоні */
     .z-hero-card::before {
         content: "⚡ 🔥 🦢 🍌 ✨ ⚡ 🔥 🦢 🍌 ✨";
         position: absolute;
@@ -14,12 +19,15 @@
         width: 200%;
         opacity: 0.15;
         white-space: nowrap;
-        animation: floatSymbols 20s linear infinite; /* ПОВЕРНУЛИ СИМВОЛИ! */
+        animation: floatSymbols 20s linear infinite;
         top: 15%;
+        pointer-events: none;
     }
+
 .outline-hero {
     -webkit-text-stroke: 2px #000;
     color: white;
+    font-weight: 950;
 }
 
 .z-badge {
@@ -31,20 +39,21 @@
     text-transform: uppercase;
 }
 
-/* --- КАРТКИ ТОВАРІВ --- */
+/* --- КАРТКИ ТОВАРІВ (КАТАЛОГ) --- */
 .z-item-card {
     background: #fff;
     border: 6px solid #000 !important;
-    transition: 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
     position: relative;
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-    /* Підсвітка ціни при наведенні на картку */
-    .z-item-card:hover .z-price-pill {
-        background: #fff !important;
-        transform: scale(1.1) rotate(-3deg);
-        box-shadow: 4px 4px 0px #000;
+    /* 1. ПІДСВІТКА КАРТКИ (тільки тінь та легкий зсув) */
+    .z-item-card:hover {
+        transform: translate(-4px, -4px);
+        box-shadow: 6px 6px 0px #000, 12px 12px 0px var(--z-green-dark) !important;
     }
 
 .z-img-box {
@@ -62,19 +71,31 @@
         transition: 0.3s ease;
     }
 
+/* Збільшення фото при наведенні на картку */
 .z-item-card:hover .z-img-box img {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
-/* --- ЦІНА ТА КНОПКИ --- */
+/* --- ЦІНА ТА КНОПКА (ОКРЕМІ ХОВЕРИ) --- */
+
+/* 2. ПІДСВІТКА ЦІНИ (тільки коли мишка прямо на ній) */
 .z-price-pill {
     background: var(--z-yellow);
-    padding: 5px 15px;
+    padding: 6px 15px;
     font-weight: 950;
     border: 3px solid #000;
     transform: rotate(-2deg);
+    transition: 0.2s ease;
+    display: inline-block;
 }
-/* Стиль нової кнопки КУПИТИ */
+
+    .z-price-pill:hover {
+        background: #fff !important;
+        transform: scale(1.1) rotate(-5deg) !important;
+        box-shadow: 4px 4px 0px #000 !important;
+    }
+
+/* 3. ПІДСВІТКА КНОПКИ (тільки коли мишка прямо на ній) */
 .z-buy-btn-full {
     background: #000;
     color: #fff;
@@ -82,31 +103,15 @@
     font-weight: 900;
     font-size: 0.9rem;
     border: 3px solid #000;
-    transition: 0.2s;
-}
-.z-item-card:hover .z-buy-btn-full {
-    background: var(--z-cyan);
-    color: #000;
-    transform: translate(-2px, -2px);
-    box-shadow: 4px 4px 0px #000;
-}
-.z-buy-btn {
-    background: #000;
-    color: #fff;
-    border: 3px solid #000;
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    transition: 0.2s;
+    transition: 0.2s ease;
+    cursor: pointer;
 }
 
-    .z-buy-btn:hover {
+    .z-buy-btn-full:hover {
         background: var(--z-cyan) !important;
         color: #000 !important;
-        transform: scale(1.15) rotate(-10deg);
+        transform: translate(-4px, -4px) !important;
+        box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
     }
 
 /* --- АНІМАЦІЇ --- */
@@ -122,26 +127,12 @@
     }
 }
 
-.z-hero-card {
-    background: var(--z-cyan);
-    border: 8px solid #000;
-    position: relative;
-    box-shadow: 12px 12px 0px #000;
-    min-height: 400px;
-    display: flex;
-    align-items: center;
-}
+@keyframes floatSymbols {
+    from {
+        transform: translateX(0%);
+    }
 
-.outline-hero {
-    -webkit-text-stroke: 2px #000;
-    color: white;
-    font-weight: 950;
-}
-
-.z-badge {
-    background: #000;
-    color: #fff;
-    padding: 5px 15px;
-    display: inline-block;
-    font-weight: 900;
+    to {
+        transform: translateX(-50%);
+    }
 }

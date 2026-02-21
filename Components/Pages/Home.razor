@@ -48,36 +48,40 @@
             @foreach (var p in pagedProducts)
             {
                 <div class="col">
-                    @* ВСЯ КАРТКА — ЦЕ ПОСИЛАННЯ *@
-                    <a href="/product/@p.Id" class="z-item-card shadow-pixel text-decoration-none d-block">
-                        <div class="z-img-box">
-                            @{
-                                var img = string.IsNullOrEmpty(p.ImageUrl) ? "images/placeholder.jpg" : p.ImageUrl.TrimStart('/');
-                            }
-                            <img src="/@img" onerror="this.src='/images/placeholder.jpg';" alt="@p.Name" />
+                    <div class="z-item-card shadow-pixel">
+                        @* 1. Основне посилання (Картинка та назва) *@
+                        <a href="/product/@p.Id" class="text-decoration-none d-block">
+                            <div class="z-img-box">
+                                @{
+                                    var img = string.IsNullOrEmpty(p.ImageUrl) ? "images/placeholder.jpg" : p.ImageUrl.TrimStart('/');
+                                }
+                                <img src="/@img" onerror="this.src='/images/placeholder.jpg';" alt="@p.Name" />
 
-                            @if (p.BasePrice > 1000)
-                            {
-                                <div class="z-card-badge shadow-pixel">🔥 TOP</div>
-                            }
-                        </div>
+                                @if (p.BasePrice > 1000)
+                                {
+                                    <div class="z-card-badge shadow-pixel">🔥 TOP</div>
+                                }
+                            </div>
+                            <div class="p-4 bg-white">
+                                <h4 class="fw-black text-uppercase text-truncate mb-1 text-dark">@p.Name</h4>
+                            </div>
+                        </a>
 
-                        <div class="p-4 bg-white">
-                            <h4 class="fw-black text-uppercase text-truncate mb-1 text-dark">@p.Name</h4>
-
-                            <div class="d-flex justify-content-between align-items-center mt-4">
-                                @* ЦІННИК З ПІДСВІТКОЮ *@
+                        @* 2. Блок дій (Ціна та Кнопка) *@
+                        <div class="px-4 pb-4 d-flex justify-content-between align-items-center mt-auto">
+                            @* ТЕПЕР ЦІНА ТЕЖ ПОСИЛАННЯ *@
+                            <a href="/product/@p.Id" class="text-decoration-none">
                                 <div class="z-price-pill shadow-pixel">
                                     @p.BasePrice <span class="small">ГРН</span>
                                 </div>
+                            </a>
 
-                                @* КНОПКА КУПИТИ *@
-                                <div class="z-buy-btn-full shadow-pixel">
-                                    КУПИТИ
-                                </div>
-                            </div>
+                            @* КНОПКА КУПИТИ *@
+                            <button class="z-buy-btn-full shadow-pixel" @onclick='() => Nav.NavigateTo($"/product/{p.Id}")'>
+                                КУПИТИ
+                            </button>
                         </div>
-                    </a>
+                    </div>
                 </div>
             }
         </div>

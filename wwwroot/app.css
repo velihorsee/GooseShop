@@ -1,48 +1,8 @@
-
-
-:root {
-    --z-cyan: #00f2fe;
-    --z-cyan-dark: #0097a7;
-    --z-green: #39e75f;
-    --z-green-dark: #2d8d3c;
-    --z-red: #ff4d4d;
-    --z-red-dark: #b91d1d;
-    --z-yellow: #ffcc00;
-    --z-yellow-dark: #d4a017;
-    --z-black: #1a1a1a;
-}
-
-/* Спільні класи тіней, щоб не писати їх всюди */
-.shadow-pixel {
-    box-shadow: 4px 4px 0px #000 !important;
-    border: 3px solid #000 !important;
-}
-
-.shadow-hard {
-    box-shadow: 12px 12px 0px #000 !important;
-    border: 8px solid #000 !important;
-}
-/* --- СТАНДАРТНІ НАЛАШТУВАННЯ BLAZOR ТА ШРИФТИ --- */
-html, body {
-    font-family: 'Montserrat', sans-serif; /* Твій фірмовий шрифт */
-    background-color: #f8f9fa;
-}
-
-a, .btn-link {
-    color: #006bb7;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
+/* --- СИСТЕМНІ НАЛАШТУВАННЯ BLAZOR --- */
 .content {
     padding-top: 1.1rem;
 }
 
-/* Налаштування валідації форм */
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -55,116 +15,55 @@ a, .btn-link {
     color: #e50000;
 }
 
-/* Обробка помилок Blazor */
-.blazor-error-boundary {
-    background: url(data:image/svg+xml;base64,...) no-repeat 1rem/1.8rem, #b32121;
-    padding: 1rem 1rem 1rem 3.7rem;
-    color: white;
-}
-
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
     box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
     display: none;
     left: 0;
-    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    padding: 0.6rem 1.25rem;
     position: fixed;
     width: 100%;
     z-index: 1000;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
-    }
-
-/* --- ТВОЇ ФІРМОВІ СТИЛІ ГУСЬ-ГЕНГУ (Z-STYLES) --- */
-
-/* Базовий стиль для кнопок героя */
+/* --- КНОПКИ --- */
 .z-btn {
-    font-family: 'Montserrat', sans-serif;
     font-weight: 900;
     text-transform: uppercase;
     padding: 15px 40px;
     border: 4px solid #000;
-    font-size: 1.1rem;
     cursor: pointer;
-    transition: 0.1s ease-in-out;
+    transition: 0.1s;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 220px;
     text-decoration: none;
     color: #000;
 }
 
-.z-btn-cyan {
-    background: #00f2ff;
-}
-
-.z-btn-yellow {
-    background: #ffde00;
-}
-
-/* Тіні */
-.shadow-pixel {
-    box-shadow: 8px 8px 0px #000;
-}
-
-/* Анімація кнопок */
-.z-btn:hover, .z-action-btn:hover, .z-secondary-btn:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: 11px 11px 0px #000;
-    filter: brightness(1.1);
-    background: #fff;
-}
-
-.z-btn:active, .z-action-btn:active, .z-secondary-btn:active {
-    transform: translate(6px, 6px);
-    box-shadow: 0px 0px 0px #000;
-}
-
-/* Адаптивність для мобілок */
-@media (max-width: 576px) {
-    .z-btn {
-        width: 100%;
-        min-width: unset;
-    }
-}
-
-/* Стилі для кастомних кнопок, які ти використовував */
 .z-action-btn {
-    background: #00f2ff;
-    color: #000;
-    font-size: 1.2rem;
+    background: var(--z-cyan);
     font-weight: 900;
-    text-transform: uppercase;
-    padding: 15px 35px;
     border: 4px solid #000;
-    cursor: pointer;
-    transition: 0.1s;
-    display: inline-block;
-    text-decoration: none;
+    padding: 15px 35px;
 }
 
 .z-secondary-btn {
-    background: #ffde00;
-    color: #000;
+    background: var(--z-yellow);
     font-weight: 900;
-    text-transform: uppercase;
-    padding: 15px 35px;
     border: 4px solid #000;
-    transition: 0.1s;
-    cursor: pointer;
-    display: inline-block;
-    text-align: center;
-    text-decoration: none;
+    padding: 15px 35px;
 }
 
-/* Спільні анімації, які мають бути доступні всюди */
+    .z-btn:hover, .z-action-btn:hover, .z-secondary-btn:hover {
+        transform: translate(-3px, -3px);
+        box-shadow: 8px 8px 0px #000;
+    }
+
+/* --- УСІ АНІМАЦІЇ (ПОВЕРНУТО) --- */
+
+/* 1. Поява баннера */
 @keyframes bannerIntro {
     0% {
         transform: scale(0.9) translateY(50px);
@@ -177,31 +76,50 @@ a, .btn-link {
     }
 }
 
+/* 2. Символи на фоні баннера */
 @keyframes floatSymbols {
     from {
-        transform: translateX(50%);
+        transform: translateX(0%);
     }
 
     to {
-        transform: translateX(-100%);
+        transform: translateX(-50%);
     }
 }
+
+/* 3. Падіння гусаків */
 @keyframes fall {
     0% {
-        transform: translateY(0) rotate(0deg);
+        transform: translateY(-50px) rotate(0deg);
         opacity: 1;
     }
 
     100% {
         transform: translateY(110vh) rotate(360deg);
-        opacity: 0.5;
+        opacity: 0;
+    }
+}
+
+/* 4. Глітч тексту */
+@keyframes glitchText {
+    0%, 100% {
+        transform: skew(0deg);
+    }
+
+    20% {
+        transform: skew(-5deg);
+        color: var(--z-yellow);
+    }
+
+    25% {
+        transform: skew(5deg);
     }
 }
 
 .falling-goose {
-    position: absolute;
+    position: fixed;
+    top: -50px;
     pointer-events: none;
-    z-index: 5;
-    font-size: 1.5rem;
-    transition: none !important; /* Обов'язково вимкни для JS-анімацій */
+    z-index: 9999;
+    font-size: 2rem;
 }

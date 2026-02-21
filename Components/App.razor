@@ -7,9 +7,7 @@
     <base href="/" />
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="app.css" />
-    <link rel="stylesheet" href="css/global.css" /> @* Твоя база *@
-    <link rel="stylesheet" href="GooseShop.styles.css" />
-    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="stylesheet" href="global.css" />
     <link rel="stylesheet" href="GooseShop.styles.css" />
     <HeadOutlet @rendermode="InteractiveServer" />
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Comfortaa:wght@700&family=Lobster&family=Montserrat:wght@900&display=swap" rel="stylesheet">
@@ -161,4 +159,46 @@
     </script>
 </body>
 
+<footer class="z-footer mt-auto">
+    @* Декоративна лінія-"зуби" зверху *@
+    <div class="z-footer-divider"></div>
+
+    <div class="container-fluid px-lg-5 py-5">
+        <div class="row g-4 align-items-center">
+            @* Велике лого зліва *@
+            <div class="col-xl-4 text-center text-xl-start">
+                <h2 class="z-footer-logo m-0">GOOSE<br><span class="outline-white">GANG</span></h2>
+                <div class="z-badge-year shadow-pixel mt-3">EST. 2026</div>
+            </div>
+
+            @* Соцмережі по центру як кнопки пульта *@
+            <div class="col-xl-4 d-flex justify-content-center gap-4 py-4 py-xl-0">
+                <a href="#" class="z-soc-big link-cyan shadow-pixel"><i class="bi bi-telegram"></i></a>
+                <a href="#" class="z-soc-big link-pink shadow-pixel"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="z-soc-big link-green shadow-pixel"><i class="bi bi-tiktok"></i></a>
+            </div>
+
+            @* Форма справа *@
+            <div class="col-xl-4">
+                <div class="z-footer-card shadow-pixel p-4 bg-white">
+                    <h5 class="fw-black text-dark text-uppercase mb-3">ВЛІТАЙ У ДРОПИ 🔥</h5>
+                    <div class="d-flex gap-2">
+                        <input type="text" class="z-input-footer w-100" placeholder="ТВІЙ EMAIL" />
+                        <button class="z-btn-go">GO</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5 pt-4 border-top border-secondary border-opacity-25">
+            <div class="col-md-6 text-center text-md-start">
+                <span class="z-footer-copy">© 2026 NO MERCY FOR GOSLINGS.</span>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <a href="#" class="z-footer-sublink me-4">PRIVACY</a>
+                <a href="#" class="z-footer-sublink">TERMS</a>
+            </div>
+        </div>
+    </div>
+</footer>
 </html>

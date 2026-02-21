@@ -1,37 +1,121 @@
-/* «Ï≥ÌÌ≥ ·ÂÌ‰Û */
+Ôªø/* --- –ì–õ–û–ë–ê–õ–¨–ù–Ü –ó–ú–Ü–ù–ù–Ü (–Ñ–î–ò–ù–ï –î–ñ–ï–†–ï–õ–û) --- */
 :root {
-    --z-cyan: #00f2ff;
-    --z-yellow: #ffde00;
+    --z-cyan: #00f2fe;
+    --z-cyan-dark: #0097a7;
+    --z-green: #39e75f;
+    --z-green-dark: #2d8d3c;
+    --z-red: #ff4d4d;
+    --z-red-dark: #b91d1d;
+    --z-yellow: #ffcc00;
+    --z-yellow-dark: #d4a017;
     --z-pink: #ff00ff;
-    --z-black: #000000;
+    --z-black: #1a1a1a;
     --z-border: 4px solid #000;
 }
 
-/* √ÎÓ·‡Î¸Ì≥ Ì‡Î‡¯ÚÛ‚‡ÌÌˇ */
-body {
+/* --- –ë–ê–ó–û–í–Ü –ù–ê–õ–ê–®–¢–£–í–ê–ù–ù–Ø --- */
+html, body {
     font-family: 'Montserrat', sans-serif;
     background-color: #f8f9fa;
     color: var(--z-black);
+    overflow-x: hidden;
 }
 
-/* —Ô≥Î¸Ì≥ ÍÎ‡ÒË ‰Îˇ ÍÌÓÔÓÍ Ú‡ Ú≥ÌÂÈ */
+/* –°–ø—ñ–ª—å–Ω—ñ –∫–ª–∞—Å–∏ —Ç—ñ–Ω–µ–π */
 .shadow-pixel {
-    box-shadow: 8px 8px 0px #000;
+    box-shadow: 4px 4px 0px #000 !important;
+    border: 3px solid #000 !important;
 }
 
 .shadow-hard {
-    box-shadow: 12px 12px 0px #000;
+    box-shadow: 12px 12px 0px #000 !important;
+    border: 6px solid #000 !important;
 }
 
-.z-btn {
-    border: var(--z-border);
-    font-weight: 900;
-    text-transform: uppercase;
-    transition: 0.1s;
-    cursor: pointer;
-    display: inline-flex;
+/* --- –®–ò–ö–ê–†–ù–ò–ô –§–£–¢–ï–† "–ì–£–°–¨-–ì–ï–ù–ì" --- */
+.z-footer {
+    background: #000;
+    color: #fff;
+    position: relative;
+    border-top: 10px solid #000;
+    margin-top: 100px;
+}
+
+/* –†–≤–∞–Ω–∏–π –∫—Ä–∞–π (–ó–∏–≥–∑–∞–≥) */
+.z-footer-divider {
+    height: 30px;
+    background: #000;
+    width: 100%;
+    clip-path: polygon(0 100%, 2% 0, 4% 100%, 6% 0, 8% 100%, 10% 0, 12% 100%, 14% 0, 16% 100%, 18% 0, 20% 100%, 22% 0, 24% 100%, 26% 0, 28% 100%, 30% 0, 32% 100%, 34% 0, 36% 100%, 38% 0, 40% 100%, 42% 0, 44% 100%, 46% 0, 48% 100%, 50% 0, 52% 100%, 54% 0, 56% 100%, 58% 0, 60% 100%, 62% 0, 64% 100%, 66% 0, 68% 100%, 70% 0, 72% 100%, 74% 0, 76% 100%, 78% 0, 80% 100%, 82% 0, 84% 100%, 86% 0, 88% 100%, 90% 0, 92% 100%, 94% 0, 96% 100%, 98% 0, 100% 100%);
+    position: absolute;
+    top: -29px;
+    left: 0;
+}
+
+.z-footer-logo {
+    font-size: 3.5rem;
+    line-height: 0.8;
+    font-weight: 950;
+    letter-spacing: -2px;
+}
+
+.outline-white {
+    -webkit-text-stroke: 1.5px #fff;
+    color: transparent;
+}
+
+/* –ö–Ω–æ–ø–∫–∏ —Å–æ—Ü–º–µ—Ä–µ–∂ */
+.z-soc-big {
+    width: 75px;
+    height: 75px;
+    background: #fff;
+    color: #000;
+    display: flex;
     align-items: center;
     justify-content: center;
-    text-decoration: none;
-    color: #000;
+    font-size: 2rem;
+    border: 4px solid #000;
+    transition: 0.15s;
+    text-decoration: none !important;
 }
+
+    .z-soc-big:hover {
+        transform: scale(1.1) rotate(-5deg);
+        color: #000;
+    }
+
+.link-cyan:hover {
+    background: var(--z-cyan) !important;
+    box-shadow: 6px 6px 0px var(--z-cyan-dark) !important;
+}
+
+.link-pink:hover {
+    background: var(--z-pink) !important;
+    box-shadow: 6px 6px 0px #b000b0 !important;
+    color: #fff !important;
+}
+
+.link-green:hover {
+    background: var(--z-green) !important;
+    box-shadow: 6px 6px 0px var(--z-green-dark) !important;
+}
+
+.z-input-footer {
+    background: #f0f0f0;
+    border: 3px solid #000;
+    padding: 12px;
+    font-weight: 900;
+}
+
+.z-btn-go {
+    background: #000;
+    color: #fff;
+    border: 3px solid #000;
+    padding: 10px 25px;
+    font-weight: 950;
+}
+
+    .z-btn-go:hover {
+        background: var(--z-yellow);
+        color: #000;
+    }
