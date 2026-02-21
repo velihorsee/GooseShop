@@ -1,0 +1,68 @@
+﻿@using GooseShop.Services
+@inject CartService CartService
+@inject NavigationManager Nav
+
+<div class="cart-overlay @(IsOpen ? "active" : "")" @onclick="CloseCart"></div>
+
+<div class="cart-sidebar @(IsOpen ? "active" : "") shadow-hard">
+    <div class="cart-header border-bottom-bold d-flex justify-content-between align-items-center p-4">
+        <span class="fw-black fs-4 text-uppercase">Твій Інвентар 🎒</span>
+        <button class="z-close-btn-pixel shadow-pixel-block" @onclick="CloseCart">✕</button>
+    </div>
+
+    <div class="cart-body p-4">
+        @if (!CartService.Items.Any())
+        {
+            <div class="text-center py-5">
+                <div class="fs-1 mb-3">🦢💨</div>
+                <p class="fw-bold text-muted text-uppercase">Тут порожньо, бро...</p>
+                <button class="z-secondary-btn shadow-pixel mt-3 w-100" @onclick="CloseCart">ЙТИ ЗА ДРОПАМИ</button>
+            </div>
+        }
+        else
+        {
+            @foreach (var item in CartService.Items)
+            {
+                <div class="cart-item shadow-pixel mb-4 p-3 bg-white d-flex gap-3 align-items-center">
+                    <img src="@item.Product.ImageUrl" class="cart-item-img shadow-pixel" onerror="this.src='images/placeholder.jpg'" />
+                    <div class="flex-grow-1">
+                        <h6 class="fw-black text-uppercase m-0">@item.Product.Name</h6>
+                        <div class="z-price-tag mt-2">@item.Product.BasePrice ₴</div>
+                    </div>
+                    <button class="z-remove-btn shadow-pixel" @onclick="() => CartService.RemoveFromCart(item.Product.Id)">🗑️</button>
+                </div>
+            }
+        }
+    </div>
+
+    @if (CartService.Items.Any())
+    {
+        <div class="cart-footer p-4 border-top-bold bg-light">
+            <div class="d-flex justify-content-between mb-4">
+                <span class="fw-bold text-uppercase">Разом:</span>
+                <span class="z-total-price shadow-pixel px-3">@CartService.TotalPrice ₴</span>
+            </div>
+            <button class="z-action-btn shadow-pixel w-100 py-3 text-uppercase" @onclick="GoToCheckout">
+                ОФОРМИТИ ДРОП 🚀
+            </button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+
+    private async Task CloseCart()
+    {
+        IsOpen = false;
+        await IsOpenChanged.InvokeAsync(IsOpen);
+    }
+
+    // Тобі не вистачало саме цього методу:
+    private void GoToCheckout()
+    {
+        IsOpen = false; // Закриваємо кошик перед переходом
+        Nav.NavigateTo("/checkout"); // Летимо на сторінку оплати
+    }
+}

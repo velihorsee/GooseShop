@@ -5,17 +5,22 @@
 @inject AuthService AuthService
 @inject NavigationManager Nav
 @inject IJSRuntime JS
+@using GooseShop.Components.Pages
+
+
+@* --- КОМПОНЕНТ КОШИКА --- *@
+<CartSidebar @bind-IsOpen="isCartOpen" />
 
 <div class="page z-gang-theme">
-    @* --- ОВЕРЛЕЙ --- *@
-    <div id="sidebarOverlay" class="z-overlay" onclick="toggleSidebar()"></div>
+    @* --- ЄДИНИЙ ОВЕРЛЕЙ (для меню та кошика) --- *@
+    <div class="z-overlay @(isMenuOpen || isCartOpen ? "active" : "")" 
+         @onclick="() => { isMenuOpen = false; isCartOpen = false; }"></div>
 
     @* --- БОКОВЕ МЕНЮ (SIDEBAR) --- *@
-    <div id="sidebarMenu" class="z-sidebar shadow-hard">
+    <div id="sidebarMenu" class="z-sidebar shadow-hard @(isMenuOpen ? "active" : "")">
         <div class="sidebar-header border-bottom-bold d-flex justify-content-between align-items-center p-4">
             <span class="fw-black fs-5">ГУСЬ-ГЕНГ 🦢</span>
-            @* Кнопка закриття - Червоний блок *@
-            <button class="z-close-btn-pixel shadow-pixel-block" onclick="toggleSidebar()">✕</button>
+            <button class="z-close-btn-pixel shadow-pixel-block" @onclick="ToggleMenu">✕</button>
         </div>
 
         <div class="sidebar-body p-3 d-flex flex-column h-100">
@@ -24,14 +29,14 @@
                 <div class="d-grid gap-1">
                     @if (!AuthService.IsLoggedIn)
                     {
-                        <a href="/login" class="z-link link-cyan text-decoration-none">
+                        <a href="/login" class="z-link link-cyan text-decoration-none" @onclick="() => isMenuOpen = false">
                             <i class="bi bi-person-circle me-2"></i>Увійти
                         </a>
                     }
                     else
                     {
                         <div class="px-2 mb-2 small fw-bold text-muted text-uppercase">@AuthService.CurrentUser?.FullName</div>
-                        <a href="/profile" class="z-link link-cyan text-decoration-none">
+                        <a href="/profile" class="z-link link-cyan text-decoration-none" @onclick="() => isMenuOpen = false">
                             <i class="bi bi-bag-check me-2"></i>Мої замовлення
                         </a>
                         <button class="z-link link-red border-0 bg-transparent text-start w-100" @onclick="Logout">
@@ -44,13 +49,13 @@
             <div class="menu-section mb-4">
                 <p class="z-label px-2">КАТАЛОГ</p>
                 <div class="d-grid gap-1">
-                    <a href="/" class="z-link link-green text-decoration-none">
+                    <a href="/" class="z-link link-green text-decoration-none" @onclick="() => isMenuOpen = false">
                         <i class="bi bi-house me-2"></i>Головна
                     </a>
-                    <a href="/category/cups" class="z-link link-green text-decoration-none">
+                    <a href="/category/cups" class="z-link link-green text-decoration-none" @onclick="() => isMenuOpen = false">
                         <i class="bi bi-cup-hot me-2"></i>Чашки
                     </a>
-                    <a href="/category/tshirts" class="z-link link-green text-decoration-none">
+                    <a href="/category/tshirts" class="z-link link-green text-decoration-none" @onclick="() => isMenuOpen = false">
                         <i class="bi bi-person-badge me-2"></i>Футболки
                     </a>
                 </div>
@@ -60,8 +65,8 @@
             {
                 <div class="menu-section z-admin-card shadow-hard-sm mx-2 p-3">
                     <p class="z-label text-white mb-2">РЕЖИМ БОСА</p>
-                    <a href="/admin" class="z-link link-cyan text-white py-1 small text-decoration-none">ТОВАРИ</a>
-                    <a href="/admin/orders" class="z-link link-cyan text-white py-1 small text-decoration-none">ЗАМОВЛЕННЯ</a>
+                    <a href="/admin" class="z-link link-cyan text-white py-1 small text-decoration-none" @onclick="() => isMenuOpen = false">ТОВАРИ</a>
+                    <a href="/admin/orders" class="z-link link-cyan text-white py-1 small text-decoration-none" @onclick="() => isMenuOpen = false">ЗАМОВЛЕННЯ</a>
                 </div>
             }
 
@@ -81,7 +86,7 @@
         <header class="z-header sticky-top">
             <div class="container-fluid d-flex align-items-center justify-content-between h-100 px-lg-5">
                 <div class="d-flex align-items-center gap-3">
-                    <button class="z-btn-menu shadow-pixel" onclick="toggleSidebar()">МЕНЮ</button>
+                    <button class="z-btn-menu shadow-pixel" @onclick="ToggleMenu">МЕНЮ</button>
                     <a class="z-logo fw-black text-decoration-none text-dark" href="/">ГУСЬ<span class="text-outline">ШОП</span></a>
                 </div>
 
@@ -96,9 +101,9 @@
                         <a href="#" class="z-header-icon text-dark"><i class="bi bi-instagram"></i></a>
                     </div>
                     <div class="vr d-none d-md-block me-2" style="height: 30px; border-left: 3px solid #000;"></div>
-                    <a href="/cart" class="z-cart-btn shadow-pixel-block text-decoration-none">
+                    <button class="z-cart-btn shadow-pixel-block" @onclick="ToggleCart">
                         🛒 <span class="ms-1 fw-black">@CartService.Items.Count</span>
-                    </a>
+                    </button>
                 </div>
             </div>
         </header>
@@ -110,9 +115,23 @@
 </div>
 
 @code {
+    private bool isCartOpen = false;
+    private bool isMenuOpen = false;
+
+    private void ToggleCart()
+    {
+        isCartOpen = !isCartOpen;
+        if (isCartOpen) isMenuOpen = false;
+    }
+
+    private void ToggleMenu()
+    {
+        isMenuOpen = !isMenuOpen;
+        if (isMenuOpen) isCartOpen = false;
+    }
+
     protected override void OnInitialized()
     {
-        // Підписка на оновлення сервісів
         CartService.OnChange += StateHasChanged;
         AuthService.OnChange += StateHasChanged;
     }
@@ -120,12 +139,12 @@
     private void Logout()
     {
         AuthService.Logout();
+        isMenuOpen = false;
         Nav.NavigateTo("/");
     }
 
     public void Dispose()
     {
-        // Відписка для уникнення Memory Leak
         CartService.OnChange -= StateHasChanged;
         AuthService.OnChange -= StateHasChanged;
     }

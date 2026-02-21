@@ -50,13 +50,17 @@
                             @{
                                 var img = string.IsNullOrEmpty(p.ImageUrl) ? "images/placeholder.jpg" : p.ImageUrl.TrimStart('/');
                             }
-                            <img src="/@img" onerror="this.src='/images/placeholder.jpg';" />
+                            <img src="/@img" onerror="this.src='/images/placeholder.jpg';" alt="@p.Name" />
+                            @if (p.BasePrice > 1000) @* Наприклад, для дорогих товарів *@
+                            {
+                                <div class="z-card-badge shadow-pixel">🔥 TOP</div>
+                            }
                         </div>
                         <div class="p-4 bg-white">
                             <h4 class="fw-black text-uppercase text-truncate mb-1">@p.Name</h4>
                             <div class="d-flex justify-content-between align-items-center mt-4">
                                 <div class="z-price-pill shadow-pixel">
-                                    <span class="small opacity-75">₴</span> @p.BasePrice
+                                    @p.BasePrice <span class="small">ГРН</span>
                                 </div>
                                 <button class="z-buy-btn shadow-pixel" @onclick='() => Nav.NavigateTo($"/product/{p.Id}")'>
                                     <i class="bi bi-arrow-right-short"></i>
@@ -269,6 +273,80 @@
             color: #000 !important;
             transform: scale(1.1) rotate(-10deg);
             box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-green-dark) !important;
+        }
+
+    /* КОНТЕЙНЕР КАРТКИ */
+    .z-item-card {
+        background: #fff;
+        border: 6px solid #000 !important;
+        transition: 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        position: relative;
+    }
+
+        .z-item-card:hover {
+            transform: translate(-8px, -8px) rotate(1deg) !important;
+            box-shadow: 8px 8px 0px #000, 15px 15px 0px var(--z-green-dark) !important;
+        }
+
+    /* БЛОК З ФОТО */
+    .z-img-box {
+        height: 250px;
+        overflow: hidden;
+        border-bottom: 6px solid #000;
+        background: #f0f0f0;
+        position: relative;
+    }
+
+        .z-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.3s ease;
+        }
+
+    .z-item-card:hover .z-img-box img {
+        transform: scale(1.1);
+    }
+
+    /* БЕЙДЖ "TOP" */
+    .z-card-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: var(--z-red);
+        color: #fff;
+        font-weight: 900;
+        padding: 2px 10px;
+        font-size: 0.8rem;
+        z-index: 2;
+    }
+
+    /* ЦІНА ТА КНОПКА */
+    .z-price-pill {
+        background: var(--z-yellow);
+        padding: 5px 15px;
+        font-weight: 950;
+        border: 3px solid #000;
+        transform: rotate(-2deg);
+    }
+
+    .z-buy-btn {
+        background: #000;
+        color: #fff;
+        border: 3px solid #000;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        transition: 0.2s;
+    }
+
+        .z-buy-btn:hover {
+            background: var(--z-cyan) !important;
+            color: #000 !important;
+            transform: scale(1.15) rotate(-10deg);
         }
 </style>
 
