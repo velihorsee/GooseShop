@@ -1,4 +1,4 @@
-﻿/* --- БАННЕР --- */
+﻿/* --- ГЕРОЙ-БАНЕР --- */
 .z-hero-card {
     background: var(--z-cyan);
     border: 8px solid #000;
@@ -35,6 +35,19 @@
     font-weight: 950;
 }
 
+/* Кнопки всередині баннера (Fix для кольорів) */
+.z-btn-cyan {
+    background: var(--z-cyan) !important;
+    padding: 12px 30px;
+    border: 4px solid #000;
+}
+
+.z-btn-yellow {
+    background: var(--z-yellow) !important;
+    padding: 12px 30px;
+    border: 4px solid #000;
+}
+
 /* --- КАРТКИ ТОВАРІВ --- */
 .z-item-card {
     background: #fff;
@@ -46,7 +59,6 @@
     text-decoration: none !important;
 }
 
-    /* Повертаємо ховер на картку */
     .z-item-card:hover {
         transform: translate(-6px, -6px) !important;
         box-shadow: 10px 10px 0px #000, 15px 15px 0px var(--z-green) !important;
@@ -70,13 +82,15 @@
     transform: scale(1.05);
 }
 
-/* Ціна та Кнопки */
+/* Ціна та Кнопка Купити */
 .z-price-pill {
     background: var(--z-yellow) !important;
+    padding: 6px 15px;
+    font-weight: 950;
     border: 3px solid #000 !important;
     transform: rotate(-2deg);
     transition: 0.2s;
-    font-weight: 950;
+    color: #000;
 }
 
     .z-price-pill:hover {
@@ -88,8 +102,9 @@
 .z-buy-btn-full {
     background: #000 !important;
     color: #fff !important;
-    border: 3px solid #000 !important;
+    padding: 8px 18px;
     font-weight: 900;
+    border: 3px solid #000 !important;
     transition: 0.2s;
 }
 

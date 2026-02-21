@@ -23,7 +23,7 @@
     z-index: 1000;
 }
 
-/* --- ÊÍÎÏÊÈ ÒÀ ÅËÅÌÅÍÒÈ --- */
+/* --- ÊÍÎÏÊÈ (ÁÀÇÎÂ²) --- */
 .z-btn, .z-action-btn, .z-secondary-btn {
     border: 4px solid #000;
     font-weight: 900;
@@ -42,19 +42,7 @@
         box-shadow: 8px 8px 0px #000;
     }
 
-.z-action-btn {
-    background: var(--z-cyan);
-    padding: 15px 35px;
-}
-
-.z-secondary-btn {
-    background: var(--z-yellow);
-    padding: 15px 35px;
-}
-
-/* --- ÓÑ² ÃËÎÁÀËÜÍ² ÀÍ²ÌÀÖ²¯ --- */
-
-/* 1. Ïîÿâà áàííåğà */
+/* --- ÃËÎÁÀËÜÍ² ÀÍ²ÌÀÖ²¯ --- */
 @keyframes bannerIntro {
     0% {
         transform: scale(0.9) translateY(50px);
@@ -67,7 +55,6 @@
     }
 }
 
-/* 2. Ñèìâîëè ôîíó */
 @keyframes floatSymbols {
     from {
         transform: translateX(0%);
@@ -78,7 +65,6 @@
     }
 }
 
-/* 3. Ïàäàş÷³ ãóñàêè */
 @keyframes fall {
     0% {
         transform: translateY(-50px) rotate(0deg);
