@@ -86,25 +86,17 @@
     <main>
         @* --- ШАПКА (HEADER) --- *@
         <header class="z-header sticky-top">
-            @* --- АНІМОВАНІ ЕЛЕМЕНТИ ФОНУ --- *@
-            <div class="z-header-pixel-overlay"></div> @* Тут будуть літати кубики ■ □ *@
+            <div class="z-pixel-rain-top"></div> @* Шар для пригаючих пікселів *@
 
-            <div class="container-fluid d-flex align-items-center justify-content-between h-100 px-lg-5" style="position: relative; z-index: 10;">
+            <div class="container-fluid d-flex align-items-center justify-content-between h-100 px-lg-5" style="position: relative; z-index: 30;">
                 <div class="d-flex align-items-center gap-3">
                     <button class="z-btn-menu shadow-pixel" @onclick="ToggleMenu">МЕНЮ</button>
-                    <a class="z-logo fw-black text-decoration-none text-dark" href="/">
-                        ГУСЬ<span class="text-outline">ШОП</span>
-                    </a>
+                    <a class="z-logo fw-black text-decoration-none text-dark" href="/">GOOSE Shop</a>
                 </div>
 
-                @* --- ЗОНА 3D КНОПОК З АНІМАЦІЄЮ --- *@
                 <div class="d-none d-lg-flex gap-4">
-                    <a href="/constructor/1" class="z-nav-pill-3d text-decoration-none">
-                        ЧАШКА 3D
-                    </a>
-                    <a href="/constructor/2" class="z-nav-pill-3d text-decoration-none">
-                        ФУТБОЛКА 3D
-                    </a>
+                    <a href="/constructor/1" class="z-nav-pill-3d text-decoration-none">ЧАШКА 3D</a>
+                    <a href="/constructor/2" class="z-nav-pill-3d text-decoration-none">ФУТБОЛКА 3D</a>
                 </div>
 
                 <div class="d-flex align-items-center gap-3">

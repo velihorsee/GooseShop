@@ -66,3 +66,95 @@ html, body {
     .z-soc-big:hover {
         transform: scale(1.1) rotate(-5deg);
     }
+
+Владе, я зрозумів! Прибираємо статичну сітку і робимо «живий» ефект пікселів, що хаотично з'являються та підстрибують у верхній частині хедера. Це створить динаміку, ніби в шапці сайту відбувається цифровий збій (glitch) або працює старий монітор.
+
+Ось повний код для твоїх файлів.
+
+1. Оновлений global.css
+Я прибрав стару сітку pixelShift і замінив її на анімацію pixelJump. Тепер замість ліній у нас будуть окремі кольорові квадрати, що «стрибають».
+
+CSS
+/* --- ГЛОБАЛЬНІ ЗМІННІ ТА БАЗА --- */
+:root {
+    --z-cyan: #00f2fe;
+    --z-pink: #ff00ff;
+    --z-yellow: #ffcc00;
+    --z-green: #39e75f;
+    --z-black: #1a1a1a;
+}
+
+/* --- ОНОВЛЕНИЙ ХЕДЕР З ПРИГАЮЧИМИ ПІКСЕЛЯМИ --- */
+header, .z-header {
+    background: #fff !important;
+    border-bottom: 8px solid #000;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Шар з пригаючими пікселями (без сітки) */
+.z-pixel-rain-top {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+    /* Створюємо окремі яскраві точки-пікселі */
+    background-image: radial-gradient(var(--z-cyan) 20%, transparent 20%), radial-gradient(var(--z-pink) 20%, transparent 20%), radial-gradient(var(--z-yellow) 20%, transparent 20%);
+    background-size: 40px 40px;
+    background-position: 0 0, 20px 20px, 10px 30px;
+    opacity: 0.4;
+    /* Анімація стрибків через переривчасті кроки */
+    animation: pixelJump 0.8s steps(4) infinite;
+    mask-image: linear-gradient(to bottom, black 20%, transparent 80%);
+}
+
+@keyframes pixelJump {
+    0% {
+        background-position: 0 0, 20px 20px, 10px 30px;
+    }
+
+    25% {
+        background-position: 5px 10px, 15px 5px, 25px 20px;
+    }
+
+    50% {
+        background-position: -5px 5px, 10px 25px, 0px 10px;
+    }
+
+    75% {
+        background-position: 10px -5px, 0px 15px, 20px -10px;
+    }
+
+    100% {
+        background-position: 0 0, 20px 20px, 10px 30px;
+    }
+}
+
+/* Кольорова лінія внизу хедера */
+.z-header-bottom-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(90deg, var(--z-cyan), var(--z-pink), var(--z-yellow), var(--z-green));
+    background-size: 50% 100%;
+    animation: lineSlide 2s linear infinite;
+    z-index: 25;
+}
+
+@keyframes lineSlide {
+    0% {
+        background-position: 0% 0;
+    }
+
+    100% {
+        background-position: 100% 0;
+    }
+}
+
