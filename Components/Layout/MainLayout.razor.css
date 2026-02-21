@@ -1,39 +1,4 @@
-:root {
-    /* Основна палітра */
-    --z-cyan: #00f2fe;
-    --z-cyan-dark: #0097a7; /* "Земляна" грань для алмазного блоку */
-    --z-green: #39e75f;
-    --z-green-dark: #2d8d3c; /* "Земляна" грань для трави */
-    --z-red: #ff4d4d;
-    --z-red-dark: #b91d1d; /* "Земляна" грань для TNT */
-    --z-yellow: #ffcc00;
-    --z-yellow-dark: #d4a017;
-    --z-black: #1a1a1a;
-}
-
-.z-btn-menu {
-    background: #000;
-    color: #fff;
-    border: 3px solid #000;
-    padding: 8px 24px;
-    font-weight: 950;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative;
-}
-    .z-btn-menu:hover {
-        background: var(--z-cyan); /* Колір при наведенні */
-        color: #000;
-        transform: translate(-4px, -4px); /* Зсув для об'єму */
-        box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
-    }
-
-    .z-btn-menu:active {
-        transform: translate(2px, 2px);
-        box-shadow: 2px 2px 0px #000 !important;
-    }
-
+/* --- СТРУКТУРА ТА ФОН --- */
 .z-gang-theme {
     background-color: #f0f0f0;
     min-height: 100vh;
@@ -41,9 +6,25 @@
     overflow-x: hidden;
 }
 
-.fw-black {
-    font-weight: 950;
+/* Оверлей (Затемнення фону при відкритті меню) */
+.z-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1500;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
+
+    .z-overlay.active {
+        display: block;
+        opacity: 1;
+    }
 
 /* --- ШАПКА (HEADER) --- */
 .z-header {
@@ -51,12 +32,15 @@
     height: 80px;
     border-bottom: 5px solid #000;
     z-index: 1000;
+    display: flex;
+    align-items: center;
 }
 
 .z-logo {
     font-size: 2rem;
     letter-spacing: -1.5px;
     font-weight: 950;
+    color: #000;
 }
 
 .text-outline {
@@ -64,7 +48,25 @@
     color: transparent;
 }
 
-/* Кнопки в хедері (Чашки/Футболки) - тепер стають блоками */
+/* Кнопка МЕНЮ */
+.z-btn-menu {
+    background: #000;
+    color: #fff;
+    border: 3px solid #000;
+    padding: 8px 24px;
+    font-weight: 950;
+    text-transform: uppercase;
+    transition: 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+    .z-btn-menu:hover {
+        background: var(--z-cyan);
+        color: #000;
+        transform: translate(-4px, -4px);
+        box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
+    }
+
+/* Навігаційні пігулки (Чашки/Футболки) */
 .z-nav-pill {
     border: 3px solid #000;
     padding: 8px 20px;
@@ -74,38 +76,22 @@
     transition: 0.1s ease;
 }
 
-    .z-nav-pill.btn-cyan:hover {
-        background: var(--z-cyan) !important;
+    .z-nav-pill:hover {
         transform: translate(-4px, -4px);
-        box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
+        box-shadow: 4px 4px 0px #000;
     }
 
-    .z-nav-pill.btn-yellow:hover {
-        background: var(--z-yellow) !important;
-        transform: translate(-4px, -4px);
-        box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-yellow-dark) !important;
-    }
-
-/* Іконки в хедері */
-.z-header-icon {
-    font-size: 1.5rem;
-    transition: 0.1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border: 3px solid transparent;
+.btn-cyan:hover {
+    background: var(--z-cyan) !important;
+    box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
 }
 
-    .z-header-icon:hover {
-        background: var(--z-cyan);
-        border-color: #000;
-        box-shadow: 4px 4px 0px #000, 6px 6px 0px var(--z-cyan-dark);
-        transform: translate(-3px, -3px);
-    }
+.btn-yellow:hover {
+    background: var(--z-yellow) !important;
+    box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-yellow-dark) !important;
+}
 
-/* Кошик */
+/* Кошик у хедері */
 .z-cart-btn {
     background: #fff;
     border: 3px solid #000;
@@ -119,28 +105,26 @@
         box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-green-dark) !important;
     }
 
-/* Кнопка закриття (Червоний блок) */
-.z-close-btn-pixel {
-    background: #000;
-    color: #fff;
-    border: 3px solid #000;
-    width: 40px;
-    height: 40px;
+/* --- БОКОВЕ МЕНЮ (SIDEBAR) --- */
+.z-sidebar {
+    position: fixed;
+    top: 0;
+    left: -400px;
+    width: 350px;
+    height: 100vh;
+    background: #fff;
+    z-index: 2000;
+    border-right: 8px solid #000;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 950;
-    transition: 0.1s;
+    flex-direction: column;
 }
 
-    .z-close-btn-pixel:hover {
-        background: var(--z-red) !important;
-        color: #fff !important;
-        transform: translate(-4px, -4px) rotate(90deg);
-        box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-red-dark) !important;
+    .z-sidebar.active {
+        left: 0;
     }
 
-/* Посилання в меню (Блоки) */
+/* Посилання в меню */
 .z-link {
     display: flex;
     align-items: center;
@@ -153,69 +137,45 @@
     transition: 0.1s;
 }
 
+    .z-link:hover {
+        border: 3px solid #000 !important;
+        transform: translate(-5px, -5px);
+    }
+
 .link-cyan:hover {
     background: var(--z-cyan) !important;
-    border: 3px solid #000 !important;
-    transform: translate(-5px, -5px);
     box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
 }
 
 .link-green:hover {
     background: var(--z-green) !important;
-    border: 3px solid #000 !important;
-    transform: translate(-5px, -5px);
     box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-green-dark) !important;
 }
 
 .link-red:hover {
     background: var(--z-red) !important;
     color: #fff !important;
-    border: 3px solid #000 !important;
-    transform: translate(-5px, -5px);
     box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-red-dark) !important;
 }
 
-/* Соцмережі в меню */
+/* Соцмережі */
 .z-soc-icon {
     width: 48px;
     height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
     color: #000;
     background: #fff;
     border: 3px solid #000;
     transition: 0.1s;
 }
 
-    .z-soc-icon.link-cyan:hover {
-        background: var(--z-cyan) !important;
+    .z-soc-icon:hover {
         transform: translate(-3px, -3px);
-        box-shadow: 3px 3px 0px #000, 6px 6px 0px var(--z-cyan-dark) !important;
     }
 
-    .z-soc-icon.link-green:hover {
-        background: var(--z-green) !important;
-        transform: translate(-3px, -3px);
-        box-shadow: 3px 3px 0px #000, 6px 6px 0px var(--z-green-dark) !important;
-    }
-
-    .z-soc-icon.link-red:hover {
-        background: var(--z-red) !important;
-        color: #fff;
-        transform: translate(-3px, -3px);
-        box-shadow: 3px 3px 0px #000, 6px 6px 0px var(--z-red-dark) !important;
-    }
-
-/* Адмінка */
-.z-admin-card {
-    background: #000;
-    border: 2px solid #fff;
-    margin: 10px;
-    padding: 10px;
-}
-
+/* --- ДОПОМІЖНІ КЛАСИ --- */
 .z-label {
     font-size: 0.75rem;
     font-weight: 900;
@@ -224,6 +184,9 @@
     text-transform: uppercase;
 }
 
-.border-top-bold {
-    border-top: 5px solid #000;
+.z-admin-card {
+    background: #000;
+    border: 2px solid #fff;
+    margin: 10px;
+    padding: 15px;
 }
