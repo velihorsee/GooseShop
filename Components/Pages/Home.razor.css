@@ -4,14 +4,15 @@
     border: 8px solid #000;
     box-shadow: 12px 12px 0px #000;
     position: relative;
-    overflow: hidden;
+    overflow: hidden; /* Щоб символи не вилазили за межі */
     min-height: 400px;
     display: flex;
     align-items: center;
-    animation: bannerIntro 1s cubic-bezier(0.2, 1, 0.3, 1);
+    /* Анімація bannerIntro береться з app.css */
+    animation: bannerIntro 1s cubic-bezier(0.2, 1, 0.3, 1) forwards;
 }
 
-    /* Символи, що літають на фоні */
+    /* Символи, що літають на фоні (Більше не перекривають текст) */
     .z-hero-card::before {
         content: "⚡ 🔥 🦢 🍌 ✨ ⚡ 🔥 🦢 🍌 ✨";
         position: absolute;
@@ -19,9 +20,18 @@
         width: 200%;
         opacity: 0.15;
         white-space: nowrap;
-        animation: floatSymbols 20s linear infinite;
-        top: 15%;
-        pointer-events: none;
+        animation: floatSymbols 20s linear infinite; /* З app.css */
+        top: 20%;
+        left: 0;
+        pointer-events: none; /* Щоб не заважало клікати на кнопки */
+        z-index: 1;
+    }
+
+    /* Контент баннера поверх символів */
+    .z-hero-card .row {
+        position: relative;
+        z-index: 2;
+        width: 100%;
     }
 
 .outline-hero {
@@ -39,100 +49,9 @@
     text-transform: uppercase;
 }
 
-/* --- КАРТКИ ТОВАРІВ (КАТАЛОГ) --- */
-.z-item-card {
-    background: #fff;
-    border: 6px solid #000 !important;
-    transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-    position: relative;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-    /* 1. ПІДСВІТКА КАРТКИ (тільки тінь та легкий зсув) */
-    .z-item-card:hover {
-        transform: translate(-4px, -4px);
-        box-shadow: 6px 6px 0px #000, 12px 12px 0px var(--z-green-dark) !important;
-    }
-
-.z-img-box {
-    height: 250px;
-    overflow: hidden;
-    border-bottom: 6px solid #000;
-    background: #f0f0f0;
-    position: relative;
-}
-
-    .z-img-box img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: 0.3s ease;
-    }
-
-/* Збільшення фото при наведенні на картку */
-.z-item-card:hover .z-img-box img {
-    transform: scale(1.05);
-}
-
-/* --- ЦІНА ТА КНОПКА (ОКРЕМІ ХОВЕРИ) --- */
-
-/* 2. ПІДСВІТКА ЦІНИ (тільки коли мишка прямо на ній) */
-.z-price-pill {
-    background: var(--z-yellow);
-    padding: 6px 15px;
-    font-weight: 950;
-    border: 3px solid #000;
-    transform: rotate(-2deg);
-    transition: 0.2s ease;
-    display: inline-block;
-}
-
-    .z-price-pill:hover {
-        background: #fff !important;
-        transform: scale(1.1) rotate(-5deg) !important;
-        box-shadow: 4px 4px 0px #000 !important;
-    }
-
-/* 3. ПІДСВІТКА КНОПКИ (тільки коли мишка прямо на ній) */
-.z-buy-btn-full {
-    background: #000;
-    color: #fff;
-    padding: 8px 18px;
-    font-weight: 900;
-    font-size: 0.9rem;
-    border: 3px solid #000;
-    transition: 0.2s ease;
-    cursor: pointer;
-}
-
-    .z-buy-btn-full:hover {
-        background: var(--z-cyan) !important;
-        color: #000 !important;
-        transform: translate(-4px, -4px) !important;
-        box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
-    }
-
-/* --- АНІМАЦІЇ --- */
-@keyframes bannerIntro {
-    0% {
-        transform: scale(0.9) translateY(50px);
-        opacity: 0;
-    }
-
-    100% {
-        transform: scale(1) translateY(0);
-        opacity: 1;
-    }
-}
-
-@keyframes floatSymbols {
-    from {
-        transform: translateX(0%);
-    }
-
-    to {
-        transform: translateX(-50%);
-    }
+.z-goose-main {
+    max-width: 100%;
+    height: auto;
+    /* Початковий стан для роботи JS-скрипта */
+    transition: transform 0.1s ease-out;
 }
