@@ -109,20 +109,43 @@ main {
 .z-sidebar {
     position: fixed;
     top: 0;
-    left: -400px;
-    width: 350px;
-    height: 100vh;
+    left: -320px; /* Початкова позиція за екраном */
+    width: 300px;
+    height: 100vh; /* Завжди на всю висоту екрана */
     background: #fff;
-    z-index: 2000;
     border-right: 8px solid #000;
-    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 2000;
+    transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    /* ОСЬ ЦЕ ДОДАЄМО: */
     display: flex;
     flex-direction: column;
+    overflow-y: auto; /* Дозволяє скрол всередині, якщо контенту багато */
+    overflow-x: hidden;
 }
 
     .z-sidebar.active {
         left: 0;
     }
+    /* Робимо скролбар стилізованим під наш дизайн */
+    .z-sidebar::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .z-sidebar::-webkit-scrollbar-track {
+        background: #f0f0f0;
+    }
+
+    .z-sidebar::-webkit-scrollbar-thumb {
+        background: #000;
+        border: 2px solid #f0f0f0;
+    }
+.sidebar-body {
+    flex: 1 1 auto; /* Дозволяє контенту розтягуватися */
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    min-height: min-content; /* Потрібно для коректного скролу в flex */
+}
 
 /* Логотип */
 .z-logo {
@@ -245,3 +268,17 @@ main {
         color: #fff !important;
         box-shadow: 3px 3px 0px var(--z-yellow), 6px 6px 0px #000 !important;
     }
+
+/* Додай це до своїх стилів посилань у сайдбарі */
+.z-link.link-yellow:hover {
+    background: var(--z-yellow) !important;
+    color: #000 !important;
+    transform: translate(-3px, -3px);
+    box-shadow: 4px 4px 0px var(--z-cyan);
+}
+
+/* Секція Соцмереж в самому низу */
+.menu-section.mt-auto {
+    margin-top: auto; /* Притискає соцмережі до низу, якщо меню коротке */
+    padding-top: 20px;
+}

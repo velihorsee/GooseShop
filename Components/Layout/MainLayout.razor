@@ -15,67 +15,82 @@
     <div class="z-overlay @(isMenuOpen || isCartOpen ? "active" : "")"
          @onclick="CloseAllPanels"></div>
 
+
     @* --- БОКОВЕ МЕНЮ (SIDEBAR) --- *@
     <div id="sidebarMenu" class="z-sidebar shadow-hard @(isMenuOpen ? "active" : "")">
+        @* HEADER ЗАЛИШАЄТЬСЯ ЗВЕРХУ *@
         <div class="sidebar-header border-bottom-bold d-flex justify-content-between align-items-center p-4">
             <span class="fw-black fs-5">ГУСЬ-ГЕНГ 🦢</span>
             <button class="z-close-btn-pixel shadow-pixel-block" @onclick="ToggleMenu">✕</button>
         </div>
 
-        <div class="sidebar-body p-3 d-flex flex-column h-100">
-            @* Секція Аккаунту *@
-            <div class="menu-section mb-4">
-                <p class="z-label px-2">ТВІЙ АККАУНТ</p>
-                <div class="d-grid gap-1">
-                    @if (!AuthService.IsLoggedIn)
-                    {
-                        <a href="/login" class="z-link link-cyan text-decoration-none" @onclick="() => isMenuOpen = false">
-                            <i class="bi bi-person-circle me-2"></i>Увійти
-                        </a>
-                    }
-                    else
-                    {
-                        <div class="px-2 mb-2 small fw-bold text-muted text-uppercase">@AuthService.CurrentUser?.FullName</div>
-                        <a href="/profile" class="z-link link-cyan text-decoration-none" @onclick="() => isMenuOpen = false">
-                            <i class="bi bi-bag-check me-2"></i>Мої замовлення
-                        </a>
-                        <button class="z-link link-red border-0 bg-transparent text-start w-100" @onclick="Logout">
-                            <i class="bi bi-box-arrow-left me-2"></i>Вийти
-                        </button>
-                    }
+        @* ОСЬ ТУТ: sidebar-body стає контейнером для скролу *@
+        <div class="sidebar-body p-3">
+            <div class="sidebar-content">
+                @* Додаткова обгортка для стабільності скролу *@
+                @* Секція Аккаунту *@
+                <div class="menu-section mb-4">
+                    <p class="z-label px-2">ТВІЙ АККАУНТ</p>
+                    <div class="d-grid gap-1">
+                        @if (!AuthService.IsLoggedIn)
+                        {
+                            <a href="/login" class="z-link link-cyan text-decoration-none" @onclick="() => isMenuOpen = false">
+                                <i class="bi bi-person-circle me-2"></i>Увійти
+                            </a>
+                        }
+                        else
+                        {
+                            <div class="px-2 mb-2 small fw-bold text-muted text-uppercase">@AuthService.CurrentUser?.FullName</div>
+                            <a href="/profile" class="z-link link-cyan text-decoration-none" @onclick="() => isMenuOpen = false">
+                                <i class="bi bi-bag-check me-2"></i>Мої замовлення
+                            </a>
+                            <button class="z-link link-red border-0 bg-transparent text-start w-100" @onclick="Logout">
+                                <i class="bi bi-box-arrow-left me-2"></i>Вийти
+                            </button>
+                        }
+                    </div>
                 </div>
+
+                @* Секція Каталогу *@
+                <div class="menu-section mb-4">
+                    <p class="z-label px-2">КАТАЛОГ</p>
+                    <div class="d-grid gap-1">
+                        <a href="/" class="z-link link-green text-decoration-none" @onclick="() => isMenuOpen = false">
+                            <i class="bi bi-house me-2"></i>Головна
+                        </a>
+                        <a href="/category/cups" class="z-link link-green text-decoration-none" @onclick="() => isMenuOpen = false">
+                            <i class="bi bi-cup-hot me-2"></i>Чашки
+                        </a>
+                        <a href="/category/tshirts" class="z-link link-green text-decoration-none" @onclick="() => isMenuOpen = false">
+                            <i class="bi bi-person-badge me-2"></i>Футболки
+                        </a>
+                    </div>
+                </div>
+
+                @* Секція Адмінки (РЕЖИМ БОСА) *@
+                @if (AuthService.IsLoggedIn && AuthService.CurrentUser?.Role == "Admin")
+                {
+                    <div class="menu-section z-admin-card shadow-hard-sm mx-1 p-3 mt-3 mb-4">
+                        <p class="z-label text-white mb-2">РЕЖИМ БОСА ⚡</p>
+                        <div class="d-grid gap-2">
+                            <a href="/admin" class="z-link link-cyan text-white py-1 small text-decoration-none" @onclick="() => isMenuOpen = false">
+                                <i class="bi bi-box-seam me-2"></i>ТОВАРИ
+                            </a>
+                            <a href="/admin/orders" class="z-link link-cyan text-white py-1 small text-decoration-none" @onclick="() => isMenuOpen = false">
+                                <i class="bi bi-list-check me-2"></i>ЗАМОВЛЕННЯ
+                            </a>
+                            <a href="/profile" class="z-link link-yellow text-white py-1 small text-decoration-none" @onclick="() => isMenuOpen = false">
+                                <i class="bi bi-truck me-2"></i>НАЛАШТУВАННЯ НП
+                            </a>
+                        </div>
+                    </div>
+                }
             </div>
 
-            @* Секція Каталогу *@
-            <div class="menu-section mb-4">
-                <p class="z-label px-2">КАТАЛОГ</p>
-                <div class="d-grid gap-1">
-                    <a href="/" class="z-link link-green text-decoration-none" @onclick="() => isMenuOpen = false">
-                        <i class="bi bi-house me-2"></i>Головна
-                    </a>
-                    <a href="/category/cups" class="z-link link-green text-decoration-none" @onclick="() => isMenuOpen = false">
-                        <i class="bi bi-cup-hot me-2"></i>Чашки
-                    </a>
-                    <a href="/category/tshirts" class="z-link link-green text-decoration-none" @onclick="() => isMenuOpen = false">
-                        <i class="bi bi-person-badge me-2"></i>Футболки
-                    </a>
-                </div>
-            </div>
-
-            @* Секція Адмінки *@
-            @if (AuthService.IsLoggedIn && AuthService.CurrentUser?.Role == "Admin")
-            {
-                <div class="menu-section z-admin-card shadow-hard-sm mx-2 p-3">
-                    <p class="z-label text-white mb-2">РЕЖИМ БОСА</p>
-                    <a href="/admin" class="z-link link-cyan text-white py-1 small text-decoration-none" @onclick="() => isMenuOpen = false">ТОВАРИ</a>
-                    <a href="/admin/orders" class="z-link link-cyan text-white py-1 small text-decoration-none" @onclick="() => isMenuOpen = false">ЗАМОВЛЕННЯ</a>
-                </div>
-            }
-
+            @* СОЦМЕРЕЖІ: Завжди в самому низу *@
             <div class="menu-section mt-auto pt-3 border-top-bold">
                 <p class="z-label px-2">ПРИЄДНУЙСЯ</p>
                 <div class="d-flex gap-3 px-2 pb-3">
-                    @* Додай класи link-cyan, link-green, link-red *@
                     <a href="https://t.me/goose_gang" class="z-soc-icon link-cyan"><i class="bi bi-telegram"></i></a>
                     <a href="#" class="z-soc-icon link-green"><i class="bi bi-instagram"></i></a>
                     <a href="#" class="z-soc-icon link-red"><i class="bi bi-tiktok"></i></a>
