@@ -1,18 +1,16 @@
-﻿/* --- ГЕРОЙ-БАНЕР (ВЕРХНЯ ЧАСТИНА) --- */
+﻿/* --- БАННЕР --- */
 .z-hero-card {
     background: var(--z-cyan);
     border: 8px solid #000;
     box-shadow: 12px 12px 0px #000;
     position: relative;
-    overflow: hidden; /* Щоб символи не вилазили за межі */
+    overflow: hidden;
     min-height: 400px;
     display: flex;
     align-items: center;
-    /* Анімація bannerIntro береться з app.css */
     animation: bannerIntro 1s cubic-bezier(0.2, 1, 0.3, 1) forwards;
 }
 
-    /* Символи, що літають на фоні (Більше не перекривають текст) */
     .z-hero-card::before {
         content: "⚡ 🔥 🦢 🍌 ✨ ⚡ 🔥 🦢 🍌 ✨";
         position: absolute;
@@ -20,14 +18,11 @@
         width: 200%;
         opacity: 0.15;
         white-space: nowrap;
-        animation: floatSymbols 20s linear infinite; /* З app.css */
+        animation: floatSymbols 20s linear infinite;
         top: 20%;
-        left: 0;
-        pointer-events: none; /* Щоб не заважало клікати на кнопки */
         z-index: 1;
     }
 
-    /* Контент баннера поверх символів */
     .z-hero-card .row {
         position: relative;
         z-index: 2;
@@ -40,119 +35,22 @@
     font-weight: 950;
 }
 
-.z-badge {
-    display: inline-block;
-    background: #000;
-    color: #fff;
-    padding: 5px 15px;
-    font-weight: 900;
-    text-transform: uppercase;
-}
-
-.z-goose-main {
-    max-width: 100%;
-    height: auto;
-    /* Початковий стан для роботи JS-скрипта */
-    transition: transform 0.1s ease-out;
-}
-
-
-/*Кнопки баннера */
-/* Повертаємо кнопки баннера */
-.z-hero-actions .z-btn {
-    padding: 15px 35px;
-    font-size: 1.1rem;
-    border: 4px solid #000;
-    font-weight: 950;
-    transition: 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.z-btn-cyan {
-    background: var(--z-cyan) !important;
-    color: #000 !important;
-}
-
-.z-btn-yellow {
-    background: var(--z-yellow) !important;
-    color: #000 !important;
-}
-
-.z-btn:hover {
-    transform: translate(-4px, -4px);
-    box-shadow: 8px 8px 0px #000 !important;
-}
-
-/* Фікс карток, щоб вони не "їхали" */
+/* --- КАРТКИ ТОВАРІВ --- */
 .z-item-card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
     background: #fff;
     border: 6px solid #000 !important;
-    transition: 0.2s ease-in-out;
-}
-
-Владе, я бачу, в чому справа. Коли ми перенесли змінні та загальні стилі, ізольовані стилі (Home.razor.css) перестали «бачити» або правильно застосовувати класи для ціни та кнопок, бо виник конфлікт специфічності.
-
-Давай повернемо їх до життя. Ось фінальні правки для Home.razor.css, які враховують твою нову структуру (де вся картка — це посилання, а ціна і кнопка мають свої ховери).
-
-1. Онови Home.razor.css
-Просто додай це в кінець файлу або заміни блоки ціни та кнопок:
-
-CSS
-/* --- ЦІНА ТА КНОПКА (ПОВЕРНЕННЯ СТИЛІВ) --- */
-/* Контейнер для ціни та кнопки */
-.z-item-card .d-flex {
-    gap: 10px;
-}
-
-/* Стиль цінника */
-.z-price-pill {
-    background: var(--z-yellow) !important;
-    color: #000 !important;
-    padding: 6px 15px;
-    font-weight: 950;
-    border: 3px solid #000 !important;
-    display: inline-block;
-    transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    transform: rotate(-2deg);
-    text-decoration: none;
-}
-
-    /* Ховер саме на ціну */
-    .z-price-pill:hover {
-        background: #fff !important;
-        transform: scale(1.1) rotate(-5deg) !important;
-        box-shadow: 4px 4px 0px #000 !important;
-    }
-
-/* Стиль кнопки КУПИТИ */
-.z-buy-btn-full {
-    background: #000 !important;
-    color: #fff !important;
-    padding: 8px 18px;
-    font-weight: 900;
-    font-size: 0.9rem;
-    border: 3px solid #000 !important;
-    transition: 0.2s;
-    cursor: pointer;
-    text-transform: uppercase;
-}
-
-    /* Ховер саме на кнопку */
-    .z-buy-btn-full:hover {
-        background: var(--z-cyan) !important;
-        color: #000 !important;
-        transform: translate(-4px, -4px) !important;
-        box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
-    }
-
-/* Фікс для карток, щоб вони були рівні */
-.z-item-card {
+    transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
     display: flex;
     flex-direction: column;
     height: 100%;
+    text-decoration: none !important;
 }
+
+    /* Повертаємо ховер на картку */
+    .z-item-card:hover {
+        transform: translate(-6px, -6px) !important;
+        box-shadow: 10px 10px 0px #000, 15px 15px 0px var(--z-green) !important;
+    }
 
 .z-img-box {
     height: 250px;
@@ -165,4 +63,39 @@ CSS
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: 0.3s;
+    }
+
+.z-item-card:hover .z-img-box img {
+    transform: scale(1.05);
+}
+
+/* Ціна та Кнопки */
+.z-price-pill {
+    background: var(--z-yellow) !important;
+    border: 3px solid #000 !important;
+    transform: rotate(-2deg);
+    transition: 0.2s;
+    font-weight: 950;
+}
+
+    .z-price-pill:hover {
+        background: #fff !important;
+        transform: scale(1.1) rotate(-5deg) !important;
+        box-shadow: 4px 4px 0px #000 !important;
+    }
+
+.z-buy-btn-full {
+    background: #000 !important;
+    color: #fff !important;
+    border: 3px solid #000 !important;
+    font-weight: 900;
+    transition: 0.2s;
+}
+
+    .z-buy-btn-full:hover {
+        background: var(--z-cyan) !important;
+        color: #000 !important;
+        transform: translate(-3px, -3px) !important;
+        box-shadow: 4px 4px 0px #000 !important;
     }

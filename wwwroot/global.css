@@ -1,4 +1,4 @@
-﻿/* --- ГЛОБАЛЬНІ ЗМІННІ (ЄДИНЕ ДЖЕРЕЛО) --- */
+﻿/* --- ГЛОБАЛЬНІ ЗМІННІ --- */
 :root {
     --z-cyan: #00f2fe;
     --z-cyan-dark: #0097a7;
@@ -21,7 +21,7 @@ html, body {
     overflow-x: hidden;
 }
 
-/* Спільні класи тіней */
+/* Спільні класи тіней (Fix: додано !important) */
 .shadow-pixel {
     box-shadow: 4px 4px 0px #000 !important;
     border: 3px solid #000 !important;
@@ -32,7 +32,7 @@ html, body {
     border: 6px solid #000 !important;
 }
 
-/* --- ШИКАРНИЙ ФУТЕР "ГУСЬ-ГЕНГ" --- */
+/* --- НОВИЙ ШИКАРНИЙ ФУТЕР --- */
 .z-footer {
     background: #000;
     color: #fff;
@@ -41,7 +41,7 @@ html, body {
     margin-top: 100px;
 }
 
-/* Рваний край (Зигзаг) */
+/* Рваний край футера */
 .z-footer-divider {
     height: 30px;
     background: #000;
@@ -64,7 +64,7 @@ html, body {
     color: transparent;
 }
 
-/* Кнопки соцмереж */
+/* Соцмережі у футері */
 .z-soc-big {
     width: 75px;
     height: 75px;
@@ -75,8 +75,8 @@ html, body {
     justify-content: center;
     font-size: 2rem;
     border: 4px solid #000;
-    transition: 0.15s;
     text-decoration: none !important;
+    transition: 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
     .z-soc-big:hover {
@@ -98,50 +98,4 @@ html, body {
 .link-green:hover {
     background: var(--z-green) !important;
     box-shadow: 6px 6px 0px var(--z-green-dark) !important;
-}
-
-.z-input-footer {
-    background: #f0f0f0;
-    border: 3px solid #000;
-    padding: 12px;
-    font-weight: 900;
-}
-
-.z-btn-go {
-    background: #000;
-    color: #fff;
-    border: 3px solid #000;
-    padding: 10px 25px;
-    font-weight: 950;
-}
-
-    .z-btn-go:hover {
-        background: var(--z-yellow);
-        color: #000;
-    }
-
-
-/* Фіксуємо розмір картинок у картках */
-.z-img-box {
-    height: 280px; /* Однакова висота для всіх фото */
-    overflow: hidden;
-    border-bottom: 6px solid #000;
-    background: #f0f0f0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-    .z-img-box img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; /* Фото заповнює блок без розтягування */
-    }
-
-/* Вирівнюємо контент картки */
-.z-item-card .p-4 {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }

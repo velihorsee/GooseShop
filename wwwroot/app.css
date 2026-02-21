@@ -1,10 +1,6 @@
-/* --- СИСТЕМНІ НАЛАШТУВАННЯ BLAZOR --- */
+/* --- СИСТЕМНІ СТИЛІ BLAZOR --- */
 .content {
     padding-top: 1.1rem;
-}
-
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
 }
 
 .invalid {
@@ -18,7 +14,7 @@
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 -1px 2px rgba(0,0,0,0.2);
     display: none;
     left: 0;
     padding: 0.6rem 1.25rem;
@@ -27,14 +23,13 @@
     z-index: 1000;
 }
 
-/* --- КНОПКИ --- */
-.z-btn {
+/* --- КНОПКИ ТА ЕЛЕМЕНТИ --- */
+.z-btn, .z-action-btn, .z-secondary-btn {
+    border: 4px solid #000;
     font-weight: 900;
     text-transform: uppercase;
-    padding: 15px 40px;
-    border: 4px solid #000;
-    cursor: pointer;
     transition: 0.1s;
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -42,26 +37,22 @@
     color: #000;
 }
 
-.z-action-btn {
-    background: var(--z-cyan);
-    font-weight: 900;
-    border: 4px solid #000;
-    padding: 15px 35px;
-}
-
-.z-secondary-btn {
-    background: var(--z-yellow);
-    font-weight: 900;
-    border: 4px solid #000;
-    padding: 15px 35px;
-}
-
     .z-btn:hover, .z-action-btn:hover, .z-secondary-btn:hover {
         transform: translate(-3px, -3px);
         box-shadow: 8px 8px 0px #000;
     }
 
-/* --- УСІ АНІМАЦІЇ (ПОВЕРНУТО) --- */
+.z-action-btn {
+    background: var(--z-cyan);
+    padding: 15px 35px;
+}
+
+.z-secondary-btn {
+    background: var(--z-yellow);
+    padding: 15px 35px;
+}
+
+/* --- УСІ ГЛОБАЛЬНІ АНІМАЦІЇ --- */
 
 /* 1. Поява баннера */
 @keyframes bannerIntro {
@@ -76,7 +67,7 @@
     }
 }
 
-/* 2. Символи на фоні баннера */
+/* 2. Символи фону */
 @keyframes floatSymbols {
     from {
         transform: translateX(0%);
@@ -87,7 +78,7 @@
     }
 }
 
-/* 3. Падіння гусаків */
+/* 3. Падаючі гусаки */
 @keyframes fall {
     0% {
         transform: translateY(-50px) rotate(0deg);
@@ -97,22 +88,6 @@
     100% {
         transform: translateY(110vh) rotate(360deg);
         opacity: 0;
-    }
-}
-
-/* 4. Глітч тексту */
-@keyframes glitchText {
-    0%, 100% {
-        transform: skew(0deg);
-    }
-
-    20% {
-        transform: skew(-5deg);
-        color: var(--z-yellow);
-    }
-
-    25% {
-        transform: skew(5deg);
     }
 }
 
