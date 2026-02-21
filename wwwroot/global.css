@@ -85,55 +85,49 @@ CSS
 }
 
 /* --- ОНОВЛЕНИЙ ХЕДЕР З ПРИГАЮЧИМИ ПІКСЕЛЯМИ --- */
-header, .z-header {
+/* --- ЗУМЕРСЬКИЙ ХЕДЕР З КВАДРАТНИМИ ПІКСЕЛЯМИ --- */
+.z-header {
     background: #fff !important;
-    border-bottom: 8px solid #000;
+    border-bottom: 8px solid #000 !important;
     position: sticky;
     top: 0;
+    height: 85px;
     z-index: 1000;
-    height: 80px;
-    display: flex;
-    align-items: center;
     overflow: hidden;
 }
 
-/* Шар з пригаючими пікселями (без сітки) */
+/* Шар з квадратними градієнтними пікселями */
 .z-pixel-rain-top {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: 20;
-    /* Створюємо окремі яскраві точки-пікселі */
-    background-image: radial-gradient(var(--z-cyan) 20%, transparent 20%), radial-gradient(var(--z-pink) 20%, transparent 20%), radial-gradient(var(--z-yellow) 20%, transparent 20%);
-    background-size: 40px 40px;
-    background-position: 0 0, 20px 20px, 10px 30px;
-    opacity: 0.4;
-    /* Анімація стрибків через переривчасті кроки */
-    animation: pixelJump 0.8s steps(4) infinite;
-    mask-image: linear-gradient(to bottom, black 20%, transparent 80%);
+    z-index: 1;
+    /* Створюємо чіткі КВАДРАТНІ пікселі через градієнти */
+    background-image: linear-gradient(45deg, var(--z-cyan) 25%, transparent 25%), linear-gradient(-45deg, var(--z-pink) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--z-yellow) 75%), linear-gradient(-45deg, transparent 75%, var(--z-green) 75%);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px, 15px 15px, 0 0;
+    opacity: 0.25;
+    /* Анімація "стрибків" */
+    animation: zoomerPixels 0.6s steps(4) infinite;
 }
 
-@keyframes pixelJump {
+@keyframes zoomerPixels {
     0% {
-        background-position: 0 0, 20px 20px, 10px 30px;
-    }
-
-    25% {
-        background-position: 5px 10px, 15px 5px, 25px 20px;
+        background-position: 0 0, 15px 15px, 15px 15px, 0 0;
+        filter: hue-rotate(0deg);
     }
 
     50% {
-        background-position: -5px 5px, 10px 25px, 0px 10px;
-    }
-
-    75% {
-        background-position: 10px -5px, 0px 15px, 20px -10px;
+        background-position: 15px 0, 0 15px, 0 0, 15px 15px;
+        filter: hue-rotate(90deg);
     }
 
     100% {
-        background-position: 0 0, 20px 20px, 10px 30px;
+        background-position: 0 15px, 15px 0, 15px 15px, 0 0;
+        filter: hue-rotate(180deg);
     }
 }
+
 
 /* Кольорова лінія внизу хедера */
 .z-header-bottom-line {
@@ -158,3 +152,56 @@ header, .z-header {
     }
 }
 
+/* --- 3D КНОПКИ (ЧАШКА / ФУТБОЛКА) --- */
+.z-nav-pill-3d {
+    background: #fff !important;
+    border: 4px solid #000 !important;
+    padding: 10px 25px !important;
+    font-weight: 950 !important;
+    font-size: 1.1rem !important;
+    color: #000 !important;
+    text-transform: uppercase;
+    text-decoration: none !important;
+    position: relative;
+    z-index: 10;
+    transition: 0.1s;
+    /* Зумерська тінь */
+    box-shadow: 4px 4px 0px #000;
+}
+
+    .z-nav-pill-3d:hover {
+        transform: translate(-4px, -4px);
+        background: var(--z-black) !important;
+        color: var(--z-cyan) !important;
+        /* Глітч-тінь */
+        box-shadow: 4px 4px 0px var(--z-pink), 8px 8px 0px #000 !important;
+    }
+
+    /* Ефект "мерехтіння" при наведенні */
+    .z-nav-pill-3d:active {
+        transform: scale(0.95);
+        background: var(--z-yellow) !important;
+        color: #000 !important;
+    }
+
+/* Кольорова лінія внизу (глітч-стиль) */
+.z-header-bottom-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: repeating-linear-gradient( 90deg, var(--z-cyan), var(--z-cyan) 25px, var(--z-pink) 25px, var(--z-pink) 50px, var(--z-yellow) 50px, var(--z-yellow) 75px );
+    animation: glitchLine 0.3s steps(2) infinite;
+    z-index: 5;
+}
+
+@keyframes glitchLine {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50px);
+    }
+}
