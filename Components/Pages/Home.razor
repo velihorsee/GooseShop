@@ -25,7 +25,6 @@
                 </div>
             </div>
 
-            @* Головний гусак з ID для JS-інтерактиву *@
             <div class="col-lg-5 text-center py-4" style="position: relative; min-height: 350px;">
                 <img id="heroGoose" src="images/hero-goose.png" class="z-goose-main" alt="Goose Hero" />
             </div>
@@ -49,29 +48,36 @@
             @foreach (var p in pagedProducts)
             {
                 <div class="col">
-                    <div class="z-item-card shadow-pixel">
+                    @* ВСЯ КАРТКА — ЦЕ ПОСИЛАННЯ *@
+                    <a href="/product/@p.Id" class="z-item-card shadow-pixel text-decoration-none d-block">
                         <div class="z-img-box">
                             @{
                                 var img = string.IsNullOrEmpty(p.ImageUrl) ? "images/placeholder.jpg" : p.ImageUrl.TrimStart('/');
                             }
                             <img src="/@img" onerror="this.src='/images/placeholder.jpg';" alt="@p.Name" />
-                            @if (p.BasePrice > 1000) @* Наприклад, для дорогих товарів *@
+
+                            @if (p.BasePrice > 1000)
                             {
                                 <div class="z-card-badge shadow-pixel">🔥 TOP</div>
                             }
                         </div>
+
                         <div class="p-4 bg-white">
-                            <h4 class="fw-black text-uppercase text-truncate mb-1">@p.Name</h4>
+                            <h4 class="fw-black text-uppercase text-truncate mb-1 text-dark">@p.Name</h4>
+
                             <div class="d-flex justify-content-between align-items-center mt-4">
+                                @* ЦІННИК З ПІДСВІТКОЮ *@
                                 <div class="z-price-pill shadow-pixel">
                                     @p.BasePrice <span class="small">ГРН</span>
                                 </div>
-                                <button class="z-buy-btn shadow-pixel" @onclick='() => Nav.NavigateTo($"/product/{p.Id}")'>
-                                    <i class="bi bi-arrow-right-short"></i>
-                                </button>
+
+                                @* КНОПКА КУПИТИ *@
+                                <div class="z-buy-btn-full shadow-pixel">
+                                    КУПИТИ
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             }
         </div>
@@ -90,14 +96,12 @@
     }
 
     private void UpdatePagedResults() => pagedProducts = allProducts?.Take(pageSize).ToList();
-
     private async Task ScrollTo(string id) => await JS.InvokeVoidAsync("scrollToElement", id);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            // Запуск інтерактивних функцій з App.razor
             await JS.InvokeVoidAsync("initGooseRain");
             await JS.InvokeVoidAsync("initSmartGoose", "heroGoose");
         }
