@@ -1,24 +1,21 @@
 ﻿@inherits LayoutComponentBase
 @using GooseShop.Services
+@using GooseShop.Components.Pages
 @implements IDisposable
 @inject CartService CartService
 @inject AuthService AuthService
 @inject NavigationManager Nav
 @inject IJSRuntime JS
-@using GooseShop.Components.Pages
-
 
 @* --- КОМПОНЕНТ КОШИКА --- *@
 <CartSidebar @bind-IsOpen="isCartOpen" />
 
 <div class="page z-gang-theme">
     @* --- ЄДИНИЙ ОВЕРЛЕЙ --- *@
-    @* Він активний, якщо відкрите меню АБО кошик *@
     <div class="z-overlay @(isMenuOpen || isCartOpen ? "active" : "")"
          @onclick="CloseAllPanels"></div>
 
     @* --- БОКОВЕ МЕНЮ (SIDEBAR) --- *@
-    @* --- БОКОВЕ МЕНЮ --- *@
     <div id="sidebarMenu" class="z-sidebar shadow-hard @(isMenuOpen ? "active" : "")">
         <div class="sidebar-header border-bottom-bold d-flex justify-content-between align-items-center p-4">
             <span class="fw-black fs-5">ГУСЬ-ГЕНГ 🦢</span>
@@ -26,6 +23,7 @@
         </div>
 
         <div class="sidebar-body p-3 d-flex flex-column h-100">
+            @* Секція Аккаунту *@
             <div class="menu-section mb-4">
                 <p class="z-label px-2">ТВІЙ АККАУНТ</p>
                 <div class="d-grid gap-1">
@@ -48,6 +46,7 @@
                 </div>
             </div>
 
+            @* Секція Каталогу *@
             <div class="menu-section mb-4">
                 <p class="z-label px-2">КАТАЛОГ</p>
                 <div class="d-grid gap-1">
@@ -63,6 +62,7 @@
                 </div>
             </div>
 
+            @* Секція Адмінки *@
             @if (AuthService.IsLoggedIn && AuthService.CurrentUser?.Role == "Admin")
             {
                 <div class="menu-section z-admin-card shadow-hard-sm mx-2 p-3">
@@ -86,14 +86,18 @@
     <main>
         @* --- ШАПКА (HEADER) --- *@
         <header class="z-header sticky-top">
-            <div class="z-pixel-rain-top"></div> @* Шар для пригаючих пікселів *@
+            @* ШАР ДЛЯ ПОВІЛЬНИХ КУБИКІВ *@
+            <div class="z-pixel-rain-top"></div>
 
-            <div class="container-fluid d-flex align-items-center justify-content-between h-100 px-lg-5" style="position: relative; z-index: 30;">
+            <div class="container-fluid d-flex align-items-center justify-content-between h-100 px-lg-5" style="position: relative; z-index: 10;">
                 <div class="d-flex align-items-center gap-3">
                     <button class="z-btn-menu shadow-pixel" @onclick="ToggleMenu">МЕНЮ</button>
-                    <a class="z-logo fw-black text-decoration-none text-dark" href="/">GOOSE Shop</a>
+                    <a class="z-logo fw-black text-decoration-none text-dark" href="/">
+                        ГУСЬ<span class="text-outline">ШОП</span>
+                    </a>
                 </div>
 
+                @* --- ЗОНА 3D КНОПОК --- *@
                 <div class="d-none d-lg-flex gap-4">
                     <a href="/constructor/1" class="z-nav-pill-3d text-decoration-none">ЧАШКА 3D</a>
                     <a href="/constructor/2" class="z-nav-pill-3d text-decoration-none">ФУТБОЛКА 3D</a>
@@ -114,7 +118,7 @@
                 </div>
             </div>
 
-            @* --- ПІКСЕЛЬНА ЛІНІЯ ВНИЗУ (ТА ЩО СТРИБАЄ) --- *@
+            @* НИЖНЯ ГЛІТЧ-ЛІНІЯ *@
             <div class="z-header-bottom-line"></div>
         </header>
 
@@ -158,7 +162,7 @@
         CartService.OnChange -= StateHasChanged;
         AuthService.OnChange -= StateHasChanged;
     }
-    // Метод для закриття всього одним кліком
+
     private void CloseAllPanels()
     {
         isMenuOpen = false;

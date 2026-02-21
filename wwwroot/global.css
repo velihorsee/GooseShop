@@ -31,6 +31,90 @@ html, body {
     border: 6px solid #000 !important;
 }
 
+/* --- ЄДИНИЙ СТИЛЬ ХЕДЕРА (GOOSE GANG) --- */
+header, .z-header {
+    background: #fff !important;
+    border-bottom: 8px solid #000 !important;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    overflow: hidden;
+    height: 85px;
+    /* Базова піксельна сітка, що ледь помітна */
+    background-image: linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px) !important;
+    background-size: 20px 20px !important;
+}
+
+/* ШАР ПІКСЕЛЬНОГО ДОЩУ (ПОВІЛЬНИЙ ТА СТИЛЬНИЙ) */
+.z-pixel-rain-top {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background-image: conic-gradient(from 90deg at 2px 2px, transparent 90deg, var(--z-black) 0), conic-gradient(from 90deg at 2px 2px, transparent 90deg, var(--z-red) 0), conic-gradient(from 90deg at 2px 2px, transparent 90deg, var(--z-green) 0), conic-gradient(from 90deg at 2px 2px, transparent 90deg, var(--z-cyan) 0);
+    background-size: 32px 32px, 48px 48px, 24px 24px, 40px 40px;
+    opacity: 0.4;
+    animation: pixelRainFall 10s linear infinite;
+    mask-image: linear-gradient(to bottom, black 20%, rgba(0,0,0,0.2) 80%, transparent 100%);
+}
+
+@keyframes pixelRainFall {
+    0% {
+        background-position: 0 0, 10px 10px, 20px 5px, 15px 20px;
+    }
+
+    100% {
+        background-position: 0 640px, 10px 960px, 20px 480px, 15px 800px;
+    }
+}
+
+/* --- ГРАДІЄНТНА ЛІНІЯ (СИНХРОНІЗОВАНА) --- */
+.z-header-bottom-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: linear-gradient(90deg, var(--z-cyan), var(--z-red), var(--z-green), var(--z-black), var(--z-cyan) );
+    background-size: 200% 100%;
+    animation: gradientMove 4s linear infinite;
+    z-index: 5;
+    border-top: 3px solid #000;
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* --- 3D КНОПКИ (ПІДТРИМКА СТИЛЮ) --- */
+.z-nav-pill-3d {
+    background: #fff !important;
+    border: 4px solid #000 !important;
+    padding: 10px 25px !important;
+    font-weight: 950 !important;
+    font-size: 1.1rem !important;
+    color: #000 !important;
+    text-transform: uppercase;
+    text-decoration: none !important;
+    position: relative;
+    z-index: 10;
+    transition: 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 4px 4px 0px #000;
+}
+
+    .z-nav-pill-3d:hover {
+        transform: translate(-4px, -4px);
+        background: var(--z-black) !important;
+        color: var(--z-cyan) !important;
+        box-shadow: 4px 4px 0px var(--z-pink), 8px 8px 0px #000 !important;
+    }
+
 /* --- ФУТЕР --- */
 .z-footer {
     background: #000;
@@ -66,142 +150,3 @@ html, body {
     .z-soc-big:hover {
         transform: scale(1.1) rotate(-5deg);
     }
-
-Владе, я зрозумів! Прибираємо статичну сітку і робимо «живий» ефект пікселів, що хаотично з'являються та підстрибують у верхній частині хедера. Це створить динаміку, ніби в шапці сайту відбувається цифровий збій (glitch) або працює старий монітор.
-
-Ось повний код для твоїх файлів.
-
-1. Оновлений global.css
-Я прибрав стару сітку pixelShift і замінив її на анімацію pixelJump. Тепер замість ліній у нас будуть окремі кольорові квадрати, що «стрибають».
-
-CSS
-/* --- ГЛОБАЛЬНІ ЗМІННІ ТА БАЗА --- */
-:root {
-    --z-cyan: #00f2fe;
-    --z-pink: #ff00ff;
-    --z-yellow: #ffcc00;
-    --z-green: #39e75f;
-    --z-black: #1a1a1a;
-}
-
-/* --- ОНОВЛЕНИЙ ХЕДЕР З ПРИГАЮЧИМИ ПІКСЕЛЯМИ --- */
-/* --- ЗУМЕРСЬКИЙ ХЕДЕР З КВАДРАТНИМИ ПІКСЕЛЯМИ --- */
-.z-header {
-    background: #fff !important;
-    border-bottom: 8px solid #000 !important;
-    position: sticky;
-    top: 0;
-    height: 85px;
-    z-index: 1000;
-    overflow: hidden;
-}
-
-/* Шар з квадратними градієнтними пікселями */
-.z-pixel-rain-top {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-    /* Створюємо чіткі КВАДРАТНІ пікселі через градієнти */
-    background-image: linear-gradient(45deg, var(--z-cyan) 25%, transparent 25%), linear-gradient(-45deg, var(--z-pink) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--z-yellow) 75%), linear-gradient(-45deg, transparent 75%, var(--z-green) 75%);
-    background-size: 30px 30px;
-    background-position: 0 0, 15px 15px, 15px 15px, 0 0;
-    opacity: 0.25;
-    /* Анімація "стрибків" */
-    animation: zoomerPixels 0.6s steps(4) infinite;
-}
-
-@keyframes zoomerPixels {
-    0% {
-        background-position: 0 0, 15px 15px, 15px 15px, 0 0;
-        filter: hue-rotate(0deg);
-    }
-
-    50% {
-        background-position: 15px 0, 0 15px, 0 0, 15px 15px;
-        filter: hue-rotate(90deg);
-    }
-
-    100% {
-        background-position: 0 15px, 15px 0, 15px 15px, 0 0;
-        filter: hue-rotate(180deg);
-    }
-}
-
-
-/* Кольорова лінія внизу хедера */
-.z-header-bottom-line {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 8px;
-    background: linear-gradient(90deg, var(--z-cyan), var(--z-pink), var(--z-yellow), var(--z-green));
-    background-size: 50% 100%;
-    animation: lineSlide 2s linear infinite;
-    z-index: 25;
-}
-
-@keyframes lineSlide {
-    0% {
-        background-position: 0% 0;
-    }
-
-    100% {
-        background-position: 100% 0;
-    }
-}
-
-/* --- 3D КНОПКИ (ЧАШКА / ФУТБОЛКА) --- */
-.z-nav-pill-3d {
-    background: #fff !important;
-    border: 4px solid #000 !important;
-    padding: 10px 25px !important;
-    font-weight: 950 !important;
-    font-size: 1.1rem !important;
-    color: #000 !important;
-    text-transform: uppercase;
-    text-decoration: none !important;
-    position: relative;
-    z-index: 10;
-    transition: 0.1s;
-    /* Зумерська тінь */
-    box-shadow: 4px 4px 0px #000;
-}
-
-    .z-nav-pill-3d:hover {
-        transform: translate(-4px, -4px);
-        background: var(--z-black) !important;
-        color: var(--z-cyan) !important;
-        /* Глітч-тінь */
-        box-shadow: 4px 4px 0px var(--z-pink), 8px 8px 0px #000 !important;
-    }
-
-    /* Ефект "мерехтіння" при наведенні */
-    .z-nav-pill-3d:active {
-        transform: scale(0.95);
-        background: var(--z-yellow) !important;
-        color: #000 !important;
-    }
-
-/* Кольорова лінія внизу (глітч-стиль) */
-.z-header-bottom-line {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 8px;
-    background: repeating-linear-gradient( 90deg, var(--z-cyan), var(--z-cyan) 25px, var(--z-pink) 25px, var(--z-pink) 50px, var(--z-yellow) 50px, var(--z-yellow) 75px );
-    animation: glitchLine 0.3s steps(2) infinite;
-    z-index: 5;
-}
-
-@keyframes glitchLine {
-    from {
-        transform: translateX(0);
-    }
-
-    to {
-        transform: translateX(-50px);
-    }
-}

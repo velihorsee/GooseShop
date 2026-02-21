@@ -11,36 +11,77 @@
     color: #e50000;
 }
 
-/* --- ГЛОБАЛЬНІ КНОПКИ (ДЛЯ ВСЬОГО САЙТУ І КОШИКА) --- */
-.z-btn, .z-action-btn, .z-secondary-btn {
+/* --- ГЛОБАЛЬНІ КНОПКИ "GOOSE GANG" (ДЛЯ ВСЬОГО САЙТУ І КОШИКА) --- */
+/* Уніфікований стиль для всіх інтерактивних елементів */
+.z-btn,
+.z-action-btn,
+.z-secondary-btn,
+.z-nav-pill,
+.z-cart-btn,
+.z-nav-pill-3d {
     border: 4px solid #000 !important;
-    font-weight: 900 !important;
+    font-weight: 950 !important;
     text-transform: uppercase !important;
-    padding: 15px 35px !important;
-    transition: 0.1s !important;
+    padding: 12px 28px !important;
+    transition: 0.05s steps(2) !important; /* Рваний зумерський рух */
     cursor: pointer !important;
+    background: #fff;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     text-decoration: none !important;
     color: #000 !important;
+    box-shadow: 4px 4px 0px #000 !important;
+    position: relative;
 }
 
-    .z-btn:hover, .z-action-btn:hover, .z-secondary-btn:hover {
-        transform: translate(-4px, -4px) !important;
+    /* Базовий ефект наведення (підстрибування) */
+    .z-btn:hover,
+    .z-nav-pill:hover,
+    .z-cart-btn:hover,
+    .z-secondary-btn:hover,
+    .z-action-btn:hover {
+        transform: translate(-2px, -2px) !important;
         box-shadow: 8px 8px 0px #000 !important;
     }
 
-/* Конкретні кольори */
+/* --- КОНКРЕТНІ КОЛЬОРИ ТА ГЛІТЧ-ЕФЕКТИ --- */
+
+/* Головна кнопка (Cyan) з рожевим глітчем */
 .z-action-btn {
     background: var(--z-cyan) !important;
 }
 
+    .z-action-btn:hover {
+        background: var(--z-cyan) !important;
+        box-shadow: 4px 4px 0px var(--z-pink), 10px 10px 0px #000 !important;
+    }
+
+/* Друрядна кнопка (Yellow) */
 .z-secondary-btn {
     background: var(--z-yellow) !important;
 }
 
+    .z-secondary-btn:hover {
+        background: var(--z-yellow) !important;
+        box-shadow: 4px 4px 0px var(--z-green), 10px 10px 0px #000 !important;
+    }
+
+/* Кнопка кошика (Зелена при наведенні) */
+.z-cart-btn:hover {
+    background: var(--z-green) !important;
+    color: #000 !important;
+}
+
+/* Ефект натискання для всіх кнопок */
+.z-btn:active, .z-action-btn:active, .z-secondary-btn:active {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 2px 2px 0px #000 !important;
+}
+
 /* --- АНІМАЦІЇ --- */
+
+/* Вліт банера */
 @keyframes bannerIntro {
     0% {
         transform: scale(0.9) translateY(50px);
@@ -53,6 +94,7 @@
     }
 }
 
+/* Рух символів (marquee) */
 @keyframes floatSymbols {
     from {
         transform: translateX(0%);
@@ -63,6 +105,7 @@
     }
 }
 
+/* Падіння гусей (Rain ефект) */
 @keyframes fall {
     0% {
         transform: translateY(-50px) rotate(0deg);
@@ -75,10 +118,17 @@
     }
 }
 
+/* Клас для падаючих об'єктів */
 .falling-goose {
     position: fixed;
     top: -50px;
     pointer-events: none;
     z-index: 9999;
     font-size: 2rem;
+    animation: fall 5s linear forwards;
+}
+
+/* Додатковий глітч-ефект для тексту (опціонально) */
+.text-glitch:hover {
+    text-shadow: 2px 0 var(--z-pink), -2px 0 var(--z-cyan);
 }
