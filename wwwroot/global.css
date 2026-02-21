@@ -115,38 +115,163 @@ header, .z-header {
         box-shadow: 4px 4px 0px var(--z-pink), 8px 8px 0px #000 !important;
     }
 
-/* --- ФУТЕР --- */
+/* --- ФУТЕР "GOOSE GANG" (ЗУМЕР-СТАЙЛ) --- */
 .z-footer {
     background: #000;
     color: #fff;
     position: relative;
     border-top: 10px solid #000;
     margin-top: 100px;
+    padding: 60px 0;
 }
 
+/* Піксельний розріз зверху футера */
 .z-footer-divider {
     height: 30px;
     background: #000;
     width: 100%;
     position: absolute;
     top: -29px;
+    /* Твій фірмовий піксельний зигзаг */
     clip-path: polygon(0 100%, 2% 0, 4% 100%, 6% 0, 8% 100%, 10% 0, 12% 100%, 14% 0, 16% 100%, 18% 0, 20% 100%, 22% 0, 24% 100%, 26% 0, 28% 100%, 30% 0, 32% 100%, 34% 0, 36% 100%, 38% 0, 40% 100%, 42% 0, 44% 100%, 46% 0, 48% 100%, 50% 0, 52% 100%, 54% 0, 56% 100%, 58% 0, 60% 100%, 62% 0, 64% 100%, 66% 0, 68% 100%, 70% 0, 72% 100%, 74% 0, 76% 100%, 78% 0, 80% 100%, 82% 0, 84% 100%, 86% 0, 88% 100%, 90% 0, 92% 100%, 94% 0, 96% 100%, 98% 0, 100% 100%);
 }
 
+/* ВЕЛИКІ ЗУМЕРСЬКІ КНОПКИ СОЦМЕРЕЖ */
 .z-soc-big {
-    width: 75px;
-    height: 75px;
+    width: 80px;
+    height: 80px;
     background: #fff;
     color: #000;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: 2.2rem;
     border: 4px solid #000;
-    transition: 0.15s;
+    transition: 0.1s steps(2); /* Рваний рух */
     text-decoration: none !important;
+    position: relative;
+    box-shadow: 4px 4px 0px #000;
 }
 
+    /* Кольорові глітч-ховери для кожної кнопки */
     .z-soc-big:hover {
-        transform: scale(1.1) rotate(-5deg);
+        transform: scale(1.1) rotate(-5deg) translate(-5px, -5px);
+    }
+
+    /* Індивідуальні кислотні тіні для соцмереж */
+    .z-soc-big.link-cyan:hover {
+        background: var(--z-cyan) !important;
+        box-shadow: 6px 6px 0px var(--z-pink), 12px 12px 0px #000 !important;
+    }
+
+    .z-soc-big.link-green:hover {
+        background: var(--z-green) !important;
+        box-shadow: 6px 6px 0px var(--z-cyan), 12px 12px 0px #000 !important;
+    }
+
+    .z-soc-big.link-red:hover {
+        background: var(--z-red) !important;
+        color: #fff !important;
+        box-shadow: 6px 6px 0px var(--z-yellow), 12px 12px 0px #000 !important;
+    }
+
+/* Текст у футері */
+.z-footer h4 {
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+}
+
+/* --- КНОПКА "ВЛІТАЙ У ДРОПИ" (СПЕЦІАЛЬНИЙ СТИЛЬ) --- */
+.z-btn-drop {
+    /* Наслідуємо базу z-btn, але додаємо акценти */
+    background: var(--z-yellow) !important;
+    font-size: 1.2rem !important;
+    padding: 15px 40px !important;
+    margin-top: 20px; /* Відступ від тексту зверху */
+    display: inline-flex !important;
+    align-self: flex-start; /* Щоб не розтягувалася на всю ширину */
+}
+
+    .z-btn-drop:hover {
+        background: var(--z-cyan) !important;
+        transform: translate(-5px, -5px) rotate(2deg) !important; /* Зумерський нахил */
+        box-shadow: 5px 5px 0px var(--z-pink), 12px 12px 0px #000 !important;
+    }
+
+/* Виправлення позиціонування в банері */
+.banner-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Вирівнюємо текст і кнопку по лівому краю */
+    justify-content: center;
+    height: 100%;
+    position: relative;
+    z-index: 5;
+}
+
+/* ПІКСЕЛЬНИЙ ІНПУТ */
+.z-input-group {
+    background: #000;
+    padding: 3px;
+    border: 3px solid #000;
+    display: flex;
+}
+
+.z-input-pixel {
+    width: 100%;
+    background: #fff;
+    border: none;
+    padding: 12px 15px;
+    font-weight: 800;
+    font-family: 'Montserrat', sans-serif;
+    outline: none;
+    text-transform: uppercase;
+}
+
+    .z-input-pixel:focus {
+        background: var(--z-cyan);
+        color: #000;
+    }
+
+/* ЛОГОТИП ФУТЕРА */
+.z-footer-logo {
+    font-size: 3.5rem;
+    line-height: 0.8;
+    color: #fff;
+    font-weight: 950;
+}
+
+.outline-white {
+    -webkit-text-stroke: 1.5px #fff;
+    color: transparent;
+}
+
+.z-badge-year {
+    background: var(--z-yellow);
+    color: #000;
+    display: inline-block;
+    padding: 5px 15px;
+    font-weight: 950;
+    transform: rotate(-2deg);
+}
+
+/* КОПІРАЙТ */
+.z-footer-copy {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 700;
+}
+
+.z-footer-sublink {
+    color: #888;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.8rem;
+    transition: 0.2s;
+}
+
+    .z-footer-sublink:hover {
+        color: var(--z-cyan);
     }
