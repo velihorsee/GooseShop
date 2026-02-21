@@ -7,79 +7,84 @@
 @inject IDbContextFactory<AppDbContext> DbFactory
 @inject NavigationManager Nav
 
-<div class="container mt-5">
+<div class="container mt-5 pb-5">
     @if (!AuthService.IsLoggedIn)
     {
-        <div class="alert alert-warning shadow-sm">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            Будь ласка, <a href="/login" class="alert-link">увійдіть</a>, щоб бачити замовлення та керувати профілем.
+        <div class="z-alert shadow-pixel mb-5">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            ЕЙ, ГУСАЧЕ! <a href="/login" class="text-white fw-black text-decoration-underline">УВІЙДИ</a>, ЩОБ БАЧИТИ СВІЙ ШМОТ.
         </div>
     }
     else
     {
-        <div class="row">
-            @* ЛІВА ПАНЕЛЬ: Навігація та статус *@
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm border-0 p-4 text-center">
-                    <div class="display-4 text-primary mb-3">
-                        <i class="bi bi-person-badge"></i>
+        <h2 class="fw-black display-4 text-uppercase mb-5 mt-4">
+            ТВІЙ <span class="z-highlight px-3 shadow-pixel">КАБІНЕТ</span>
+        </h2>
+
+        <div class="row g-5">
+            @* ЛІВА ПАНЕЛЬ: Картка юзера *@
+            <div class="col-xl-4">
+                <div class="z-profile-card shadow-pixel p-4 text-center">
+                    <div class="z-avatar-box shadow-pixel mb-3 mx-auto">
+                        <i class="bi bi-person-bounding-box"></i>
                     </div>
-                    <h4>@AuthService.CurrentUser.FullName</h4>
-                    <p class="text-muted small">@AuthService.CurrentUser.Email</p>
-                    <hr />
-                    <div class="nav flex-column nav-pills" role="tablist">
-                        <button class="nav-link @(activeTab == "orders" ? "active" : "") mb-2" @onclick='() => activeTab = "orders"'>
-                            <i class="bi bi-cart-check me-2"></i> Мої замовлення
+                    <h3 class="fw-black text-uppercase m-0">@AuthService.CurrentUser.FullName</h3>
+                    <p class="z-label text-muted">@AuthService.CurrentUser.Email</p>
+
+                    <div class="d-flex flex-column gap-2 mt-4">
+                        <button class="z-nav-pill-3d @(activeTab == "orders" ? "active-z" : "")" @onclick='() => activeTab = "orders"'>
+                            ЗАМОВЛЕННЯ 📦
                         </button>
-                        <button class="nav-link @(activeTab == "settings" ? "active" : "") mb-2" @onclick='() => activeTab = "settings"'>
-                            <i class="bi bi-gear me-2"></i> Налаштування
+                        <button class="z-nav-pill-3d @(activeTab == "settings" ? "active-z" : "")" @onclick='() => activeTab = "settings"'>
+                            НАЛАШТУВАННЯ ⚙️
                         </button>
                     </div>
-                    <button class="btn btn-outline-danger btn-sm mt-4" @onclick="Logout">
-                        <i class="bi bi-box-arrow-left me-1"></i> Вийти
+
+                    @* Кнопка ВИЙТИ *@
+                    <button class="z-btn z-btn-red w-100 mt-5 shadow-pixel" @onclick="Logout">
+                        ВИЙТИ <i class="bi bi-box-arrow-left ms-1"></i>
                     </button>
                 </div>
             </div>
 
             @* ПРАВА ПАНЕЛЬ: Контент *@
-            <div class="col-md-8">
-                <div class="card shadow-sm border-0 p-4">
+            <div class="col-xl-8">
+                <div class="z-content-card shadow-pixel p-4 p-md-5">
                     @if (activeTab == "orders")
                     {
-                        <h4 class="mb-4">Історія замовлень</h4>
+                        <h4 class="fw-black text-uppercase mb-4">Історія твоїх дропів</h4>
                         @if (userOrders == null)
                         {
-                            <div class="text-center py-4">
-                                <div class="spinner-border text-primary" role="status"></div>
-                                <p class="mt-2 text-muted">Завантаження...</p>
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-dark" style="width: 3rem; height: 3rem; border-width: 0.5rem;"></div>
                             </div>
                         }
                         else if (!userOrders.Any())
                         {
-                            <div class="text-center py-5 border rounded bg-light">
-                                <i class="bi bi-bag-x display-1 text-muted"></i>
-                                <p class="mt-3">Ви ще не робили замовлень.</p>
-                                <a href="/" class="btn btn-primary btn-sm">До каталогу</a>
+                            <div class="text-center py-5 border-dashed">
+                                <i class="bi bi-bag-x display-1 opacity-25"></i>
+                                <p class="mt-3 fw-bold">Тут порожньо, як в холодильнику гусака.</p>
+                                <a href="/" class="z-btn z-btn-cyan text-decoration-none py-3 px-5">ДО КАТАЛОГУ 🔥</a>
                             </div>
                         }
                         else
                         {
-                            <div class="list-group">
+                            <div class="list-group gap-3">
                                 @foreach (var order in userOrders)
                                 {
-                                    <div class="list-group-item list-group-item-action mb-2 rounded border shadow-sm">
-                                        <div class="d-flex justify-content-between align-items-center">
+                                    <div class="z-order-item shadow-pixel p-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
                                             <div>
-                                                <span class="fw-bold text-primary">№@order.Id</span>
-                                                <span class="badge @(order.IsCompleted ? "bg-success" : "bg-warning text-dark") ms-2">
-                                                    @(order.IsCompleted ? "Виконано" : "В обробці")
+                                                <span class="z-order-id">№@order.Id</span>
+                                                <span class="z-status-badge @(order.IsCompleted ? "status-ok" : "status-wait")">
+                                                    @(order.IsCompleted ? "ДОСТАВЛЕНО" : "В ДОРОЗІ")
                                                 </span>
                                             </div>
-                                            <span class="fw-bold text-dark">@order.TotalAmount.ToString("N0") грн</span>
+                                            <span class="fw-black fs-5">@order.TotalAmount.ToString("N0") ГРН</span>
                                         </div>
-                                        <div class="d-flex justify-content-between mt-2 small text-muted">
+                                        <div class="d-flex flex-wrap gap-3 small fw-bold opacity-75 mt-3">
                                             <span><i class="bi bi-calendar3 me-1"></i> @order.OrderDate.ToShortDateString()</span>
-                                            <span><i class="bi bi-geo-alt me-1"></i> @order.ShippingAddress</span>
+                                            <span><i class="bi bi-geo-alt-fill me-1"></i> @order.ShippingAddress</span>
                                         </div>
                                     </div>
                                 }
@@ -88,32 +93,32 @@
                     }
                     else if (activeTab == "settings")
                     {
-                        <h4 class="mb-4">Редагування профілю</h4>
-                        <div class="row g-3">
+                        <h4 class="fw-black text-uppercase mb-4">Налаштування шпигуна</h4>
+                        <div class="row g-4">
                             <div class="col-12">
-                                <label class="form-label fw-bold">ПІБ (Повне ім'я)</label>
-                                <input type="text" @bind="editUser.FullName" class="form-control" />
+                                <label class="z-label-input">ІМ'Я ТА ПРІЗВИЩЕ</label>
+                                <input type="text" @bind="editUser.FullName" class="z-input-pixel" />
                             </div>
                             <div class="col-12">
-                                <label class="form-label fw-bold">Email (Логін)</label>
-                                <input type="email" value="@editUser.Email" class="form-control bg-light" disabled />
-                                <div class="form-text">Зміна пошти недоступна.</div>
+                                <label class="z-label-input">ПОШТА (LOGIN)</label>
+                                <input type="email" value="@editUser.Email" class="z-input-pixel opacity-50" disabled />
                             </div>
                             <div class="col-12">
-                                <label class="form-label fw-bold">Новий пароль</label>
-                                <input type="password" @bind="editUser.Password" class="form-control" placeholder="Залиште порожнім, щоб не змінювати" />
+                                <label class="z-label-input">НОВИЙ ПАРОЛЬ</label>
+                                <input type="password" @bind="editUser.Password" class="z-input-pixel" placeholder="НЕ КАЖИ НІКОМУ..." />
                             </div>
 
                             @if (!string.IsNullOrEmpty(statusMessage))
                             {
                                 <div class="col-12">
-                                    <div class="alert alert-success py-2 small text-center">@statusMessage</div>
+                                    <div class="z-status-ok shadow-pixel p-2 text-center fw-black">@statusMessage</div>
                                 </div>
                             }
 
-                            <div class="col-12 pt-2">
-                                <button class="btn btn-primary w-100 fw-bold" @onclick="UpdateProfile">
-                                    <i class="bi bi-save me-1"></i> Зберегти зміни
+                            <div class="col-12 mt-4">
+                                @* Кнопка ЗБЕРЕГТИ *@
+                                <button class="z-btn z-btn-green w-100 shadow-pixel py-3" @onclick="UpdateProfile">
+                                    ЗБЕРЕГТИ ВСЕ <i class="bi bi-check-lg ms-1"></i>
                                 </button>
                             </div>
                         </div>
@@ -125,6 +130,7 @@
 </div>
 
 @code {
+    // Код залишається твоїм, Валерію, він працює чітко!
     private List<Order>? userOrders;
     private string activeTab = "orders";
     private User editUser = new();
@@ -134,14 +140,12 @@
     {
         if (AuthService.IsLoggedIn)
         {
-            // Завантаження замовлень
             using var context = DbFactory.CreateDbContext();
             userOrders = await context.Orders
                 .Where(o => o.Email == AuthService.CurrentUser.Email)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
-            // Підготовка даних для редагування
             editUser = new User
             {
                 Id = AuthService.CurrentUser.Id,
@@ -156,27 +160,20 @@
     private async Task UpdateProfile()
     {
         if (string.IsNullOrWhiteSpace(editUser.FullName)) return;
-
         using var context = DbFactory.CreateDbContext();
         var userInDb = await context.Users.FindAsync(editUser.Id);
 
         if (userInDb != null)
         {
             userInDb.FullName = editUser.FullName;
-
-            // Хешуємо пароль, якщо він був змінений (не такий, як у базі)
             if (!string.IsNullOrEmpty(editUser.Password) && editUser.Password != AuthService.CurrentUser.Password)
             {
                 userInDb.Password = BCrypt.Net.BCrypt.HashPassword(editUser.Password);
             }
-
             await context.SaveChangesAsync();
-
-            // Оновлюємо локальні дані
             AuthService.CurrentUser.FullName = userInDb.FullName;
             AuthService.CurrentUser.Password = userInDb.Password;
-
-            statusMessage = "Дані успішно оновлено! ✅";
+            statusMessage = "ОНОВЛЕНО! ✅";
             StateHasChanged();
         }
     }
