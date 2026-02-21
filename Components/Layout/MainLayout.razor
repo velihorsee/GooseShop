@@ -12,11 +12,13 @@
 <CartSidebar @bind-IsOpen="isCartOpen" />
 
 <div class="page z-gang-theme">
-    @* --- ЄДИНИЙ ОВЕРЛЕЙ (для меню та кошика) --- *@
-    <div class="z-overlay @(isMenuOpen || isCartOpen ? "active" : "")" 
-         @onclick="() => { isMenuOpen = false; isCartOpen = false; }"></div>
+    @* --- ЄДИНИЙ ОВЕРЛЕЙ --- *@
+    @* Він активний, якщо відкрите меню АБО кошик *@
+    <div class="z-overlay @(isMenuOpen || isCartOpen ? "active" : "")"
+         @onclick="CloseAllPanels"></div>
 
     @* --- БОКОВЕ МЕНЮ (SIDEBAR) --- *@
+    @* --- БОКОВЕ МЕНЮ --- *@
     <div id="sidebarMenu" class="z-sidebar shadow-hard @(isMenuOpen ? "active" : "")">
         <div class="sidebar-header border-bottom-bold d-flex justify-content-between align-items-center p-4">
             <span class="fw-black fs-5">ГУСЬ-ГЕНГ 🦢</span>
@@ -147,5 +149,11 @@
     {
         CartService.OnChange -= StateHasChanged;
         AuthService.OnChange -= StateHasChanged;
+    }
+    // Метод для закриття всього одним кліком
+    private void CloseAllPanels()
+    {
+        isMenuOpen = false;
+        isCartOpen = false;
     }
 }

@@ -302,3 +302,67 @@ h1:focus {
         transform: scale(1);
     }
 }
+/* Оверлей - спільний для всього */
+.z-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6); /* Темніший колір */
+    backdrop-filter: blur(4px); /* Ефект розмиття фону */
+    z-index: 1500; /* Нижче ніж панелі */
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+    .z-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+
+/* Бокове меню (Sidebar) */
+.z-sidebar {
+    position: fixed;
+    top: 0;
+    left: -400px; /* Сховане зліва */
+    width: 350px;
+    height: 100vh;
+    background: #fff;
+    z-index: 2000; /* Вище ніж оверлей */
+    border-right: 8px solid #000;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+    .z-sidebar.active {
+        left: 0; /* Виїжджає при активації */
+    }
+
+/* КНОПКА "ЙТИ ЗА ДРОПАМИ" */
+.z-secondary-btn {
+    background: var(--z-yellow); /* Твій жовтий колір */
+    color: #000;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding: 12px 20px;
+    border: 4px solid #000;
+    box-shadow: 6px 6px 0px #000; /* Та сама піксельна тінь */
+    transition: 0.1s ease-in-out;
+    cursor: pointer;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+    .z-secondary-btn:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 8px 8px 0px #000;
+        background: #fff; /* При наведенні стає білою */
+    }
+
+    .z-secondary-btn:active {
+        transform: translate(4px, 4px);
+        box-shadow: 0px 0px 0px #000; /* Ефект натискання кнопки вглиб */
+    }
