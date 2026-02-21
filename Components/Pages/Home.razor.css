@@ -1,4 +1,5 @@
 ﻿/* --- ГЕРОЙ-БАНЕР (ЗУМЕР-РЕДАКЦІЯ) --- */
+. /* --- ГЕРОЙ-БАНЕР (БЕЗ ГЛІТЧА, ПЛАВНИЙ ВЛІТ) --- */
 .z-hero-card {
     background: var(--z-cyan) !important;
     border: 8px solid #000 !important;
@@ -8,26 +9,26 @@
     min-height: 450px;
     display: flex;
     align-items: center;
-    /* Вліт банера тепер з ефектом steps для "цифрового" вигляду */
-    animation: bannerIntro 0.8s steps(10) forwards;
+    /* Плавна анімація замість steps() */
+    animation: bannerIntro 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     z-index: 10;
 }
 
-    /* Символи на фоні банера (Marquee) */
-    .z-hero-card::before {
-        content: "⚡ 🔥 🦢 🍌 ✨ ⚡ 🔥 🦢 🍌 ✨ ⚡ 🔥 🦢 🍌 ✨";
-        position: absolute;
-        font-size: 3rem;
-        width: 200%;
-        opacity: 0.12;
-        white-space: nowrap;
-        animation: floatSymbols 15s linear infinite;
-        top: 15%;
-        left: 0;
-        z-index: 1;
-        pointer-events: none;
-        color: #000;
-    }
+/* Символи на фоні банера */
+.z-hero-card::before {
+    content: "⚡ 🔥 🦢 🍌 ✨ ⚡ 🔥 🦢 🍌 ✨ ⚡ 🔥 🦢 🍌 ✨";
+    position: absolute;
+    font-size: 3rem;
+    width: 200%;
+    opacity: 0.1;
+    white-space: nowrap;
+    animation: floatSymbols 25s linear infinite; /* Уповільнив для плавності */
+    top: 15%;
+    left: 0;
+    z-index: 1;
+    pointer-events: none;
+    color: #000;
+}
 
     .z-hero-card .row {
         position: relative;
@@ -57,8 +58,8 @@
 .z-item-card {
     background: #fff;
     border: 6px solid #000 !important;
-    /* Використовуємо steps для анімації при наведенні */
-    transition: 0.1s steps(2) !important;
+    /* Повертаємо плавність замість steps(2) */
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -68,9 +69,9 @@
 }
 
     .z-item-card:hover {
-        transform: translate(-6px, -6px) !important;
-        /* Подвійна глітч-тінь: Рожева + Чорна */
-        box-shadow: 6px 6px 0px var(--z-pink), 12px 12px 0px #000 !important;
+        transform: translateY(-8px) !important; /* Піднімаємо вгору без зсуву вбік */
+        /* Залишаємо одну чітку чорну тінь, прибираємо рожевий глітч */
+        box-shadow: 0px 15px 30px rgba(0,0,0,0.1), 10px 10px 0px #000 !important;
     }
 
 .z-img-box {
@@ -85,11 +86,11 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: 0.3s steps(4);
+        transition: transform 0.5s ease; /* Плавний зум картинки */
     }
 
 .z-item-card:hover .z-img-box img {
-    transform: scale(1.1) rotate(-2deg);
+    transform: scale(1.05); /* Легкий зум без поворотів */
 }
 
 /* Бедж для ТОП товарів */
@@ -114,13 +115,13 @@
     font-weight: 950;
     border: 3px solid #000 !important;
     transform: rotate(-3deg);
-    transition: 0.1s steps(2);
+    transition: all 0.2s ease;
     color: #000;
 }
 
 .z-item-card:hover .z-price-pill {
-    transform: rotate(0deg) scale(1.1);
-    background: var(--z-green) !important;
+    transform: rotate(0deg) scale(1.05);
+    background: var(--z-cyan) !important; /* Змінюємо на Cyan для стилю */
 }
 
 .z-buy-btn-full {
@@ -130,15 +131,13 @@
     font-weight: 900;
     border: 3px solid #000 !important;
     text-transform: uppercase;
-    transition: 0.1s steps(2);
-    box-shadow: 4px 4px 0px var(--z-cyan);
+    transition: all 0.2s ease;
 }
 
     .z-buy-btn-full:hover {
-        background: var(--z-pink) !important;
-        color: #fff !important;
-        transform: translate(-3px, -3px) !important;
-        box-shadow: 4px 4px 0px #000 !important;
+        background: var(--z-green) !important; /* Зелений при наведенні замість рожевого */
+        color: #000 !important;
+        transform: scale(1.02);
     }
 
 /* Заголовок "ТОП ДРОПИ" */
