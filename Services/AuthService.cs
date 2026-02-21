@@ -1,15 +1,13 @@
 ﻿using GooseShop.Data;
 using GooseShop.Models;
 using Microsoft.EntityFrameworkCore;
+using BCrypt.Net;
 
 namespace GooseShop.Services
 {
     public class AuthService
     {
-        // Поле для фабрики контексту (вирішує помилку _contextFactory)
         private readonly IDbContextFactory<AppDbContext> _contextFactory;
-
-        // Поле для поточного користувача (вирішує помилку _currentUser)
         private User? _currentUser;
 
         public User? CurrentUser
@@ -26,11 +24,13 @@ namespace GooseShop.Services
             _contextFactory = dbFactory;
         }
 
+        // --- ВХІД ---
         public async Task<bool> Login(string email, string password)
         {
             using var context = _contextFactory.CreateDbContext();
             var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
+            // Перевірка хешу пароля
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
                 CurrentUser = user;
@@ -40,13 +40,40 @@ namespace GooseShop.Services
             return false;
         }
 
+        // --- РЕЄСТРАЦІЯ (НОВИЙ МЕТОД) ---
+        public async Task<bool> Register(string fullName, string email, string password)
+        {
+            using var context = _contextFactory.CreateDbContext();
+
+            // Перевіряємо, чи пошта вже зайнята
+            bool exists = await context.Users.AnyAsync(u => u.Email == email);
+            if (exists) return false;
+
+            var newUser = new User
+            {
+                FullName = fullName,
+                Email = email,
+                Password = BCrypt.Net.BCrypt.HashPassword(password), // Хешуємо пароль перед збереженням
+                Phone = "" // Початкове значення, щоб не було null
+            };
+
+            context.Users.Add(newUser);
+            await context.SaveChangesAsync();
+
+            // Автоматичний вхід після реєстрації
+            CurrentUser = newUser;
+            NotifyStateChanged();
+            return true;
+        }
+
+        // --- ВИХІД ---
         public void Logout()
         {
             CurrentUser = null;
             NotifyStateChanged();
         }
 
-        // Вирішує помилки Name, Phone та tempPassword
+        // --- ОНОВЛЕННЯ ПРОФІЛЮ ---
         public async Task<bool> UpdateUserAsync(User updatedUser, string? newPassword = null)
         {
             using var context = _contextFactory.CreateDbContext();
@@ -54,7 +81,6 @@ namespace GooseShop.Services
 
             if (user == null) return false;
 
-            // Використовуємо FullName замість Name, як у вашій моделі
             user.FullName = updatedUser.FullName;
             user.Phone = updatedUser.Phone;
             user.Email = updatedUser.Email;
@@ -65,6 +91,8 @@ namespace GooseShop.Services
             }
 
             await context.SaveChangesAsync();
+
+            // Оновлюємо поточного користувача в пам'яті
             CurrentUser = user;
             NotifyStateChanged();
             return true;

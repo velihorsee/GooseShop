@@ -5,37 +5,72 @@
 @inject NavigationManager Nav
 @rendermode InteractiveServer
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-4 card shadow p-4">
-            <h3 class="text-center mb-4">Вхід у GooseShop 🦢</h3>
+<div class="z-auth-container">
+    <div class="z-auth-box shadow-hard">
+        @* ТАБИ: ВХІД / РЕЄСТРАЦІЯ *@
+        <div class="d-flex border-bottom-bold mb-4">
+            <button class="z-tab-btn @(isLogin ? "active" : "")" @onclick="() => isLogin = true">ВХІД</button>
+            <button class="z-tab-btn @(!isLogin ? "active" : "")" @onclick="() => isLogin = false">РЕЄСТРАЦІЯ</button>
+        </div>
+
+        <div class="p-4 pt-2">
+            <h2 class="fw-black text-uppercase mb-4 text-center">
+                @(isLogin ? "З ПОВЕРНЕННЯМ, ГУСЬ!" : "ВСТУПАЙ У ГЕНГ!") 🦢
+            </h2>
+
+            @if (!isLogin)
+            {
+                <div class="mb-3">
+                    <label class="z-label">Як тебе звати?</label>
+                    <input @bind="userName" type="text" class="z-input shadow-pixel w-100" placeholder="Влад..." />
+                </div>
+            }
+
             <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input @bind="email" type="email" class="form-control" placeholder="vash@email.com" />
+                <label class="z-label">Твій Email</label>
+                <input @bind="email" type="email" class="z-input shadow-pixel w-100" placeholder="vash@email.com" />
             </div>
-            <div class="mb-3">
-                <label class="form-label">Пароль</label>
-                <input @bind="password" type="password" class="form-control" />
+
+            <div class="mb-4">
+                <label class="z-label">Секретний пароль</label>
+                <input @bind="password" type="password" class="z-input shadow-pixel w-100" placeholder="••••••••" />
             </div>
+
             @if (!string.IsNullOrEmpty(error))
             {
-                <div class="alert alert-danger">@error</div>
+                <div class="z-alert mb-4">@error</div>
             }
-            <button class="btn btn-primary w-100" @onclick="HandleLogin">Увійти</button>
+
+            <button class="z-btn @(isLogin ? "z-btn-cyan" : "z-btn-yellow") w-100 shadow-pixel py-3" @onclick="HandleAuth">
+                @(isLogin ? "ПОГНАЛИ! 🚀" : "СТАТИ ГУСЕМ 🔥")
+            </button>
         </div>
     </div>
 </div>
 
 @code {
+    private bool isLogin = true;
+    private string userName = "";
     private string email = "";
     private string password = "";
     private string error = "";
 
-    private async Task HandleLogin()
+    private async Task HandleAuth()
     {
-        if (await AuthService.Login(email, password))
+        error = "";
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+        {
+            error = "Заповни всі поля, бро!";
+            return;
+        }
+
+        bool success = isLogin
+            ? await AuthService.Login(email, password)
+            : await AuthService.Register(userName, email, password);
+
+        if (success)
             Nav.NavigateTo("/profile");
         else
-            error = "Невірний email або пароль";
+            error = isLogin ? "Невірний email або пароль" : "Помилка при реєстрації";
     }
 }

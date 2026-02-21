@@ -11,38 +11,36 @@
     color: #e50000;
 }
 
-#blazor-error-ui {
-    background: lightyellow;
-    bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0,0,0,0.2);
-    display: none;
-    left: 0;
-    padding: 0.6rem 1.25rem;
-    position: fixed;
-    width: 100%;
-    z-index: 1000;
-}
-
-/* --- ÊÍÎÏÊÈ (ÁÀÇÎÂ²) --- */
+/* --- ÃËÎÁÀËÜÍ² ÊÍÎÏÊÈ (ÄËß ÂÑÜÎÃÎ ÑÀÉÒÓ ² ÊÎØÈÊÀ) --- */
 .z-btn, .z-action-btn, .z-secondary-btn {
-    border: 4px solid #000;
-    font-weight: 900;
-    text-transform: uppercase;
-    transition: 0.1s;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    color: #000;
+    border: 4px solid #000 !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    padding: 15px 35px !important;
+    transition: 0.1s !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    color: #000 !important;
 }
 
     .z-btn:hover, .z-action-btn:hover, .z-secondary-btn:hover {
-        transform: translate(-3px, -3px);
-        box-shadow: 8px 8px 0px #000;
+        transform: translate(-4px, -4px) !important;
+        box-shadow: 8px 8px 0px #000 !important;
     }
 
-/* --- ÃËÎÁÀËÜÍ² ÀÍ²ÌÀÖ²¯ --- */
+/* Êîíêğåòí³ êîëüîğè */
+.z-action-btn {
+    background: var(--z-cyan) !important;
+}
+
+.z-secondary-btn {
+    background: var(--z-yellow) !important;
+}
+
+/* --- ÀÍ²ÌÀÖ²¯ --- */
 @keyframes bannerIntro {
     0% {
         transform: scale(0.9) translateY(50px);

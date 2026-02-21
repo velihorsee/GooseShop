@@ -35,17 +35,13 @@
     font-weight: 950;
 }
 
-/* Кнопки всередині баннера (Fix для кольорів) */
+/* Кнопки баннера */
 .z-btn-cyan {
     background: var(--z-cyan) !important;
-    padding: 12px 30px;
-    border: 4px solid #000;
 }
 
 .z-btn-yellow {
     background: var(--z-yellow) !important;
-    padding: 12px 30px;
-    border: 4px solid #000;
 }
 
 /* --- КАРТКИ ТОВАРІВ --- */
@@ -78,11 +74,7 @@
         transition: 0.3s;
     }
 
-.z-item-card:hover .z-img-box img {
-    transform: scale(1.05);
-}
-
-/* Ціна та Кнопка Купити */
+/* Ціна та Кнопка */
 .z-price-pill {
     background: var(--z-yellow) !important;
     padding: 6px 15px;
@@ -90,7 +82,6 @@
     border: 3px solid #000 !important;
     transform: rotate(-2deg);
     transition: 0.2s;
-    color: #000;
 }
 
     .z-price-pill:hover {
@@ -105,7 +96,6 @@
     padding: 8px 18px;
     font-weight: 900;
     border: 3px solid #000 !important;
-    transition: 0.2s;
 }
 
     .z-buy-btn-full:hover {
