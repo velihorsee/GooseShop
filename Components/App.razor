@@ -44,8 +44,7 @@
             }
         };
 
-        // 3. Інтерактивний ГУСЯЧИЙ ДОЩ (Гусаки падають і тікають від мишки)
-        window.initGooseRain = () => {
+                window.initGooseRain = () => {
             const banner = document.querySelector('.z-hero-card');
             if (!banner) return;
 
@@ -54,36 +53,56 @@
                 goose.className = 'falling-goose';
                 goose.innerHTML = '🦢';
 
-                let posX = Math.random() * banner.offsetWidth;
-                let posY = -50;
-                let speedY = 1.5 + Math.random() * 2;
+                // Початкові фізичні показники
+                let curX = Math.random() * banner.offsetWidth;
+                let curY = -50;
+                let targetOffsetX = 0; // На скільки гусак відхилився через страх
+                let targetOffsetY = 0;
+                let speedY = 1.0 + Math.random() * 1.5; // Трішки повільніше для плавності
+                let rotation = 0;
 
-                goose.style.left = posX + 'px';
+                goose.style.left = curX + 'px';
+                goose.style.position = 'absolute';
                 banner.appendChild(goose);
 
-                // Логіка втікання окремого маленького гусака
                 const onMouseMove = (e) => {
                     const rect = banner.getBoundingClientRect();
                     const mouseX = e.clientX - rect.left;
                     const mouseY = e.clientY - rect.top;
 
-                    const dist = Math.sqrt((mouseX - posX)**2 + (mouseY - posY)**2);
+                    // Розраховуємо дистанцію від курсору до поточної позиції гусака
+                    const distX = (curX + targetOffsetX) - mouseX;
+                    const distY = (curY + targetOffsetY) - mouseY;
+                    const dist = Math.sqrt(distX * distX + distY * distY);
 
-                    if (dist < 100) {
-                        posX += (posX - mouseX) * 0.15;
-                        posY += (posY - mouseY) * 0.15;
-                        goose.style.transform = `scale(1.5) rotate(${posX}deg)`;
+                    if (dist < 120) { // Радіус переляку
+                        const angle = Math.atan2(distY, distX);
+                        const force = (120 - dist) / 120; // Чим ближче мишка, тим сильніший поштовх
+
+                        // Задаємо ціль для відскоку
+                        targetOffsetX += Math.cos(angle) * 50 * force;
+                        targetOffsetY += Math.sin(angle) * 50 * force;
+                        rotation = angle * (180 / Math.PI) + 90; // Повертаємо гусака в бік втечі
                     }
                 };
 
                 banner.addEventListener('mousemove', onMouseMove);
 
                 const update = () => {
-                    posY += speedY;
-                    goose.style.top = posY + 'px';
-                    goose.style.left = posX + 'px';
+                    // Падіння вниз
+                    curY += speedY;
 
-                    if (posY < banner.offsetHeight + 100) {
+                    // ПЛАВНЕ ПОВЕРНЕННЯ (Lerp):
+                    // Відхилення targetOffset завжди намагається повернутися до 0 (спокою)
+                    targetOffsetX *= 0.92;
+                    targetOffsetY *= 0.92;
+
+                    // Фінальна позиція = базовий шлях + плавне відхилення
+                    goose.style.top = (curY + targetOffsetY) + 'px';
+                    goose.style.left = (curX + targetOffsetX) + 'px';
+                    goose.style.transform = `rotate(${rotation}deg) scale(${1 + Math.abs(targetOffsetX)/100})`;
+
+                    if (curY < banner.offsetHeight + 100) {
                         requestAnimationFrame(update);
                     } else {
                         banner.removeEventListener('mousemove', onMouseMove);
@@ -93,45 +112,48 @@
                 update();
             }
 
-            setInterval(createFallingGoose, 2000); // Новий гусак кожні 2 секунди
+            // Створюємо гусака кожні 2.5 секунди, щоб не захаращувати екран
+            setInterval(createFallingGoose, 2500);
         };
 
         // 4. РОЗУМНИЙ ГУСАК-ГЕРОЙ (Тікає і повертається на місце)
-        window.initSmartGoose = (elementId) => {
-            const goose = document.getElementById(elementId);
-            if (!goose) return;
+            window.initSmartGoose = (elementId) => {
+        const goose = document.getElementById(elementId);
+        if (!goose) return;
 
-            let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
-            let isScared = false;
+        let currentX = 0, currentY = 0;
+        let targetX = 0, targetY = 0;
+        let isScared = false;
 
-            document.addEventListener('mousemove', (e) => {
-                const gooseRect = goose.getBoundingClientRect();
-                const gooseCenterX = gooseRect.left + gooseRect.width / 2;
-                const gooseCenterY = gooseRect.top + gooseRect.height / 2;
+        document.addEventListener('mousemove', (e) => {
+            const rect = goose.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
 
-                const distX = e.clientX - gooseCenterX;
-                const distY = e.clientY - gooseCenterY;
-                const distance = Math.sqrt(distX * distX + distY * distY);
+            const distX = e.clientX - centerX;
+            const distY = e.clientY - centerY;
+            const distance = Math.sqrt(distX * distX + distY * distY);
 
-                if (distance < 150) {
-                    isScared = true;
-                    const angle = Math.atan2(distY, distX);
-                    targetX = -Math.cos(angle) * 120;
-                    targetY = -Math.sin(angle) * 120;
-                    goose.style.filter = "drop-shadow(20px 20px 0px rgba(255,0,0,0.3))";
-                } else {
-                    isScared = false;
-                    targetX = 0;
-                    targetY = 0;
-                    goose.style.filter = "drop-shadow(15px 15px 0px rgba(0,0,0,0.1))";
-                }
-            });
+            // Збільшуємо радіус, але робимо втечу плавною
+            if (distance < 200) {
+                isScared = true;
+                const angle = Math.atan2(distY, distX);
+                // Гусак тікає ВІД мишки
+                targetX = -Math.cos(angle) * 150;
+                targetY = -Math.sin(angle) * 150;
+            } else {
+                isScared = false;
+                targetX = 0;
+                targetY = 0;
+            }
+        });
+                function animate() {
+                // РІШЕННЯ ТРЯСКИ: Дуже плавне прямування до цілі (0.05 замість 0.15)
+                const lerp = isScared ? 0.08 : 0.03;
+                currentX += (targetX - currentX) * lerp;
+                currentY += (targetY - currentY) * lerp;
 
-            function animate() {
-                const speed = isScared ? 0.15 : 0.05;
-                currentX += (targetX - currentX) * speed;
-                currentY += (targetY - currentY) * speed;
-                goose.style.transform = `translate(${currentX}px, ${currentY}px) rotate(${currentX * 0.3}deg)`;
+                goose.style.transform = `translate(${currentX}px, ${currentY}px)`;
                 requestAnimationFrame(animate);
             }
             animate();
