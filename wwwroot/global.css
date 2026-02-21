@@ -321,3 +321,28 @@ header, .z-header {
         margin: 0;
     }
 }
+
+
+/* --- ПЕРЕМОГА НАД БУТСТРАПОМ --- */
+.container,
+.container-fluid,
+.row,
+.col,
+main,
+section {
+    background-color: transparent !important;
+}
+
+/* Прибираємо дефолтний фон, який Bootstrap міг дати для body */
+body {
+    background-color: transparent !important;
+}
+
+/* Залишаємо фон тільки там, де він потрібен (картки, банери) */
+.z-item-card,
+.z-hero-card,
+.z-header,
+.z-sidebar,
+.z-modal-content {
+    background-color: #fff !important;
+}

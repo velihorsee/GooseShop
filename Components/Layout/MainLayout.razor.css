@@ -1,9 +1,13 @@
 ﻿/* --- 1. СТРУКТУРА ТА ЗАГАЛЬНИЙ ФОН --- */
 .z-gang-theme {
-   
     min-height: 100vh;
-    font-family: 'Montserrat', sans-serif;
-    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    /* Примусово робимо прозорим, щоб бачити фон з body */
+    background: transparent !important;
+}
+main {
+    background: transparent !important;
 }
 
 /* Оверлей (Затемнення при відкритті меню) */
