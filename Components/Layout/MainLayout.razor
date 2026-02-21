@@ -75,9 +75,10 @@
             <div class="menu-section mt-auto pt-3 border-top-bold">
                 <p class="z-label px-2">ПРИЄДНУЙСЯ</p>
                 <div class="d-flex gap-3 px-2 pb-3">
-                    <a href="https://t.me/goose_gang" class="z-soc-icon link-cyan shadow-pixel-block"><i class="bi bi-telegram"></i></a>
-                    <a href="#" class="z-soc-icon link-green shadow-pixel-block"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="z-soc-icon link-red shadow-pixel-block"><i class="bi bi-tiktok"></i></a>
+                    @* Додай класи link-cyan, link-green, link-red *@
+                    <a href="https://t.me/goose_gang" class="z-soc-icon link-cyan"><i class="bi bi-telegram"></i></a>
+                    <a href="#" class="z-soc-icon link-green"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="z-soc-icon link-red"><i class="bi bi-tiktok"></i></a>
                 </div>
             </div>
         </div>
@@ -108,11 +109,11 @@
                         <a href="#" class="z-header-icon text-dark"><i class="bi bi-telegram"></i></a>
                         <a href="#" class="z-header-icon text-dark"><i class="bi bi-instagram"></i></a>
                     </div>
-
+                    
                     <div class="vr d-none d-md-block me-2" style="height: 30px; border-left: 3px solid #000; opacity: 1;"></div>
-
+                    
                     <button class="z-cart-btn shadow-pixel-block" @onclick="ToggleCart">
-                        <span class="fs-5">🛒</span>
+                        <span class="fs-5">🛒</span> 
                         <span class="ms-1 fw-black">@CartService.Items.Count</span>
                     </button>
                 </div>
@@ -132,39 +133,33 @@
     private bool isCartOpen = false;
     private bool isMenuOpen = false;
 
-    private void ToggleCart()
-    {
+    private void ToggleCart() {
         isCartOpen = !isCartOpen;
         if (isCartOpen) isMenuOpen = false;
     }
 
-    private void ToggleMenu()
-    {
+    private void ToggleMenu() {
         isMenuOpen = !isMenuOpen;
         if (isMenuOpen) isCartOpen = false;
     }
 
-    protected override void OnInitialized()
-    {
+    protected override void OnInitialized() {
         CartService.OnChange += StateHasChanged;
         AuthService.OnChange += StateHasChanged;
     }
 
-    private void Logout()
-    {
+    private void Logout() {
         AuthService.Logout();
         isMenuOpen = false;
         Nav.NavigateTo("/");
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
         CartService.OnChange -= StateHasChanged;
         AuthService.OnChange -= StateHasChanged;
     }
 
-    private void CloseAllPanels()
-    {
+    private void CloseAllPanels() {
         isMenuOpen = false;
         isCartOpen = false;
     }

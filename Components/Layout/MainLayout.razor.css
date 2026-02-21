@@ -204,3 +204,40 @@
     margin: 10px;
     padding: 15px;
 }
+/* --- КНОПКИ СОЦМЕРЕЖ У БОКОВОМУ МЕНЮ --- */
+.z-soc-icon {
+    width: 45px;
+    height: 45px;
+    background: #fff;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    border: 3px solid #000;
+    text-decoration: none !important;
+    transition: 0.1s steps(2); /* Той самий рваний рух */
+    position: relative;
+    box-shadow: 4px 4px 0px #000;
+}
+
+    /* Ефекти при наведенні для кожної іконки */
+    .z-soc-icon:hover {
+        transform: translate(-3px, -3px) rotate(-5deg);
+    }
+
+    .z-soc-icon.link-cyan:hover {
+        background: var(--z-cyan) !important;
+        box-shadow: 3px 3px 0px var(--z-pink), 6px 6px 0px #000 !important;
+    }
+
+    .z-soc-icon.link-green:hover {
+        background: var(--z-green) !important;
+        box-shadow: 3px 3px 0px var(--z-cyan), 6px 6px 0px #000 !important;
+    }
+
+    .z-soc-icon.link-red:hover {
+        background: var(--z-red) !important;
+        color: #fff !important;
+        box-shadow: 3px 3px 0px var(--z-yellow), 6px 6px 0px #000 !important;
+    }
