@@ -9,8 +9,9 @@
     <div class="z-auth-box shadow-hard">
         @* ТАБИ: ВХІД / РЕЄСТРАЦІЯ *@
         <div class="d-flex border-bottom-bold mb-4">
-            <button class="z-tab-btn @(isLogin ? "active" : "")" @onclick="() => isLogin = true">ВХІД</button>
-            <button class="z-tab-btn @(!isLogin ? "active" : "")" @onclick="() => isLogin = false">РЕЄСТРАЦІЯ</button>
+            @* Додав SwitchTab, щоб очищати помилки при переході *@
+            <button class="z-tab-btn @(isLogin ? "active" : "")" @onclick="() => SwitchTab(true)">ВХІД</button>
+            <button class="z-tab-btn @(!isLogin ? "active" : "")" @onclick="() => SwitchTab(false)">РЕЄСТРАЦІЯ</button>
         </div>
 
         <div class="p-4 pt-2">
@@ -22,7 +23,8 @@
             {
                 <div class="mb-3">
                     <label class="z-label">Як тебе звати?</label>
-                    <input @bind="userName" type="text" class="z-input shadow-pixel w-100" placeholder="Влад..." />
+                    @* Додав spellcheck="false", щоб червоне не підкреслювало *@
+                    <input @bind="userName" type="text" class="z-input shadow-pixel w-100" placeholder="Влад..." spellcheck="false" />
                 </div>
             }
 
@@ -41,7 +43,10 @@
                 <div class="z-alert mb-4">@error</div>
             }
 
-            <button class="z-btn @(isLogin ? "z-btn-cyan" : "z-btn-yellow") w-100 shadow-pixel py-3" @onclick="HandleAuth">
+            @* УВАГА: Тут я змінив клас на z-btn-auth, 
+               щоб запрацювала та сама "дика" анімація з CSS! 
+            *@
+            <button class="z-btn-auth shadow-pixel py-3" @onclick="HandleAuth">
                 @(isLogin ? "ПОГНАЛИ! 🚀" : "СТАТИ ГУСЕМ 🔥")
             </button>
         </div>
@@ -54,6 +59,12 @@
     private string email = "";
     private string password = "";
     private string error = "";
+
+    private void SwitchTab(bool login)
+    {
+        isLogin = login;
+        error = ""; // Очищаємо помилку, коли гусак передумав
+    }
 
     private async Task HandleAuth()
     {
@@ -71,6 +82,6 @@
         if (success)
             Nav.NavigateTo("/profile");
         else
-            error = isLogin ? "Невірний email або пароль" : "Помилка при реєстрації";
+            error = isLogin ? "Невірний email або пароль" : "Помилка при реєстрації (може Email вже зайнятий?)";
     }
 }

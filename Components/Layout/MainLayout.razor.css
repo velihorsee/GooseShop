@@ -1,4 +1,4 @@
-﻿/* --- СТРУКТУРА ТА ФОН --- */
+﻿/* --- 1. СТРУКТУРА ТА ЗАГАЛЬНИЙ ФОН --- */
 .z-gang-theme {
     background-color: #f0f0f0;
     min-height: 100vh;
@@ -6,7 +6,7 @@
     overflow-x: hidden;
 }
 
-/* Оверлей (Затемнення фону при відкритті меню) */
+/* Оверлей (Затемнення при відкритті меню) */
 .z-overlay {
     position: fixed;
     top: 0;
@@ -26,14 +26,82 @@
         opacity: 1;
     }
 
-/* --- ШАПКА (HEADER) --- */
-.z-header {
-    background: #fff;
-    height: 80px;
-    border-bottom: 5px solid #000;
+/* --- ПІКСЕЛЬНИЙ ХЕДЕР "GANG-FLOW" --- */
+header, .z-header, .z-navbar {
+    background: #fff !important; /* Базовий колір */
+    border-bottom: 8px solid #000;
+    position: sticky;
+    top: 0;
     z-index: 1000;
+    height: 80px;
     display: flex;
     align-items: center;
+    /* Створюємо сітку з пікселів */
+    background-image: linear-gradient(90deg, rgba(0, 242, 255, 0.1) 1px, transparent 1px), linear-gradient(rgba(0, 242, 255, 0.1) 1px, transparent 1px) !important;
+    background-size: 20px 20px !important;
+    animation: pixelShift 10s linear infinite;
+    overflow: hidden;
+}
+
+    /* Кольорові плями під сіткою */
+    .z-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 20% 50%, var(--z-cyan) 0%, transparent 25%), radial-gradient(circle at 80% 30%, var(--z-pink) 0%, transparent 25%), radial-gradient(circle at 50% 80%, var(--z-yellow) 0%, transparent 25%) !important;
+        background-size: 200% 200% !important;
+        opacity: 0.15;
+        filter: blur(40px);
+        animation: cubeFloat 8s ease-in-out infinite alternate;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    /* Анімована лінія внизу */
+    .z-header::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 8px;
+        background: linear-gradient(90deg, var(--z-cyan) 0%, var(--z-cyan) 25%, var(--z-pink) 25%, var(--z-pink) 50%, var(--z-yellow) 50%, var(--z-yellow) 75%, var(--z-green) 75%, var(--z-green) 100%) !important;
+        background-size: 40px 100% !important;
+        animation: pixelLineMove 2s steps(10) infinite;
+        z-index: 2;
+    }
+
+@keyframes pixelShift {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 20px 20px;
+    }
+}
+
+@keyframes cubeFloat {
+    0% {
+        background-position: 0% 0%;
+    }
+
+    100% {
+        background-position: 100% 100%;
+    }
+}
+
+@keyframes pixelLineMove {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 40px 0;
+    }
 }
 
 .z-logo {
@@ -41,12 +109,17 @@
     letter-spacing: -1.5px;
     font-weight: 950;
     color: #000;
+    text-decoration: none;
+    position: relative;
+    z-index: 10;
 }
 
 .text-outline {
     -webkit-text-stroke: 1.5px #000;
     color: transparent;
 }
+
+/* --- 3. КНОПКИ ТА НАВІГАЦІЯ В ХЕДЕРІ --- */
 
 /* Кнопка МЕНЮ */
 .z-btn-menu {
@@ -57,6 +130,7 @@
     font-weight: 950;
     text-transform: uppercase;
     transition: 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10;
 }
 
     .z-btn-menu:hover {
@@ -66,14 +140,17 @@
         box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
     }
 
-/* Навігаційні пігулки (Чашки/Футболки) */
+/* Навігаційні пігулки (Чашка/Футболка 3D) */
 .z-nav-pill {
+    background: #fff;
     border: 3px solid #000;
     padding: 8px 20px;
     font-weight: 900;
     color: #000;
-    background: #fff;
+    text-transform: uppercase;
     transition: 0.1s ease;
+    z-index: 10;
+    text-decoration: none;
 }
 
     .z-nav-pill:hover {
@@ -81,22 +158,12 @@
         box-shadow: 4px 4px 0px #000;
     }
 
-.btn-cyan:hover {
-    background: var(--z-cyan) !important;
-    box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
-}
-
-.btn-yellow:hover {
-    background: var(--z-yellow) !important;
-    box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-yellow-dark) !important;
-}
-
-/* Кошик у хедері */
 .z-cart-btn {
     background: #fff;
     border: 3px solid #000;
     padding: 10px 20px;
     transition: 0.1s;
+    z-index: 10;
 }
 
     .z-cart-btn:hover {
@@ -105,7 +172,24 @@
         box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-green-dark) !important;
     }
 
-/* --- БОКОВЕ МЕНЮ (SIDEBAR) --- */
+/* Іконки соцмереж у хедері */
+.z-header-icon {
+    font-size: 1.5rem;
+    color: #000;
+    transition: 0.1s;
+    padding: 5px;
+    border: 3px solid transparent;
+    z-index: 10;
+}
+
+    .z-header-icon:hover {
+        background: var(--z-cyan) !important;
+        border-color: #000 !important;
+        transform: translate(-3px, -3px) !important;
+        box-shadow: 4px 4px 0px #000;
+    }
+
+/* --- 4. БОКОВЕ МЕНЮ (SIDEBAR) --- */
 .z-sidebar {
     position: fixed;
     top: 0;
@@ -124,12 +208,11 @@
         left: 0;
     }
 
-/* Посилання в меню */
 .z-link {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 16px;
+    padding: 16px;
     color: #000;
     font-weight: 800;
     text-decoration: none !important;
@@ -137,133 +220,66 @@
     transition: 0.1s;
 }
 
-    .z-link:hover {
+    /* Кольорові ховери для посилань у меню */
+    .z-link.link-cyan:hover {
+        background: var(--z-cyan) !important;
         border: 3px solid #000 !important;
         transform: translate(-5px, -5px);
+        box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
     }
 
-.link-cyan:hover {
-    background: var(--z-cyan) !important;
-    box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
-}
-
-.link-green:hover {
-    background: var(--z-green) !important;
-    box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-green-dark) !important;
-}
-
-.link-red:hover {
-    background: var(--z-red) !important;
-    color: #fff !important;
-    box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-red-dark) !important;
-}
-
-/* Соцмережі */
-.z-soc-icon {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #000;
-    background: #fff;
-    border: 3px solid #000;
-    transition: 0.1s;
-}
-
-    .z-soc-icon:hover {
-        transform: translate(-3px, -3px);
+    .z-link.link-green:hover {
+        background: var(--z-green) !important;
+        border: 3px solid #000 !important;
+        transform: translate(-5px, -5px);
+        box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-green-dark) !important;
     }
 
-/* --- ДОПОМІЖНІ КЛАСИ --- */
-.z-label {
-    font-size: 0.75rem;
-    font-weight: 900;
-    color: #888;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-}
-
-.z-admin-card {
-    background: #000;
-    border: 2px solid #fff;
-    margin: 10px;
-    padding: 15px;
-}
-
-/* Повертаємо кольори для пунктів меню */
-.link-cyan:hover {
-    background: var(--z-cyan) !important;
-    color: #000 !important;
-    border: 3px solid #000 !important;
-    transform: translate(-5px, -5px);
-    box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-cyan-dark) !important;
-}
-
-.link-green:hover {
-    background: var(--z-green) !important;
-    color: #000 !important;
-    border: 3px solid #000 !important;
-    transform: translate(-5px, -5px);
-    box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-green-dark) !important;
-}
-
-.link-red:hover {
-    background: var(--z-red) !important;
-    color: #fff !important;
-    border: 3px solid #000 !important;
-    transform: translate(-5px, -5px);
-    box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-red-dark) !important;
-}
-
-/* Хедер та Лого */
-.z-header {
-    background: #fff;
-    height: 80px;
-    border-bottom: 5px solid #000;
-    display: flex;
-    align-items: center;
-    z-index: 1000;
-}
-
-.z-logo {
-    font-size: 2rem;
-    font-weight: 950;
-    color: #000;
-    text-decoration: none;
-}
+    .z-link.link-red:hover {
+        background: var(--z-red) !important;
+        color: #fff !important;
+        border: 3px solid #000 !important;
+        transform: translate(-5px, -5px);
+        box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-red-dark) !important;
+    }
 
 /* Кнопка закриття (✕) */
 .z-close-btn-pixel {
     background: #000;
     color: #fff;
     border: 3px solid #000;
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 950;
-    transition: 0.1s;
+    transition: 0.15s;
 }
+
     .z-close-btn-pixel:hover {
         background: var(--z-red) !important;
         transform: translate(-4px, -4px) rotate(90deg) !important;
         box-shadow: 4px 4px 0px #000, 8px 8px 0px var(--z-red-dark) !important;
     }
 
-/* Соцмережі в хедері */
-.z-header-icon {
-    font-size: 1.5rem;
-    color: #000;
-    transition: 0.1s;
-    padding: 5px;
-    border: 3px solid transparent;
+/* --- 5. АНІМАЦІЇ --- */
+@keyframes digitalFlow {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
-    .z-header-icon:hover {
-        background: var(--z-cyan) !important;
-        border-color: #000 !important;
-        transform: translate(-3px, -3px) !important;
-        box-shadow: 4px 4px 0px #000, 6px 6px 0px var(--z-cyan-dark) !important;
+@keyframes pixelLineMove {
+    from {
+        background-position: 0 0;
     }
+
+    to {
+        background-position: 40px 0;
+    }
+}

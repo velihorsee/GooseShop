@@ -86,15 +86,25 @@
     <main>
         @* --- ШАПКА (HEADER) --- *@
         <header class="z-header sticky-top">
-            <div class="container-fluid d-flex align-items-center justify-content-between h-100 px-lg-5">
+            @* --- АНІМОВАНІ ЕЛЕМЕНТИ ФОНУ --- *@
+            <div class="z-header-pixel-overlay"></div> @* Тут будуть літати кубики ■ □ *@
+
+            <div class="container-fluid d-flex align-items-center justify-content-between h-100 px-lg-5" style="position: relative; z-index: 10;">
                 <div class="d-flex align-items-center gap-3">
                     <button class="z-btn-menu shadow-pixel" @onclick="ToggleMenu">МЕНЮ</button>
-                    <a class="z-logo fw-black text-decoration-none text-dark" href="/">ГУСЬ<span class="text-outline">ШОП</span></a>
+                    <a class="z-logo fw-black text-decoration-none text-dark" href="/">
+                        ГУСЬ<span class="text-outline">ШОП</span>
+                    </a>
                 </div>
 
+                @* --- ЗОНА 3D КНОПОК З АНІМАЦІЄЮ --- *@
                 <div class="d-none d-lg-flex gap-4">
-                    <a href="/constructor/1" class="z-nav-pill btn-cyan shadow-pixel-block text-decoration-none px-4 py-2 fs-5">ЧАШКА 3D</a>
-                    <a href="/constructor/2" class="z-nav-pill btn-yellow shadow-pixel-block text-decoration-none px-4 py-2 fs-5">ФУТБОЛКА 3D</a>
+                    <a href="/constructor/1" class="z-nav-pill-3d text-decoration-none">
+                        ЧАШКА 3D
+                    </a>
+                    <a href="/constructor/2" class="z-nav-pill-3d text-decoration-none">
+                        ФУТБОЛКА 3D
+                    </a>
                 </div>
 
                 <div class="d-flex align-items-center gap-3">
@@ -102,12 +112,18 @@
                         <a href="#" class="z-header-icon text-dark"><i class="bi bi-telegram"></i></a>
                         <a href="#" class="z-header-icon text-dark"><i class="bi bi-instagram"></i></a>
                     </div>
-                    <div class="vr d-none d-md-block me-2" style="height: 30px; border-left: 3px solid #000;"></div>
+
+                    <div class="vr d-none d-md-block me-2" style="height: 30px; border-left: 3px solid #000; opacity: 1;"></div>
+
                     <button class="z-cart-btn shadow-pixel-block" @onclick="ToggleCart">
-                        🛒 <span class="ms-1 fw-black">@CartService.Items.Count</span>
+                        <span class="fs-5">🛒</span>
+                        <span class="ms-1 fw-black">@CartService.Items.Count</span>
                     </button>
                 </div>
             </div>
+
+            @* --- ПІКСЕЛЬНА ЛІНІЯ ВНИЗУ (ТА ЩО СТРИБАЄ) --- *@
+            <div class="z-header-bottom-line"></div>
         </header>
 
         <article class="content">
