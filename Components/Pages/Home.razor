@@ -25,8 +25,14 @@
                 </div>
             </div>
 
-            <div class="col-lg-5 text-center py-4" style="position: relative; min-height: 350px;">
-                <img id="heroGoose" src="images/hero-goose.png" class="z-goose-main" alt="Goose Hero" />
+            <div id="guard-goose" class="z-guard-goose">
+                <div class="goose-wrapper">
+                    <div class="goose-neck">
+                        <span class="goose-head">🦢</span>
+                        <div class="goose-speech">КУСЬ!</div>
+                    </div>
+                    <div class="goose-body">☁️</div> @* Тіло-хмаринка для об'єму *@
+                </div>
             </div>
         </div>
     </div>
@@ -105,7 +111,8 @@
         if (firstRender)
         {
             await JS.InvokeVoidAsync("initGooseRain");
-            await JS.InvokeVoidAsync("initSmartGoose", "heroGoose");
+            //await JS.InvokeVoidAsync("initSmartGoose", "heroGoose");
+            await JS.InvokeVoidAsync("initGuardGoose");
         }
     }
 }

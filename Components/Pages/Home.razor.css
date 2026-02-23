@@ -1,18 +1,14 @@
 ﻿/* --- ГЕРОЙ-БАНЕР (ЗУМЕР-РЕДАКЦІЯ) --- */
  /* --- ГЕРОЙ-БАНЕР (БЕЗ ГЛІТЧА, ПЛАВНИЙ ВЛІТ) --- */
 /* --- КИСЛОТНИЙ ГЕРОЙ-БАНЕР --- */
+/* Контейнер банера (Hero Card) */
 .z-hero-card {
-    /* Робимо фон максимально насиченим Cyan */
-    background: #00f2fe !important;
-    border: 8px solid #000 !important;
-    box-shadow: 20px 20px 0px #000;
-    position: relative;
-    overflow: hidden;
-    min-height: 450px;
-    display: flex;
-    align-items: center;
-    animation: bannerIntro 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    z-index: 10;
+    position: relative; /* Обов'язково! */
+    min-height: 450px; /* Трохи збільшив, щоб гусаку було де розгулятися */
+    overflow: hidden; /* Щоб гусак не вибігав на поля сайту */
+    background: #fff;
+    border: 6px solid #000;
+    box-shadow: 12px 12px 0px #000;
 }
 
 /* Символи на фоні банера */
