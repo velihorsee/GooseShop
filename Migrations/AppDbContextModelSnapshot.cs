@@ -237,6 +237,41 @@ namespace GooseShop.Migrations
                     b.ToTable("ProductConstructors");
                 });
 
+            modelBuilder.Entity("GooseShop.Models.ProductVariant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Size")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("StockQuantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductVariants");
+                });
+
             modelBuilder.Entity("GooseShop.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -315,6 +350,17 @@ namespace GooseShop.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("GooseShop.Models.ProductVariant", b =>
+                {
+                    b.HasOne("GooseShop.Models.Product", "Product")
+                        .WithMany("Variants")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("GooseShop.Models.Category", b =>
                 {
                     b.Navigation("Products");
@@ -323,6 +369,11 @@ namespace GooseShop.Migrations
             modelBuilder.Entity("GooseShop.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("GooseShop.Models.Product", b =>
+                {
+                    b.Navigation("Variants");
                 });
 #pragma warning restore 612, 618
         }

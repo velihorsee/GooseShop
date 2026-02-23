@@ -19,6 +19,7 @@ namespace GooseShop.Data
         public DbSet<CachedWarehouse> CachedWarehouses { get; set; }
         public DbSet<AppConfig> AppConfigs { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<ProductVariant> ProductVariants { get; set; }
 
         public DbSet<ProductConstructor> ProductConstructors { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

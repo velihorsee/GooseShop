@@ -225,24 +225,29 @@
 
     private async Task SaveAndAdd()
     {
-        // Отримуємо повний стан (координати, повороти, масштаби)
         var threeJsState = await JS.InvokeAsync<string>("getConstructorState");
 
         var config = new
         {
             Text = customText,
             Color = textColor,
-            State = threeJsState, // Це JSON-масив для 3D відтворення в адмінці
-            Layers = uploadedLayers, // Список об'єктів {Id, Url}
+            State = threeJsState,
+            Layers = uploadedLayers,
             ModelType = constructorConfig?.Type.ToString()
         };
 
         string json = JsonSerializer.Serialize(config);
-        
-        // Передаємо в кошик: перше фото зі списку буде іконкою
         string? previewUrl = uploadedLayers.FirstOrDefault()?.Url;
-        
-        CartService.AddToCart(product!, json, previewUrl, quantity);
+
+        // ВИКОРИСТОВУЄМО ІМЕНОВАНІ ПАРАМЕТРИ
+        CartService.AddToCart(
+            product: product!,
+            options: json,           // Передаємо JSON сюди
+            price: product!.BasePrice, // Ціна конструктора (або додай свою логіку)
+            imageUrl: previewUrl,    // Передаємо картинку в правильний параметр
+            quantity: quantity
+        );
+
         Nav.NavigateTo("/cart");
     }
 }

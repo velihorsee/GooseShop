@@ -8,4 +8,6 @@ public class CartItem
     public string CustomConfigurationJson { get; set; } = string.Empty;
     public string? UserUploadedImageUrl { get; set; } // Нове поле
     public decimal TotalPrice => Product.BasePrice * Quantity;
+    public string? Options { get; set; } // Додай це!
+    public decimal Price { get; set; }   // Додай це!
 }
