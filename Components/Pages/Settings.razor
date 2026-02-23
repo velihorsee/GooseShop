@@ -7,52 +7,50 @@
 @inject AppDbContext DbContext
 @inject NavigationManager Nav
 
-<div class="container mt-4">
-    <div class="d-flex align-items-center mb-4">
-        <button class="btn btn-outline-secondary me-3" @onclick='() => Nav.NavigateTo("/admin")'>
-            <i class="bi bi-arrow-left"></i>
-        </button>
-        <h3 class="mb-0">Налаштування магазину ⚙️</h3>
+@* Оновлений заголовок *@
+
+<div class="d-flex align-items-center mb-4 mt-2">
+    <button class="z-btn-menu shadow-pixel me-3" @onclick='() => Nav.NavigateTo("/admin")' style="padding: 5px 15px;">
+        <i class="bi bi-arrow-left"></i>
+    </button>
+    <h3 class="fw-black text-uppercase m-0">НАЛАШТУВАННЯ <span class="z-highlight px-2 shadow-pixel">МАГАЗИНУ</span></h3>
+</div>
+
+@* Оновлена картка *@
+<div class="z-content-card shadow-pixel p-4 p-md-5 bg-white">
+    <h5 class="fw-black text-uppercase mb-3">СИНХРОНІЗАЦІЯ З НОВОЮ ПОШТОЮ 🚚</h5>
+    
+    <div class="z-alert shadow-pixel mb-4" style="background: #f8f9fa; color: #000; border: 3px solid #000;">
+        <i class="bi bi-clock-history me-2"></i>
+        ОСТАННЄ ОНОВЛЕННЯ: <strong class="text-danger">@lastUpdate</strong>
     </div>
 
-    <div class="card p-4 shadow-sm border-0">
-        <h5 class="mb-3">Синхронізація з Новою Поштою</h5>
-        <p class="text-muted">
-            Цей процес завантажує всі діючі відділення та поштомати у локальну базу даних для миттєвого пошуку під час оформлення замовлення.
-        </p>
-
-        <div class="alert @(lastUpdate == "Ніколи" ? "alert-warning" : "alert-light border") mb-4">
-            <i class="bi bi-clock-history me-2"></i>
-            Останнє оновлення бази: <strong>@lastUpdate</strong>
+    @if (isUpdating)
+    {
+        <div class="z-status-ok shadow-pixel p-3 mb-4 bg-cyan" style="background: var(--z-cyan) !important;">
+            <div class="d-flex align-items-center">
+                <div class="spinner-border spinner-border-sm me-3" role="status"></div>
+                <div class="fw-black text-uppercase">ОБРОБЛЕНО: @processedCount ЗАПИСІВ...</div>
+            </div>
         </div>
+    }
 
+    @* Наша фірмова кнопка *@
+    <button class="z-btn z-btn-green w-100 shadow-pixel py-3" @onclick="SyncWarehouses" disabled="@isUpdating">
         @if (isUpdating)
         {
-            <div class="alert alert-info shadow-sm">
-                <div class="d-flex align-items-center">
-                    <div class="spinner-border text-primary me-3" role="status"></div>
-                    <div>
-                        <div class="fw-bold">Триває оновлення бази даних...</div>
-                        <small>Завантажено та оброблено: @processedCount записів</small>
-                    </div>
-                </div>
-            </div>
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            <span>ЗАЧЕКАЙ...</span>
         }
-
-        <button class="btn btn-primary btn-lg" @onclick="SyncWarehouses" disabled="@isUpdating">
-            @if (isUpdating)
-            {
-                <span class="spinner-border spinner-border-sm me-2"></span>
-                <span>Зачекайте...</span>
-            }
-            else
-            {
-                <i class="bi bi-arrow-repeat me-2"></i>
-                <span>Оновити базу відділень</span>
-            }
-        </button>
-    </div>
+        else
+        {
+            <i class="bi bi-arrow-repeat me-2"></i>
+            <span>ОНОВИТИ БАЗУ ВІДДІЛЕНЬ</span>
+        }
+    </button>
 </div>
+
+
 
 @code {
     private string lastUpdate = "Ніколи";

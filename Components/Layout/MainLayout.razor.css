@@ -274,7 +274,7 @@ main {
     background: var(--z-yellow) !important;
     color: #000 !important;
     transform: translate(-3px, -3px);
-    box-shadow: 4px 4px 0px var(--z-cyan);
+    box-shadow: 4px 4px 0px var(--z-cyan) !important;
 }
 
 /* Секція Соцмереж в самому низу */

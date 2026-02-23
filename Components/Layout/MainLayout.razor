@@ -67,20 +67,26 @@
                     </div>
                 </div>
 
+
                 @* Секція Адмінки (РЕЖИМ БОСА) *@
                 @if (AuthService.IsLoggedIn && AuthService.CurrentUser?.Role == "Admin")
                 {
                     <div class="menu-section z-admin-card shadow-hard-sm mx-1 p-3 mt-3 mb-4">
-                        <p class="z-label text-white mb-2">РЕЖИМ БОСА ⚡</p>
+                        <p class="z-label text-white mb-2 text-uppercase" style="letter-spacing: 1px;">РЕЖИМ БОСА ⚡</p>
                         <div class="d-grid gap-2">
+                            @* Кнопка ТОВАРИ *@
                             <a href="/admin" class="z-link link-cyan text-white py-1 small text-decoration-none" @onclick="() => isMenuOpen = false">
                                 <i class="bi bi-box-seam me-2"></i>ТОВАРИ
                             </a>
+
+                            @* Кнопка ЗАМОВЛЕННЯ *@
                             <a href="/admin/orders" class="z-link link-cyan text-white py-1 small text-decoration-none" @onclick="() => isMenuOpen = false">
                                 <i class="bi bi-list-check me-2"></i>ЗАМОВЛЕННЯ
                             </a>
-                            <a href="/profile" class="z-link link-yellow text-white py-1 small text-decoration-none" @onclick="() => isMenuOpen = false">
-                                <i class="bi bi-truck me-2"></i>НАЛАШТУВАННЯ НП
+
+                            @* Кнопка НАЛАШТУВАННЯ НП (Яскравий акцент) *@
+                            <a href="/admin/settings" class="z-link link-yellow text-white py-1 small text-decoration-none" @onclick="() => isMenuOpen = false">
+                                <i class="bi bi-truck-flatbed me-2"></i>НАЛАШТУВАННЯ НП
                             </a>
                         </div>
                     </div>
