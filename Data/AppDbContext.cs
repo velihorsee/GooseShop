@@ -24,6 +24,11 @@ namespace GooseShop.Data
         public DbSet<ProductConstructor> ProductConstructors { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Створюємо індекс для CityRef, щоб пошук за містом був миттєвим
+            modelBuilder.Entity<CachedWarehouse>()
+                .HasIndex(w => w.CityRef);
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();

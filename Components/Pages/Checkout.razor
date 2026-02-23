@@ -4,6 +4,7 @@
 @using GooseShop.Services
 @using GooseShop.Data
 @using System.Text.Json
+@inject IJSRuntime JS
 @using Microsoft.EntityFrameworkCore
 @inject CartService CartService
 @inject AppDbContext DbContext
@@ -12,45 +13,57 @@
 @inject EmailService EmailService
 
 <div class="container mt-5 pb-5">
-    <h3 class="mb-4">Оформлення замовлення 🦢</h3>
+    <h2 class="fw-black text-uppercase mb-4">ОФОРМЛЕННЯ ДРОПУ 🦢</h2>
 
-    <div class="row">
+    <div class="row g-4">
+        @* ЛІВА ПАНЕЛЬ: ДАНІ ТА ДОСТАВКА *@
         <div class="col-md-7">
-            <div class="card p-4 shadow-sm border-0 mb-4">
-                <h5 class="mb-3">Контактні дані</h5>
+            <div class="card shadow-hard p-4 border-dark border-3 bg-white mb-4">
+                <h4 class="fw-black text-uppercase mb-3">Хто забере лут?</h4>
                 <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label small fw-bold">Ім'я</label>
-                        <input @bind="order.CustomerName" class="form-control" placeholder="Ваше ім'я" />
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold small text-uppercase">Ім'я</label>
+                        <input @bind="order.CustomerName" class="form-control shadow-pixel border-2 border-dark" placeholder="Твоє ім'я..." @oninput='(e) => OnInputChanged("Name", e.Value?.ToString() ?? "")' />
+                        
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label small fw-bold">Телефон</label>
-                        <input @bind="order.Phone" class="form-control" placeholder="+380..." />
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold small text-uppercase">Телефон</label>
+                        <input @bind="order.Phone" class="form-control shadow-pixel border-2 border-dark" placeholder="+380..." @oninput='(e) => OnInputChanged("Phone", e.Value?.ToString() ?? "")' />
                     </div>
-                    @* НОВЕ ПОЛЕ ДЛЯ EMAIL *@
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label small fw-bold">Email (для чеку)</label>
-                        <input @bind="order.Email" type="email" class="form-control" placeholder="example@mail.com" />
+                    <div class="col-12 mb-3">
+                        <label class="fw-bold small text-uppercase">Email (для чеку та входу)</label>
+                        <input @bind="order.Email" type="email" class="form-control shadow-pixel border-2 border-dark" placeholder="goose@mail.com" @oninput='(e) => OnInputChanged("Email", e.Value?.ToString() ?? "")' />
                     </div>
                 </div>
 
-                <hr class="my-4" />
-                <h5 class="mb-3">Доставка Новою Поштою</h5>
+                <hr class="border-2 border-dark my-4" />
+                <h4 class="fw-black text-uppercase mb-3">Куди летимо? 🚀</h4>
 
                 @* ПОШУК МІСТА *@
                 <div class="mb-3 position-relative">
-                    <label class="form-label small fw-bold">Місто:</label>
+                    <label class="fw-bold small text-uppercase">Місто:</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-white"><i class="bi bi-geo-alt text-primary"></i></span>
-                        <input type="text" class="form-control border-start-0" placeholder="Почніть вводити місто..."
-                               @bind="citySearch" @oninput="OnCityInput" autocomplete="off" />
+                        <span class="input-group-text bg-dark text-white border-dark shadow-pixel px-3">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </span>
+                        <div class="position-relative">
+                            <input @oninput="OnCityInput" value="@citySearch" class="form-control shadow-pixel" placeholder="Введіть місто..." />
+
+                            @if (isCityLoading)
+                            {
+                                <div class="position-absolute end-0 top-0 mt-2 me-3">
+                                    <div class="spinner-border spinner-border-sm text-cyan" role="status"></div>
+                                </div>
+                            }
+                            @* Тут твій випадаючий список міст *@
+                        </div>
                     </div>
                     @if (cities.Any())
                     {
-                        <ul class="city-dropdown-list shadow">
+                        <ul class="z-dropdown-list shadow-hard border-3 border-dark">
                             @foreach (var city in cities)
                             {
-                                <li class="city-item" @onclick="() => SelectCity(city)">@city.Description</li>
+                                <li class="z-dropdown-item fw-bold" @onclick="() => SelectCity(city)">@city.Description</li>
                             }
                         </ul>
                     }
@@ -58,125 +71,263 @@
 
                 @* ТИП ДОСТАВКИ *@
                 <div class="mb-3">
-                    <label class="form-label small fw-bold text-secondary">Оберіть тип доставки:</label>
-                    <div class="btn-group w-100" role="group">
-                        <input type="radio" class="btn-check" name="deliveryBtn" id="btnWh"
-                               checked="@(deliveryType == "Warehouse")"
-                               @onchange="@(() => ChangeDeliveryType("Warehouse"))">
-                        <label class="btn btn-outline-primary d-flex align-items-center justify-content-center py-2" for="btnWh">
-                            <i class="bi bi-house-door me-2"></i> Відділення
-                        </label>
-
-                        <input type="radio" class="btn-check" name="deliveryBtn" id="btnPost"
-                               checked="@(deliveryType == "Postomat")"
-                               @onchange="@(() => ChangeDeliveryType("Postomat"))">
-                        <label class="btn btn-outline-primary d-flex align-items-center justify-content-center py-2" for="btnPost">
-                            <i class="bi bi-mailbox me-2"></i> Поштомат
-                        </label>
+                    <label class="fw-bold small text-uppercase text-muted mb-2">Обери спосіб:</label>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <button class="z-btn w-100 @(deliveryType == "Warehouse" ? "z-action-btn" : "")"
+                                    @onclick='() => ChangeDeliveryType("Warehouse")'>
+                                ВІДДІЛЕННЯ
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="z-btn w-100 @(deliveryType == "Postomat" ? "z-action-btn" : "")"
+                                    @onclick='() => ChangeDeliveryType("Postomat")'>
+                                ПОШТОМАТ
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                @* ПОШУК ВІДДІЛЕННЯ (ЛОКАЛЬНИЙ) *@
+                @* ПОШУК ВІДДІЛЕННЯ *@
                 <div class="mb-3 position-relative">
-                    <label class="form-label small fw-bold">
-                        @(deliveryType == "Warehouse" ? "Оберіть відділення:" : "Оберіть поштомат:")
+                    <label class="fw-bold small text-uppercase">
+                        @(deliveryType == "Warehouse" ? "Номер відділення:" : "Номер поштомату:")
                     </label>
                     <div class="input-group">
-                        <span class="input-group-text bg-white">
-                            <i class="bi bi-search text-primary"></i>
+                        <span class="input-group-text bg-dark text-white border-dark shadow-pixel px-3">
+                            <i class='bi @(deliveryType == "Warehouse" ? "bi-house" : "bi-box-seam")'></i>
                         </span>
-                        <input type="text" class="form-control border-start-0"
-                               placeholder="Номер або вулиця (напр. 22 пасхальна)..."
+                        <input type="text" class="form-control shadow-pixel border-2 border-dark"
+                               placeholder="Вулиця або номер..."
                                @bind="warehouseSearch" @oninput="OnWarehouseInput"
                                disabled="@(string.IsNullOrEmpty(selectedCityRef))" autocomplete="off" />
                     </div>
 
                     @if (filteredWarehouses.Any() && selectedWarehouse != warehouseSearch && !string.IsNullOrEmpty(selectedCityRef))
                     {
-                        <ul class="city-dropdown-list shadow">
+                        <ul class="z-dropdown-list shadow-hard border-3 border-dark">
                             @foreach (var wh in filteredWarehouses)
                             {
-                                <li class="city-item" @onclick="() => SelectWarehouse(wh)">
-                                    <i class='bi @(deliveryType == "Warehouse" ? "bi-house" : "bi-box") me-2 text-muted'></i>
+                                <li class="z-dropdown-item small py-2" @onclick="() => SelectWarehouse(wh)">
                                     @wh.Description
                                 </li>
                             }
                         </ul>
                     }
                 </div>
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="z-alert-danger shadow-pixel mb-3 p-3 fw-black text-uppercase">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+                    </div>
+                }
+                <button class="z-btn z-btn-green w-100 py-4 shadow-pixel position-relative"
+                        @onclick="PlaceOrder"
+                        disabled="@isPlacingOrder">
 
-                <button class="btn btn-primary btn-lg w-100 fw-bold mt-4 shadow-sm"
-                        disabled="@(string.IsNullOrEmpty(selectedWarehouse))"
-                        @onclick="PlaceOrder">
-                    ПІДТВЕРДИТИ ЗАМОВЛЕННЯ <i class="bi bi-arrow-right-short"></i>
+                    @if (isPlacingOrder)
+                    {
+                        <span class="d-flex align-items-center justify-content-center">
+                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                            ОБРОБЛЯЄМО ТВОЙ ЛУТ...
+                        </span>
+                    }
+                    else
+                    {
+                        <span>ОФОРМИТИ ЗАМОВЛЕННЯ <i class="bi bi-cursor-fill ms-2"></i></span>
+                    }
                 </button>
             </div>
         </div>
 
-        @* ПРАВА ПАНЕЛЬ: КОШИК *@
+        @* ПРАВА ПАНЕЛЬ: ПІДСУМОК *@
         <div class="col-md-5">
-            <div class="card p-4 bg-light border-0 shadow-sm">
-                <h5 class="mb-3">Ваше замовлення</h5>
-                <hr />
-                @foreach (var item in CartService.Items)
-                {
-                    <div class="mb-3 pb-3 border-bottom">
-                        <div class="d-flex justify-content-between align-items-start">
+            <div class="card shadow-hard border-dark border-3 bg-yellow p-4">
+                <h4 class="fw-black text-uppercase mb-3">Твій кошик:</h4>
+                <div class="z-order-items bg-white border border-2 border-dark p-3 shadow-pixel">
+                    @foreach (var item in CartService.Items)
+                    {
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
                             <div>
-                                <h6 class="mb-0">@item.Product.Name</h6>
-                                <small class="text-muted">Кількість: @item.Quantity</small>
+                                <div class="fw-black text-uppercase small">@item.Product.Name</div>
+                                <div class="small fw-bold text-muted">× @item.Quantity</div>
                             </div>
-                            <span class="fw-bold">@item.TotalPrice.ToString("N0") грн</span>
+                            <span class="fw-black text-cyan">@item.TotalPrice.ToString("N0") ГРН</span>
                         </div>
+                    }
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-2">
+                        <h5 class="fw-black text-uppercase m-0">РАЗОМ:</h5>
+                        <h4 class="fw-black m-0 text-dark">@CartService.GetTotal().ToString("N0") ГРН</h4>
                     </div>
-                }
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <h5 class="mb-0">Всього до сплати:</h5>
-                    <h4 class="text-primary fw-bold mb-0">@CartService.GetTotal().ToString("N0") грн</h4>
+                </div>
+                <div class="mt-4 p-3 border border-2 border-dark border-dashed bg-white shadow-pixel small fw-bold">
+                    <i class="bi bi-shield-check text-success me-2"></i>
+                    ОПЛАТА ПРИ ОТРИМАННІ АБО КАРТКОЮ
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+
 @code {
+    private string errorMessage = "";
+    private bool isCityLoading = false; // Для пошуку міста
+    private bool isPlacingOrder = false; // Для фінальної кнопки
     private Order order = new();
     private string citySearch = "";
     private string selectedCityRef = "";
     private string selectedWarehouse = "";
     private string warehouseSearch = "";
     private string deliveryType = "Warehouse";
-    private bool isLoading = false;
-
+    
     private List<NPCity> cities = new();
     private List<CachedWarehouse> allCityWarehouses = new();
     private List<CachedWarehouse> filteredWarehouses = new();
+    private CancellationTokenSource? _cts;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadCachedData(); // Відновлюємо дані при вході
+            await JS.InvokeVoidAsync("gooseGame.start");
+            StateHasChanged();
+        }
+    }
+    // Метод для збереження КЕШУ
+    private async Task SaveToCache()
+    {
+        var data = new
+        {
+            order.CustomerName,
+            order.Phone,
+            order.Email,
+            citySearch,
+            selectedCityRef,
+            warehouseSearch,
+            selectedWarehouse,
+            deliveryType
+        };
+        await JS.InvokeVoidAsync("localStorage.setItem", "checkout_cache", JsonSerializer.Serialize(data));
+    }
 
+    // Метод для відновлення
+
+
+private async Task LoadCachedData()
+    {
+        try
+        {
+            // Додаємо <string?>, щоб JS міг повернути null без помилки
+            var json = await JS.InvokeAsync<string?>("localStorage.getItem", "checkout_cache");
+
+            if (!string.IsNullOrEmpty(json))
+            {
+                var cache = JsonSerializer.Deserialize<JsonElement>(json);
+
+                // Відновлюємо поля з перевіркою кожного властивості
+                if (cache.ValueKind != JsonValueKind.Undefined)
+                {
+                    order.CustomerName = cache.TryGetProperty("CustomerName", out var name) ? name.GetString() ?? "" : "";
+                    order.Phone = cache.TryGetProperty("Phone", out var phone) ? phone.GetString() ?? "" : "";
+                    order.Email = cache.TryGetProperty("Email", out var email) ? email.GetString() ?? "" : "";
+                    citySearch = cache.TryGetProperty("citySearch", out var city) ? city.GetString() ?? "" : "";
+                    selectedCityRef = cache.TryGetProperty("selectedCityRef", out var cityRef) ? cityRef.GetString() ?? "" : "";
+                    warehouseSearch = cache.TryGetProperty("warehouseSearch", out var whSearch) ? whSearch.GetString() ?? "" : "";
+                    selectedWarehouse = cache.TryGetProperty("selectedWarehouse", out var wh) ? wh.GetString() ?? "" : "";
+                    deliveryType = cache.TryGetProperty("deliveryType", out var type) ? type.GetString() ?? "Warehouse" : "Warehouse";
+
+                    // Якщо місто було вибране, підвантажуємо відділення
+                    if (!string.IsNullOrEmpty(selectedCityRef))
+                    {
+                        allCityWarehouses = await DbContext.CachedWarehouses
+                            .AsNoTracking()
+                            .Where(w => w.CityRef == selectedCityRef)
+                            .ToListAsync();
+                        ApplyFilters();
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Якщо кеш битий — просто ігноруємо його і даємо чисту форму
+            Console.WriteLine($"Cache loading error: {ex.Message}");
+        }
+    }
+    // Пошук міста через API Нової Пошти
     private async Task OnCityInput(ChangeEventArgs e)
     {
         citySearch = e.Value?.ToString() ?? "";
+
+        _cts?.Cancel();
+        _cts = new CancellationTokenSource();
+        var token = _cts.Token;
+
         if (citySearch.Length >= 3)
         {
-            var result = await NP.GetCities(citySearch);
-            cities = result?.OrderByDescending(c => c.Description.StartsWith(citySearch, StringComparison.OrdinalIgnoreCase)).ToList() ?? new();
+            try
+            {
+                isCityLoading = true; // Вмикаємо анімацію пошуку міста
+                StateHasChanged();
+
+                await Task.Delay(300, token);
+                var result = await NP.GetCities(citySearch);
+
+                if (!token.IsCancellationRequested)
+                {
+                    cities = result?.OrderByDescending(c =>
+                        c.Description.StartsWith(citySearch, StringComparison.OrdinalIgnoreCase))
+                        .ToList() ?? new();
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // Не вимикаємо лоадер, бо наступний запит його обробить
+                return;
+            }
+            finally
+            {
+                // Вимикаємо лоадер тільки якщо запит не був скасований
+                if (!token.IsCancellationRequested)
+                {
+                    isCityLoading = false;
+                    StateHasChanged();
+                }
+            }
         }
-        else cities.Clear();
+        else
+        {
+            cities.Clear();
+            isCityLoading = false;
+            StateHasChanged();
+        }
     }
 
     private async Task SelectCity(NPCity city)
     {
+        // 1. Миттєвий візуальний відгук
         citySearch = city.Description;
         selectedCityRef = city.Ref;
         cities.Clear();
         selectedWarehouse = "";
         warehouseSearch = "";
+        await SaveToCache();
+        // Очищуємо списки відразу, щоб старі дані не "висіли" перед очима
+        allCityWarehouses.Clear();
+        filteredWarehouses.Clear();
 
-        // Завантажуємо з ЛОКАЛЬНОЇ бази
+        // 2. Оптимізований запит
         allCityWarehouses = await DbContext.CachedWarehouses
+            .AsNoTracking() // Не витрачаємо пам'ять на відстеження
             .Where(w => w.CityRef == selectedCityRef)
+            .OrderBy(w => w.Number) // Сортуємо відразу в базі (якщо додав поле Number)
             .ToListAsync();
 
         ApplyFilters();
+
+        // 3. Форсуємо оновлення інтерфейсу
+        StateHasChanged();
     }
 
     private void ChangeDeliveryType(string type)
@@ -185,6 +336,7 @@
         selectedWarehouse = "";
         warehouseSearch = "";
         ApplyFilters();
+        _ = SaveToCache(); // Викликаємо фоново
     }
 
     private void OnWarehouseInput(ChangeEventArgs e)
@@ -198,32 +350,23 @@
         selectedWarehouse = wh.Description;
         warehouseSearch = wh.Description;
         filteredWarehouses.Clear();
+        _ = SaveToCache(); // Тепер склад теж у кеші
     }
 
     private void ApplyFilters()
     {
-        // 1. Фільтруємо за типом (Відділення/Поштомат)
         var baseQuery = allCityWarehouses.Where(w => w.Type == deliveryType);
 
-        // 2. Розумний пошук
         if (string.IsNullOrWhiteSpace(warehouseSearch))
         {
             filteredWarehouses = baseQuery.Take(20).ToList();
         }
         else
         {
-            // Розбиваємо "22 пасхальна" на ["22", "пасхальна"]
-            var searchTerms = warehouseSearch.ToLower()
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
+            var searchTerms = warehouseSearch.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
             filteredWarehouses = baseQuery
-                .Where(w =>
-                {
-                    var desc = w.Description.ToLower();
-                    // Має містити УСІ введені слова
-                    return searchTerms.All(term => desc.Contains(term));
-                })
-                .OrderBy(w => w.Description.Length) // Коротші назви зазвичай точніші збіги
+                .Where(w => searchTerms.All(term => w.Description.ToLower().Contains(term)))
+                .OrderBy(w => w.Description.Length)
                 .Take(30)
                 .ToList();
         }
@@ -231,11 +374,32 @@
 
     private async Task PlaceOrder()
     {
-        if (string.IsNullOrEmpty(order.Email) || string.IsNullOrEmpty(order.CustomerName)) return;
+        
+        
+        errorMessage = ""; // Скидаємо стару помилку
 
+        // 1. ПЕРЕВІРКА НА ПУСТІ ПОЛЯ
+        if (string.IsNullOrWhiteSpace(order.CustomerName) ||
+            string.IsNullOrWhiteSpace(order.Phone) ||
+            string.IsNullOrWhiteSpace(order.Email))
+        {
+            errorMessage = "Заповни всі дані, щоб отримати свій лут! 🦢";
+            return;
+        }
+
+        // 2. ПЕРЕВІРКА ФОРМАТУ EMAIL (регулярний вираз)
+        if (!order.Email.Contains("@") || !order.Email.Contains("."))
+        {
+            errorMessage = "Це не схоже на правильний Email. Перевір ще раз! 📧";
+            return;
+        }
+        if (isPlacingOrder) return;
+
+        isPlacingOrder = true;
+        StateHasChanged();
         try
         {
-            // 1. ПЕРЕВІРКА ТА РЕЄСТРАЦІЯ
+            // 1. ПЕРЕВІРКА ТА АВТОРЕЄСТРАЦІЯ
             var existingUser = await DbContext.Users.FirstOrDefaultAsync(u => u.Email == order.Email);
             string? generatedPassword = null;
 
@@ -246,16 +410,18 @@
                 {
                     Email = order.Email,
                     FullName = order.CustomerName,
-                    Password = generatedPassword, // Тимчасовий пароль
+                    Password = generatedPassword,
                     Role = "Customer"
                 };
                 DbContext.Users.Add(newUser);
-                await DbContext.SaveChangesAsync(); // Зберігаємо користувача
+                await DbContext.SaveChangesAsync();
             }
 
             // 2. ЗБЕРЕЖЕННЯ ЗАМОВЛЕННЯ
             order.ShippingAddress = $"{citySearch}, {selectedWarehouse}";
             order.TotalAmount = CartService.GetTotal();
+            order.Status = "Нове";
+            order.CreatedAt = DateTime.Now;
 
             foreach (var cartItem in CartService.Items)
             {
@@ -263,7 +429,7 @@
                 {
                     ProductId = cartItem.Product.Id,
                     Quantity = cartItem.Quantity,
-                    PriceAtPurchase = cartItem.Product.BasePrice,
+                    PriceAtPurchase = cartItem.Price,
                     CustomConfigurationJson = cartItem.CustomConfigurationJson
                 });
             }
@@ -271,52 +437,51 @@
             DbContext.Orders.Add(order);
             await DbContext.SaveChangesAsync();
 
-            // 3. ПІДГОТОВКА ДАНИХ ДЛЯ EMAIL
-            // Використовуємо Include, щоб підтягнути назви та фото товарів
+            // 3. EMAIL ПІДТВЕРДЖЕННЯ
             var orderWithData = await DbContext.Orders
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Product)
+                .Include(o => o.OrderItems).ThenInclude(oi => oi.Product)
                 .FirstOrDefaultAsync(o => o.Id == order.Id);
 
             if (orderWithData != null)
             {
-                // Надсилаємо лист (передаємо пароль лише якщо він був згенерований)
                 await EmailService.SendOrderConfirmationEmail(orderWithData, generatedPassword);
             }
+
+            // --- ОСЬ ЦЕЙ НОВИЙ БЛОК (№4) ТРЕБА ДОДАТИ СЮДИ ---
+
+            // Очищаємо ТІЛЬКИ адресу (місто і відділення)
+            selectedCityRef = "";
+            citySearch = "";
+            selectedWarehouse = "";
+            warehouseSearch = "";
+            allCityWarehouses.Clear();
+            filteredWarehouses.Clear();
+
+            // Оновлюємо кеш у браузері (щоб ім'я лишилось, а адреса стала порожня)
+            await SaveToCache();
+
+            // ------------------------------------------------
 
             CartService.ClearCart();
             Nav.NavigateTo("/order-success");
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
+        catch (Exception ex) { Console.WriteLine($"Checkout Error: {ex.Message}"); 
+            errorMessage = "Щось пішло не так на сервері. Спробуй ще раз!";
         }
+        finally
+        {
+            isPlacingOrder = false;
+            StateHasChanged();
+        }
+    }
+
+
+    private async Task OnInputChanged(string fieldName, string value)
+    {
+        if (fieldName == "Name") order.CustomerName = value;
+        if (fieldName == "Phone") order.Phone = value;
+        if (fieldName == "Email") order.Email = value;
+
+        await SaveToCache(); // Миттєве збереження в LocalStorage
     }
 }
-
-<style>
-    .city-dropdown-list {
-        position: absolute;
-        width: 100%;
-        max-height: 250px;
-        overflow-y: auto;
-        z-index: 1000;
-        background: white;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        list-style: none;
-        padding: 0;
-        margin-top: 2px;
-    }
-
-    .city-item {
-        padding: 10px 15px;
-        cursor: pointer;
-        border-bottom: 1px solid #f8f9fa;
-    }
-
-        .city-item:hover {
-            background: #e9ecef;
-            color: #007bff;
-        }
-</style>

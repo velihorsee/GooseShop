@@ -84,12 +84,16 @@
                 // 3. Додаємо нові
                 foreach (var wh in allWarehouses)
                 {
+                    // Витягуємо номер для правильного сортування (наприклад, 22)
+                    var onlyDigits = new string(wh.Description.Where(char.IsDigit).ToArray());
+                    int.TryParse(onlyDigits, out int whNumber);
+
                     DbContext.CachedWarehouses.Add(new CachedWarehouse
                     {
                         CityRef = wh.CityRef,
                         Ref = wh.Ref,
                         Description = wh.Description,
-                        // Логіка визначення типу
+                        Number = whNumber, // ТУТ ВАЖЛИВО!
                         Type = wh.Description.Contains("Поштомат", StringComparison.OrdinalIgnoreCase)
                                ? "Postomat" : "Warehouse"
                     });

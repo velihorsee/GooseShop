@@ -2,90 +2,93 @@
 @rendermode InteractiveServer
 @using GooseShop.Services
 @using System.Text.Json
-@inject CartService CartService
 @using GooseShop.Models
+@inject CartService CartService
 @inject NavigationManager Nav
 @implements IDisposable
 
-<div class="container mt-5">
+<div class="container mt-5 pb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Ваш кошик 🛒</h2>
+        <h2 class="fw-black text-uppercase m-0">Твій лут 🛒</h2>
         @if (CartService.Items.Any())
         {
-            <button class="btn btn-outline-secondary btn-sm" @onclick="CartService.ClearCart">Очистити кошик</button>
+            <button class="z-btn z-btn-red shadow-pixel py-2 px-3 fw-bold btn-sm" @onclick="CartService.ClearCart">
+                ВИКИНУТИ ВСЕ 🗑️
+            </button>
         }
     </div>
 
     @if (!CartService.Items.Any())
     {
-        <div class="alert alert-info shadow-sm">Кошик порожній. Час вибрати гусака!</div>
-        <a href="/" class="btn btn-primary shadow">До каталогу</a>
+        <div class="z-card-simple shadow-hard p-5 text-center bg-white border-dark">
+            <h1 class="display-1">🦢</h1>
+            <h3 class="fw-black text-uppercase">Кошик порожній, бро...</h3>
+            <p class="text-muted fw-bold">Твій гусак ще десь там, у каталозі.</p>
+            <a href="/" class="z-btn z-action-btn shadow-pixel py-3 px-5 mt-3 text-decoration-none">ДО КАТАЛОГУ</a>
+        </div>
     }
     else
     {
-        <div class="table-responsive shadow-sm rounded">
-            <table class="table align-middle bg-white">
+        <div class="table-responsive shadow-hard border border-dark border-3 bg-white mb-4">
+            <table class="table align-middle mb-0">
                 <thead class="table-dark">
                     <tr>
-                        <th>Товар</th>
-                        <th>Ваш дизайн</th>
-                        <th style="width: 130px;">Кількість</th>
-                        <th>Ціна</th>
-                        <th></th>
+                        <th class="ps-4">ТОВАР</th>
+                        <th>ДЕТАЛІ</th>
+                        <th style="width: 150px;">СКІЛЬКИ</th>
+                        <th>ЦІНА</th>
+                        <th class="text-end pe-4"></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in CartService.Items)
                     {
                         var config = GetConfig(item.CustomConfigurationJson);
-
                         <tr>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <img src="/@item.Product.ImageUrl" style="width: 50px; border-radius: 5px; margin-right: 10px;" />
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center py-2">
+                                    <div class="z-cart-img-wrapper shadow-pixel me-3">
+                                        <img src="/@item.Product.ImageUrl" style="width: 70px;" alt="@item.Product.Name" />
+                                    </div>
                                     <div>
-                                        <strong>@item.Product.Name</strong>
-                                        @if (!string.IsNullOrEmpty(item.CustomConfigurationJson) && item.CustomConfigurationJson != "{}")
-                                        {
-                                            <span class="badge bg-info">Індивідуальний дизайн</span>
-                                        }
-                                        @if (!string.IsNullOrEmpty(item.UserUploadedImageUrl))
-                                        {
-                                            <div class="mt-1">
-                                                <span class="badge bg-info text-dark" style="font-size: 0.7rem;">
-                                                    <i class="bi bi-image"></i> Фото додано
-                                                </span>
+                                        <div class="fw-black text-uppercase fs-5">@item.Product.Name</div>
+                                        <div class="small fw-bold text-muted">ID: @item.Product.Id</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="z-design-badge shadow-pixel p-2 bg-light border border-2 border-dark" style="font-size: 0.8rem;">
+                                    @if (!string.IsNullOrEmpty(item.Options))
+                                    {
+                                        <div class="fw-black text-cyan">@item.Options</div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(item.CustomConfigurationJson) && item.CustomConfigurationJson != "{}")
+                                    {
+                                        <div class="border-top border-dark mt-1 pt-1">
+                                            <span class="badge bg-warning text-dark mb-1">CUSTOM 3D</span>
+                                            <div><strong>Текст:</strong> "@config?.Text"</div>
+                                            <div class="d-flex align-items-center">
+                                                <strong>Колір:</strong>
+                                                <div class="ms-1 border border-1 border-dark" style="width: 10px; height: 10px; background-color: @config?.Color;"></div>
                                             </div>
-                                        }
-                                    </div>
+                                        </div>
+                                    }
                                 </div>
                             </td>
                             <td>
-                                <div class="design-preview p-2 border rounded bg-light" style="font-size: 0.85rem;">
-                                    <div class="@config?.Font"><strong>Текст:</strong> "@(config?.Text ?? "—")"</div>
-                                    <div class="d-flex align-items-center mt-1">
-                                        <strong>Колір:</strong>
-                                        <div class="ms-2 shadow-sm" style="width: 12px; height: 12px; background-color: @config?.Color; border-radius: 50%; border: 1px solid #ccc;"></div>
-                                        <span class="ms-2"><strong>Розмір:</strong> @(config?.Size)px</span>
-                                    </div>
+                                <div class="z-qty-selector shadow-pixel">
+                                    <button @onclick="() => UpdateQuantity(item, -1)">-</button>
+                                    <span class="fw-black">@item.Quantity</span>
+                                    <button @onclick="() => UpdateQuantity(item, 1)">+</button>
                                 </div>
                             </td>
                             <td>
-                                <div class="input-group input-group-sm">
-                                    <button class="btn btn-outline-secondary" @onclick="() => UpdateQuantity(item, -1)">-</button>
-                                    <input type="number" class="form-control text-center"
-                                           value="@item.Quantity"
-                                           @onchange="@((e) => SetQuantity(item, e))" min="1" />
-                                    <button class="btn btn-outline-secondary" @onclick="() => UpdateQuantity(item, 1)">+</button>
-                                </div>
+                                <div class="fw-black fs-5">@item.TotalPrice.ToString("N0") ГРН</div>
+                                <div class="text-muted small fw-bold">@item.Price.ToString("N0") / шт</div>
                             </td>
-                            <td>
-                                <span class="fw-bold text-nowrap">@item.TotalPrice.ToString("N2") грн</span>
-                                <div class="text-muted small">@item.Product.BasePrice.ToString("N2") за шт.</div>
-                            </td>
-                            <td>
-                                <button class="btn btn-outline-danger btn-sm border-0" @onclick="() => CartService.RemoveItem(item)">
-                                    <i class="bi bi-trash"></i>
+                            <td class="text-end pe-4">
+                                <button class="btn btn-outline-danger border-0 shadow-none" @onclick="() => CartService.RemoveItem(item)">
+                                    <i class="bi bi-trash3-fill fs-4"></i>
                                 </button>
                             </td>
                         </tr>
@@ -94,18 +97,29 @@
             </table>
         </div>
 
-        <div class="text-end mt-4 p-4 bg-white border rounded shadow-sm">
-            <h4 class="mb-3">Всього до сплати: <span class="text-primary fw-bold">@CartService.GetTotal().ToString("N2") грн</span></h4>
-            <div class="d-flex justify-content-end gap-2">
-                <a href="/" class="btn btn-outline-primary px-4">Продовжити покупки</a>
-                <a href="/checkout" class="btn btn-success btn-lg px-5 fw-bold shadow">Оформити замовлення 🚀</a>
+        <div class="row align-items-center g-4">
+            <div class="col-md-6">
+                <div class="z-promo-box p-3 border border-3 border-dark shadow-pixel bg-white d-flex gap-2">
+                    <input type="text" class="form-control border-2 border-dark fw-bold" placeholder="ПРОМОКОД..." />
+                    <button class="z-btn z-btn-yellow shadow-pixel px-3 fw-black">OK</button>
+                </div>
+            </div>
+            <div class="col-md-6 text-end">
+                <div class="z-total-card p-4 shadow-hard border border-dark border-3 bg-white">
+                    <h5 class="fw-bold text-muted text-uppercase small mb-1">РАЗОМ ДО СПЛАТИ:</h5>
+                    <h2 class="fw-black display-5 text-dark m-0">@CartService.GetTotal().ToString("N0") ГРН</h2>
+                    <hr class="border-2 border-dark" />
+                    <div class="d-flex justify-content-end gap-3 mt-3">
+                        <a href="/" class="z-btn z-secondary-btn shadow-pixel py-3 px-4 text-decoration-none fw-black">НАЗАД</a>
+                        <a href="/checkout" class="z-btn z-action-btn shadow-pixel py-3 px-5 text-decoration-none fw-black fs-5">ОФОРМИТИ ✨</a>
+                    </div>
+                </div>
             </div>
         </div>
     }
 </div>
 
 @code {
-
     private class DesignConfig
     {
         public string Text { get; set; } = "";
@@ -116,32 +130,18 @@
 
     private DesignConfig? GetConfig(string json)
     {
-        if (string.IsNullOrWhiteSpace(json)) return new DesignConfig();
+        if (string.IsNullOrWhiteSpace(json)) return null;
         try
         {
             return JsonSerializer.Deserialize<DesignConfig>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
-        catch
-        {
-            return new DesignConfig { Text = "Стандарт" };
-        }
+        catch { return null; }
     }
 
-    // Видалив повний шлях до моделі, щоб код був чистішим (якщо @using GooseShop.Models додано зверху)
-    // Тепер CartItem буде розпізнано автоматично
     private void UpdateQuantity(CartItem item, int delta)
     {
         item.Quantity = Math.Max(1, item.Quantity + delta);
         CartService.NotifyStateChanged();
-    }
-
-    private void SetQuantity(CartItem item, ChangeEventArgs e)
-    {
-        if (int.TryParse(e.Value?.ToString(), out int val))
-        {
-            item.Quantity = Math.Max(1, val);
-            CartService.NotifyStateChanged();
-        }
     }
 
     protected override void OnInitialized()

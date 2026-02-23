@@ -9,140 +9,429 @@
 @inject AuthService AuthService
 @inject NavigationManager Nav
 
-<div class="container mt-4">
+<div class="container mt-4 pb-5">
     @if (AuthService.CurrentUser?.Role != "Admin")
     {
-        <div class="alert alert-danger">У вас немає прав доступу до цієї сторінки.</div>
+        <div class="alert alert-danger shadow-pixel border-3 border-dark fw-bold">
+            У ВАС НЕМАЄ ПРАВ ДОСТУПУ ДО ЦІЄЇ СТОРІНКИ. 🛑
+        </div>
     }
     else
     {
-        <h3>Панель адміністратора 🦢</h3>
-        <hr />
-
-        <div class="row">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-black text-uppercase">Панель адміністратора 🦢</h3>
+            <span class="badge bg-dark p-2 shadow-pixel">ADMIN MODE v2.0</span>
+        </div>
+        <hr class="border-3 border-dark" />
+        <div class="row g-4">
             <div class="col-md-5">
-                <div class="card shadow p-4">
-                    <h4>Додати новий товар 🦆</h4>
+                <div class="card shadow-hard p-4 border-dark border-3">
+                    <h4 class="fw-black mb-3 text-uppercase">
+                        @(isEditMode ? $"РЕДАГУВАННЯ ID: {editingProductId}" : "ДОДАТИ ТОВАР 🦆")
+                    </h4>
+
                     <div class="mb-3">
-                        <label class="form-label">Назва товару</label>
-                        <input @bind="newProduct.Name" class="form-control" placeholder="Напр: Чашка з гусаком" />
+                        <label class="fw-bold">НАЗВА ТОВАРУ</label>
+                        <input @bind="newProduct.Name" class="form-control shadow-pixel border-2 border-dark" />
                     </div>
+
                     <div class="mb-3">
-                        <label class="form-label">Ціна (грн)</label>
-                        <input @bind="newProduct.BasePrice" type="number" class="form-control" />
+                        <label class="fw-bold d-flex justify-content-between">
+                            ОПИС ТОВАРУ
+                            <button class="btn btn-sm btn-outline-dark shadow-pixel py-0" @onclick="GenerateAiDescription" disabled="@isAiGenerating">
+                                @(isAiGenerating ? "МАЛЮЮ ТЕКСТ..." : "ШІ-ГЕНЕРАЦІЯ ✨")
+                            </button>
+                        </label>
+                        <textarea @bind="newProduct.Description" class="form-control shadow-pixel border-2 border-dark" rows="4"></textarea>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Категорія</label>
-                        <select @bind="newProduct.CategoryId" class="form-control">
-                            <option value="1">Чашки</option>
-                            <option value="2">Футболки</option>
-                            <option value="3">Стікери</option>
-                        </select>
+
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label class="fw-bold">ЦІНА (ГРН)</label>
+                            <input @bind="newProduct.BasePrice" type="number" class="form-control shadow-pixel border-2 border-dark" />
+                        </div>
+                        <div class="col-4">
+                            <label class="fw-bold">КІЛЬКІСТЬ</label>
+                            <input @bind="initialStock" type="number" class="form-control shadow-pixel border-2 border-dark" />
+                        </div>
+                        <div class="col-4">
+                            <label class="fw-bold">КАТЕГОРІЯ</label>
+                            <select @bind="newProduct.CategoryId" class="form-select shadow-pixel border-2 border-dark">
+                                @foreach (var cat in categories)
+                                {
+                                    <option value="@cat.Id">@cat.Name</option>
+                                }
+                            </select>
+                        </div>
                     </div>
+
                     <div class="mb-3">
-                        <label class="form-label">Зображення товару</label>
-                        <InputFile OnChange="LoadFiles" class="form-control" />
+                        <label class="fw-bold">ОСНОВНИЙ КОЛІР</label>
+                        <div class="d-flex gap-2 mt-1">
+                            @foreach (var color in AllAvailableColors)
+                            {
+                                <button type="button" 
+                                        class="z-color-dot shadow-pixel @(initialColor == color ? "active" : "")"
+                                        style="background-color: @color; width: 30px; height: 30px; border-radius: 50%; border: 2px solid #000;"
+                                        @onclick="() => initialColor = color"></button>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="fw-bold">ФОТО ТОВАРУ</label>
+                        <InputFile OnChange="LoadFiles" class="form-control shadow-pixel border-2 border-dark" />
                         @if (!string.IsNullOrEmpty(newProduct.ImageUrl))
                         {
-                            <div class="mt-2">
-                                <img src="@newProduct.ImageUrl" width="100" class="img-thumbnail" />
+                            <div class="mt-2 text-center border border-2 border-dark border-dashed p-2 bg-white shadow-pixel">
+                                <img src="@newProduct.ImageUrl" style="max-height: 120px;" />
                             </div>
                         }
                     </div>
 
                     @if (!string.IsNullOrEmpty(statusMessage))
                     {
-                        <div class="alert alert-info">@statusMessage</div>
+                        <div class="alert @(statusMessage.Contains("Помилка") ? "alert-danger" : "alert-info") shadow-pixel border-2 border-dark fw-bold">
+                            @statusMessage
+                        </div>
                     }
 
-                    <button class="btn btn-success w-100" @onclick="SaveProduct" disabled="@isUploading">
-                        @if (isUploading)
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success shadow-pixel fw-black py-3 border-2 border-dark" @onclick="SaveProduct" disabled="@isUploading">
+                            @(isUploading ? "ЗАВАНТАЖЕННЯ..." : (isEditMode ? "ОНОВИТИ ДАНІ 💾" : "ЗБЕРЕГТИ В БАЗУ 💾"))
+                        </button>
+                        @if (isEditMode)
                         {
-                            <span>Завантаження...</span>
+                            <button class="btn btn-outline-dark shadow-pixel fw-bold" @onclick="CancelEdit">СКАСУВАТИ РЕДАГУВАННЯ ❌</button>
                         }
-                        else
-                        {
-
-                            <span>Зберегти в базу</span>
-                        }
-                    </button>
+                    </div>
                 </div>
             </div>
 
             <div class="col-md-7">
-                <h4>Поточні товари</h4>
-                <div class="alert alert-secondary">Список товарів з'явиться тут пізніше...</div>
+                <h4 class="fw-black mb-3 text-uppercase text-center">ТОВАРИ В БАЗІ (@existingProducts.Count)</h4>
+                <div class="table-responsive shadow-hard border border-dark border-3 bg-white">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ФОТО</th>
+                                <th>НАЗВА</th>
+                                <th>ЦІНА</th>
+                                <th>СКЛАД</th>
+                                <th>ДІЇ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in existingProducts)
+                            {
+                                <tr>
+                                    <td><img src="@p.ImageUrl" width="45" class="shadow-pixel border border-1 border-dark" /></td>
+                                    <td class="fw-bold small">@p.Name</td>
+                                    <td class="fw-black text-cyan">@p.BasePrice</td>
+                                    <td>
+                                        <span class="badge @(p.Variants.Sum(v => v.StockQuantity) < 5 ? "bg-danger" : "bg-success") border border-dark shadow-pixel">
+                                            @p.Variants.Sum(v => v.StockQuantity) ШТ
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group shadow-pixel">
+                                            <button class="btn btn-sm btn-warning border-2 border-dark" @onclick="() => StartEditing(p)" title="Редагувати">✏️</button>
+                                            <button class="btn btn-sm btn-cyan border-2 border-dark" @onclick="() => OpenVariantsModal(p)" title="Варіанти">⚙️</button>
+                                            <button class="btn btn-sm btn-danger border-2 border-dark" @onclick="() => DeleteProduct(p.Id)" title="Видалити">❌</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     }
-</div>
 
+
+</div>
+@if (showVariantsModal && editingProduct != null)
+{
+    <div class="modal fade show d-block" style="background: rgba(0,0,0,0.8); z-index: 9999;">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content shadow-hard border-3 border-dark">
+                <div class="modal-header bg-warning border-bottom border-3 border-dark">
+                    <h5 class="fw-black text-uppercase">ВАРІАНТИ: @editingProduct.Name</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    @* Форма додавання нового варіанту *@
+                    <div class="row g-2 mb-4 p-3 bg-light border-dashed border-2 border-dark shadow-pixel">
+                        <div class="col-md-3">
+                            <label class="small fw-bold">РОЗМІР/ОБ'ЄМ</label>
+                            <input @bind="newVariant.Size" class="form-control shadow-pixel border-2 border-dark" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="small fw-bold">КОЛІР</label>
+                            <select @bind="newVariant.Color" class="form-select shadow-pixel border-2 border-dark">
+                                @foreach (var c in AllAvailableColors)
+                                {
+                                    <option value="@c">@c</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="small fw-bold">ЦІНА</label>
+                            <input @bind="newVariant.Price" type="number" class="form-control shadow-pixel border-2 border-dark" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="small fw-bold">КІЛЬКІСТЬ</label>
+                            <input @bind="newVariant.StockQuantity" type="number" class="form-control shadow-pixel border-2 border-dark" />
+                        </div>
+                        <div class="col-12 mt-2">
+                            <button class="btn btn-dark w-100 shadow-pixel fw-bold" @onclick="AddVariant">ДОДАТИ КОМБІНАЦІЮ +</button>
+                        </div>
+                    </div>
+
+                    @* Список вже існуючих варіацій *@
+                    <table class="table table-sm align-middle">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Розмір</th>
+                                <th>Колір</th>
+                                <th>Ціна</th>
+                                <th>Склад</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var v in editingProduct.Variants)
+                            {
+                                <tr>
+                                    <td>@v.Size</td>
+                                    <td><span class="z-color-dot shadow-pixel d-inline-block" style="background:@v.Color; width:15px; height:15px; border-radius:50%"></span> @v.Color</td>
+                                    <td class="fw-bold">@v.Price</td>
+                                    <td>@v.StockQuantity ШТ</td>
+                                    <td><button class="btn btn-sm btn-outline-danger border-0" @onclick="() => DeleteVariant(v.Id)">🗑️</button></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-dark shadow-pixel" @onclick="CloseModal">ЗАКРИТИ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 @code {
-    private Product newProduct = new() { CategoryId = 1, Name = "", ImageUrl = "" };
+    private Product newProduct = new() { CategoryId = 1, Name = "", Description = "", ImageUrl = "images/no-image.jpg" };
+    private int initialStock = 10;
+    private string initialColor = "white";
+    private readonly string[] AllAvailableColors = { "white", "black", "red", "cyan", "yellow" };
+
+    private List<Product> existingProducts = new();
+    private List<Category> categories = new();
+
     private string statusMessage = "";
     private bool isUploading = false;
+    private bool isAiGenerating = false;
+    private bool isEditMode = false;
+    private int? editingProductId;
 
-    protected override void OnInitialized()
+    private bool showVariantsModal = false;
+    private Product? editingProduct;
+    private ProductVariant newVariant = new();
+
+    protected override async Task OnInitializedAsync()
     {
-        // Перевірка ролі при ініціалізації
         if (AuthService.CurrentUser?.Role != "Admin")
         {
             Nav.NavigateTo("/login");
+            return;
         }
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        using var context = DbFactory.CreateDbContext();
+        categories = await context.Categories.ToListAsync();
+        existingProducts = await context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Variants)
+            .OrderByDescending(p => p.Id)
+            .ToListAsync();
+
+        if (categories.Any() && newProduct.CategoryId == 0)
+            newProduct.CategoryId = categories.First().Id;
+    }
+
+    private void StartEditing(Product p)
+    {
+        isEditMode = true;
+        editingProductId = p.Id;
+        newProduct = new Product
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Description = p.Description,
+            BasePrice = p.BasePrice,
+            CategoryId = p.CategoryId,
+            ImageUrl = p.ImageUrl
+        };
+        statusMessage = "Редагування активовано ✨";
+    }
+
+    private void CancelEdit()
+    {
+        isEditMode = false;
+        editingProductId = null;
+        newProduct = new() { CategoryId = categories.FirstOrDefault()?.Id ?? 1, ImageUrl = "images/no-image.jpg" };
+        statusMessage = "Редагування скасовано";
     }
 
     private async Task SaveProduct()
     {
+
         if (string.IsNullOrWhiteSpace(newProduct.Name) || newProduct.BasePrice <= 0)
         {
-            statusMessage = "Будь ласка, заповніть назву та ціну!";
+            statusMessage = "Помилка: Назва та ціна обов'язкові!";
             return;
         }
 
         try
         {
             using var context = DbFactory.CreateDbContext();
-            context.Products.Add(newProduct);
-            await context.SaveChangesAsync();
 
-            statusMessage = "Товар успішно додано! ✅";
-            newProduct = new() { CategoryId = 1, Name = "", ImageUrl = "" };
+            if (isEditMode)
+            {
+                var dbProduct = await context.Products.Include(p => p.Variants).FirstOrDefaultAsync(p => p.Id == editingProductId);
+                if (dbProduct != null)
+                {
+                    dbProduct.Name = newProduct.Name;
+                    dbProduct.Description = newProduct.Description;
+                    dbProduct.BasePrice = newProduct.BasePrice;
+                    dbProduct.CategoryId = newProduct.CategoryId;
+                    dbProduct.ImageUrl = newProduct.ImageUrl;
+
+                    // Оновлюємо кількість у ПЕРШОМУ варіанті (базовому)
+                    var baseVariant = dbProduct.Variants.FirstOrDefault();
+                    if (baseVariant != null)
+                    {
+                        baseVariant.StockQuantity = initialStock;
+                        baseVariant.Price = newProduct.BasePrice; // щоб ціна теж синхронізувалася
+                    }
+
+                    await context.SaveChangesAsync();
+                    statusMessage = "Товар та залишки оновлено! ✅";
+                }
+            }
+
+            await LoadData();
+            if (isEditMode) CancelEdit();
+            else newProduct = new() { CategoryId = categories.FirstOrDefault()?.Id ?? 1, ImageUrl = "images/no-image.jpg" };
         }
-        catch (Exception ex)
+        catch (Exception ex) { statusMessage = $"Помилка: {ex.Message}"; }
+    }
+
+    private async Task GenerateAiDescription()
+    {
+        if (string.IsNullOrWhiteSpace(newProduct.Name))
         {
-            statusMessage = $"Помилка: {ex.Message}";
+            statusMessage = "Спочатку напишіть назву товару! ✍️";
+            return;
         }
+
+        isAiGenerating = true;
+        // Імітація запиту до ШІ (сюди підключимо Gemini API)
+        await Task.Delay(1500);
+        newProduct.Description = $"Цей {newProduct.Name} просто імба! 🔥 Твій стиль взлетить до небес, а гусак на принті додасть +100 до харизми. No cap, це база! 🦢✨";
+        isAiGenerating = false;
     }
 
     private async Task LoadFiles(InputFileChangeEventArgs e)
     {
         isUploading = true;
-        statusMessage = "Завантаження фото...";
-
         try
         {
             var file = e.File;
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.Name);
-
-            // Створюємо папку images, якщо її немає
             var imagesPath = Path.Combine(Environment.WebRootPath, "images");
+
             if (!Directory.Exists(imagesPath)) Directory.CreateDirectory(imagesPath);
 
             var path = Path.Combine(imagesPath, fileName);
-
             await using FileStream fs = new(path, FileMode.Create);
-            await file.OpenReadStream(maxAllowedSize: 1024 * 1024 * 10).CopyToAsync(fs);
+            await file.OpenReadStream(maxAllowedSize: 1024 * 1024 * 5).CopyToAsync(fs);
 
             newProduct.ImageUrl = $"images/{fileName}";
-            statusMessage = "Фото завантажено 📸";
+            statusMessage = "Фото завантажено! 📸";
         }
-        catch (Exception ex)
+        catch (Exception ex) { statusMessage = $"Помилка завантаження: {ex.Message}"; }
+        finally { isUploading = false; }
+    }
+    private void OpenVariantsModal(Product p)
+    {
+        editingProduct = p;
+        newVariant = new ProductVariant
         {
-            statusMessage = $"Помилка завантаження: {ex.Message}";
-        }
-        finally
+            ProductId = p.Id,
+            Price = p.BasePrice,
+            StockQuantity = 10,
+            Color = "white",
+            Size = IsCupCategory(p.CategoryId) ? "330" : "M"
+        };
+        showVariantsModal = true;
+    }
+
+    private async Task DeleteProduct(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        var p = await context.Products.FindAsync(id);
+        if (p != null)
         {
-            isUploading = false;
+            context.Products.Remove(p);
+            await context.SaveChangesAsync();
+            await LoadData();
+            statusMessage = "Товар видалено 🗑️";
         }
     }
+    private void CloseModal() => showVariantsModal = false;
+    private bool IsCupCategory(int catId)
+    {
+        return categories.FirstOrDefault(c => c.Id == catId)?.Name.Contains("Чашки", StringComparison.OrdinalIgnoreCase) ?? false;
+    }
+    
+    private async Task AddVariant()
+    {
+        if (editingProduct == null) return;
+        using var context = DbFactory.CreateDbContext();
+        newVariant.ProductId = editingProduct.Id;
+        newVariant.Title = $"{editingProduct.Name} - {newVariant.Size} ({newVariant.Color})";
+
+        context.ProductVariants.Add(newVariant);
+        await context.SaveChangesAsync();
+
+        await LoadData(); // Перезавантажуємо, щоб оновити список у модалці
+        editingProduct = existingProducts.FirstOrDefault(p => p.Id == editingProduct.Id);
+        statusMessage = "Варіант додано! 🚀";
+    }
+
+    private async Task DeleteVariant(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        // Знаходимо саме варіацію за її ID
+        var v = await context.ProductVariants.FindAsync(id);
+        if (v != null)
+        {
+            // ВАЖЛИВО: Видаляємо з таблиці ProductVariants, а не Products
+            context.ProductVariants.Remove(v);
+            await context.SaveChangesAsync();
+
+            await LoadData();
+
+            // Оновлюємо поточний об'єкт у модалці, щоб він "побачив" видалення
+            if (editingProduct != null)
+                editingProduct = existingProducts.FirstOrDefault(p => p.Id == editingProduct.Id);
+        }
+    }
+    // Решта методів (OpenVariantsModal, DeleteVariant, AddVariant, LoadFiles, IsCupCategory, GenerateAiDescription, DeleteProduct) залишаються без змін з попередньої версії...
 }

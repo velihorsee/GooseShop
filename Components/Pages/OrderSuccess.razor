@@ -1,31 +1,86 @@
 ﻿@page "/order-success"
+@implements IDisposable
 @inject NavigationManager Nav
+@inject IJSRuntime JS
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("gooseGame.start");
+        }
+    }
 
-<div class="container mt-5">
+    public void Dispose()
+    {
+        // Коли юзер йде зі сторінки — зупиняємо JS таймер!
+        // Це критично для продуктивності
+        _ = JS.InvokeVoidAsync("gooseGame.stop");
+    }
+}
+<div class="container mt-5 pb-5">
     <div class="row justify-content-center">
-        <div class="col-md-8 text-center">
-            <div class="card shadow-lg border-0 p-5">
-                <div class="mb-4">
-                    <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+        <div class="col-md-8">
+            @* ГОЛОВНА КАРТКА УСПІХУ *@
+            <div class="z-content-card shadow-hard p-5 text-center bg-white border-dark border-4 position-relative overflow-hidden">
+                <div class="z-goose-track">
+                    <div class="z-running-goose">
+                        🦢
+                        <div class="z-egg-spawn"></div>
+                    </div>
                 </div>
-                <h2 class="fw-bold mb-3">Дякуємо за ваше замовлення! 🦢</h2>
-                <p class="text-muted fs-5">
-                    Ми вже отримали ваші дані та почали готувати замовлення до відправки.
-                    Найближчим часом ми зв'яжемося з вами для підтвердження.
+                @* ДЕКОРАТИВНИЙ ЕЛЕМЕНТ НА ФОНІ *@
+                <div class="z-bg-text">GOOSE GANG</div>
+
+                <div class="mb-4 position-relative">
+                    @* Наш фірмовий гусак замість нудної галочки *@
+                    <h1 class="display-1 mb-0">🦢</h1>
+                    <div class="z-badge-success shadow-pixel">MISSION COMPLETED</div>
+                </div>
+
+                <h2 class="fw-black text-uppercase display-5 mb-3">ДЯКУЄМО ЗА ДРОП! 🔥</h2>
+
+                <p class="fw-bold fs-5 text-dark mb-5 px-lg-5">
+                    Ми вже отримали твій запит і почали пакувати твій шмот.
+                    Гуси вже летять до тебе!
                 </p>
 
-                <div class="bg-light p-4 rounded-3 my-4">
-                    <p class="mb-1 text-secondary">Копію деталей замовлення ми надіслали на ваш Email.</p>
-                    <small class="text-muted">Перевірте папку "Спам", якщо лист не надійшов протягом 5 хвилин.</small>
+                @* ІНФО-БЛОК ПРО EMAIL *@
+                <div class="z-info-panel shadow-pixel p-4 mb-5 text-start border border-3 border-dark">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-envelope-at-fill fs-3 me-3 text-cyan"></i>
+                        <h5 class="fw-black m-0 text-uppercase">ЧЕКАЙ НА ЛИСТ</h5>
+                    </div>
+                    <p class="m-0 fw-bold small text-muted">
+                        Ми надіслали деталі замовлення (і твій пароль від кабінету) на твій Email.
+                        Якщо листа немає — перевір папку "СПАМ", гуси іноді залітають туди випадково. 🦆
+                    </p>
                 </div>
 
-                <div class="d-grid gap-2 d-md-block">
-                    <button class="btn btn-primary btn-lg px-5" @onclick='() => Nav.NavigateTo("/")'>
-                        <i class="bi bi-house-door me-2"></i> На головну
-                    </button>
-                    <button class="btn btn-outline-secondary btn-lg px-5" @onclick='() => Nav.NavigateTo("/catalog")'>
-                        Продовжити покупки
-                    </button>
+                @* КНОПКИ ДІЙ *@
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <button class="z-btn z-action-btn w-100 py-3 shadow-pixel fw-black text-uppercase"
+                                @onclick='() => Nav.NavigateTo("/")'>
+                            <i class="bi bi-house-door-fill me-2"></i> НА ГОЛОВНУ
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="z-btn z-secondary-btn w-100 py-3 shadow-pixel fw-black text-uppercase"
+                                @onclick='() => Nav.NavigateTo("/profile")'>
+                            В ОСОБИСТИЙ КАБІНЕТ <i class="bi bi-person-fill ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                @* ЗУМЕРСЬКИЙ ЗАКЛИК ДО ДІЇ *@
+                <div class="mt-5">
+                    <p class="small fw-black text-uppercase text-muted">Поділися своїм вибором у соцмережах:</p>
+                    <div class="d-flex justify-content-center gap-4 fs-2">
+                        <i class="bi bi-instagram z-social-icon"></i>
+                        <i class="bi bi-tiktok z-social-icon"></i>
+                        <i class="bi bi-telegram z-social-icon"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -33,11 +88,134 @@
 </div>
 
 <style>
-    body {
-        background-color: #f8f9fa;
+    /* ФОНОВИЙ ТЕКСТ */
+    .z-bg-text {
+        position: absolute;
+        top: 20px;
+        left: -50px;
+        font-size: 5rem;
+        font-weight: 900;
+        color: rgba(0,0,0,0.03);
+        transform: rotate(-15deg);
+        white-space: nowrap;
+        pointer-events: none;
     }
 
-    .card {
-        border-radius: 20px;
+    /* БЕЙДЖИК УСПІХУ */
+    .z-badge-success {
+        background: #00ff00;
+        color: #000;
+        display: inline-block;
+        padding: 5px 15px;
+        font-weight: 900;
+        font-size: 1.2rem;
+        border: 3px solid #000;
+        transform: rotate(5deg);
+        margin-top: -20px;
+        position: relative;
     }
+
+    /* ІНФО-ПАНЕЛЬ */
+    .z-info-panel {
+        background: #f0f0f0;
+    }
+
+    /* СОЦІАЛЬНІ ІКОНКИ */
+    .z-social-icon {
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+        .z-social-icon:hover {
+            color: var(--z-cyan);
+            transform: scale(1.2) rotate(10deg);
+        }
+
+    /* КНОПКА SECONDARY */
+    .z-secondary-btn {
+        background: #fff;
+        border: 3px solid #000;
+    }
+
+        .z-secondary-btn:hover {
+            background: #eee;
+            box-shadow: 4px 4px 0px #000;
+        }
+
+
+    /* Трек, по якому бігає гусак */
+    .z-goose-track {
+        position: relative;
+        width: 100%;
+        height: 100px;
+        overflow: hidden;
+        margin-top: 20px;
+        border-bottom: 4px dashed #000;
+    }
+
+    /* Сам гусак */
+    .z-running-goose {
+        position: absolute;
+        font-size: 3rem;
+        bottom: 5px;
+        left: -50px;
+        animation: goose-run 8s linear infinite;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Анімація бігу */
+    @@keyframes goose-run {
+        0% {
+            left: -50px;
+            transform: scaleX(1);
+        }
+
+        45% {
+            transform: scaleX(1);
+        }
+
+        50% {
+            left: calc(100% + 50px);
+            transform: scaleX(-1);
+        }
+        /* Розвертається */
+        95% {
+            transform: scaleX(-1);
+        }
+
+        100% {
+            left: -50px;
+            transform: scaleX(1);
+        }
+    }
+
+    /* Яйця, що випадають */
+    /* Яйця, що випадають */
+    .z-egg {
+        position: absolute;
+        font-size: 1.2rem;
+        animation: egg-drop 0.8s ease-in forwards;
+        z-index: 10;
+    }
+
+    @@keyframes egg-drop {
+        0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 1;
+        }
+
+        80% {
+            transform: translateY(40px) rotate(0deg);
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateY(45px) rotate(0deg);
+            opacity: 1;
+        }
+    }
+
+    
 </style>

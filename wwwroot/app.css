@@ -1,3 +1,5 @@
+
+
 /* --- СИСТЕМНІ СТИЛІ BLAZOR --- */
 .content {
     padding-top: 1.1rem;
@@ -135,4 +137,25 @@
 /* Додатковий глітч-ефект для тексту (опціонально) */
 .text-glitch:hover {
     text-shadow: 2px 0 var(--z-pink), -2px 0 var(--z-cyan);
+}
+
+/* Зупиняємо анімацію, якщо користувач не бачить сторінку */
+@media (prefers-reduced-motion: no-preference) {
+    .falling-goose {
+        animation-play-state: running;
+    }
+}
+
+/* Якщо вкладка неактивна, нові гуси не повинні з'являтися або анімуватися */
+:root:has(body:not(:focus-within)) .falling-goose {
+    display: none !important;
+}
+/* Додай це для всіх анімаційних елементів сайту */
+.z-running-goose,
+.falling-goose,
+.z-egg,
+.z-goose-track {
+    pointer-events: none !important;
+    user-select: none !important;
+    -webkit-user-drag: none !important;
 }

@@ -56,30 +56,35 @@
                     {
                         <tr>
                             <td>#@order.Id</td>
-                            <td>@order.OrderDate.ToString("dd.MM HH:mm")</td>
+                            <td>@order.CreatedAt.ToString("dd.MM HH:mm")</td>
                             <td>
                                 <div><strong>@order.CustomerName</strong></div>
                                 <small class="text-muted">@order.Phone</small>
                             </td>
                             <td><strong>@order.TotalAmount.ToString("N0") грн</strong></td>
                             <td>
-                                @if (order.IsCompleted)
+                                @if (order.Status == "Виконано")
                                 {
-                                    <span class="badge bg-success">Виконано</span>
+                                    <span class="badge bg-success shadow-pixel">ВИКОНАНО ✅</span>
+                                }
+                                else if (order.Status == "В роботі")
+                                {
+                                    <span class="badge bg-info text-dark shadow-pixel">В РОБОТІ 🛠️</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-warning text-dark">Нове</span>
+                                    <span class="badge bg-warning text-dark shadow-pixel">НОВЕ ✨</span>
                                 }
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-outline-primary" @onclick="() => ToggleDetails(order.Id)">Деталі</button>
-                                <button class="btn btn-sm @(order.IsCompleted ? "btn-secondary" : "btn-success") ms-2"
-                                        @onclick="() => UpdateStatus(order)">
-                                    @(order.IsCompleted ? "Відмінити" : "Готово")
+                                <button class="btn btn-sm btn-outline-dark shadow-pixel fw-black" @onclick="() => ToggleDetails(order.Id)">ДЕТАЛІ</button>
+
+                                @* Кнопка тепер змінює статус по колу *@
+                                <button class="btn btn-sm btn-cyan ms-2 shadow-pixel fw-black" @onclick="() => UpdateStatus(order)">
+                                    КРОК ВПЕРЕД ➡️
                                 </button>
-                                <button class="btn btn-sm btn-outline-danger ms-2"
-                                        @onclick="() => DeleteOrder(order)">
+
+                                <button class="btn btn-sm btn-danger ms-2 shadow-pixel" @onclick="() => DeleteOrder(order)">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>
@@ -155,7 +160,7 @@
         allOrders = await DbContext.Orders
             .Include(o => o.OrderItems)
             .ThenInclude(oi => oi.Product)
-            .OrderByDescending(o => o.OrderDate)
+            .OrderByDescending(o => o.CreatedAt) // Використовуємо CreatedAt з нової моделі
             .ToListAsync();
         orders = allOrders;
     }
@@ -174,8 +179,8 @@
     {
         var status = e.Value?.ToString();
         if (status == "all") orders = allOrders;
-        else if (status == "new") orders = allOrders?.Where(o => !o.IsCompleted).ToList();
-        else if (status == "completed") orders = allOrders?.Where(o => o.IsCompleted).ToList();
+        else if (status == "new") orders = allOrders?.Where(o => o.Status == "Нове").ToList();
+        else if (status == "completed") orders = allOrders?.Where(o => o.Status == "Виконано").ToList();
     }
 
     private async Task ToggleDetails(int orderId)
@@ -206,20 +211,18 @@
 
     private async Task UpdateStatus(Order order)
     {
-        order.IsCompleted = !order.IsCompleted;
-        await DbContext.SaveChangesAsync();
-
-        if (order.IsCompleted)
+        // Проста логіка зміни статусів по колу
+        if (order.Status == "Нове") order.Status = "В роботі";
+        else if (order.Status == "В роботі")
         {
-            try
-            {
-                await EmailService.SendOrderReadyEmail(order);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Email error: {ex.Message}");
-            }
+            order.Status = "Виконано";
+            // Відправляємо лист клієнту, що все готово
+            try { await EmailService.SendOrderReadyEmail(order); }
+            catch (Exception ex) { Console.WriteLine($"Email error: {ex.Message}"); }
         }
+        else order.Status = "Нове"; // Скидання для тестів
+
+        await DbContext.SaveChangesAsync();
     }
 
     private async Task DeleteOrder(Order order)

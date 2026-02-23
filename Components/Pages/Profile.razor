@@ -74,16 +74,18 @@
                                 {
                                     <div class="z-order-item shadow-pixel p-3">
                                         <div class="d-flex justify-content-between align-items-start mb-2">
+                                            @* ТУТ МИ ВИПРАВИЛИ СТАТУСИ *@
                                             <div>
                                                 <span class="z-order-id">№@order.Id</span>
-                                                <span class="z-status-badge @(order.IsCompleted ? "status-ok" : "status-wait")">
-                                                    @(order.IsCompleted ? "ДОСТАВЛЕНО" : "В ДОРОЗІ")
+                                                <span class="z-status-badge @(order.Status == "Виконано" ? "status-ok" : "status-wait")">
+                                                    @order.Status.ToUpper()
                                                 </span>
                                             </div>
                                             <span class="fw-black fs-5">@order.TotalAmount.ToString("N0") ГРН</span>
                                         </div>
                                         <div class="d-flex flex-wrap gap-3 small fw-bold opacity-75 mt-3">
-                                            <span><i class="bi bi-calendar3 me-1"></i> @order.OrderDate.ToShortDateString()</span>
+                                            @* ТУТ МИ ЗАМІНИЛИ OrderDate НА CreatedAt *@
+                                            <span><i class="bi bi-calendar3 me-1"></i> @order.CreatedAt.ToShortDateString()</span>
                                             <span><i class="bi bi-geo-alt-fill me-1"></i> @order.ShippingAddress</span>
                                         </div>
                                     </div>
@@ -141,9 +143,11 @@
         if (AuthService.IsLoggedIn)
         {
             using var context = DbFactory.CreateDbContext();
+
+            // Змінюємо OrderDate на CreatedAt для сортування
             userOrders = await context.Orders
                 .Where(o => o.Email == AuthService.CurrentUser.Email)
-                .OrderByDescending(o => o.OrderDate)
+                .OrderByDescending(o => o.CreatedAt)
                 .ToListAsync();
 
             editUser = new User

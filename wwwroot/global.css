@@ -12,6 +12,22 @@
     --z-black: #1a1a1a;
     --z-border: 4px solid #000;
 }
+
+/* Робимо всі анімаційні об'єкти ігноруючими кліки та стійкими до пауз */
+.z-running-goose,
+.falling-goose,
+.z-egg,
+.z-goose-track {
+    pointer-events: none !important; /* Кліки проходять крізь них */
+    user-select: none !important; /* Заборона виділення */
+    animation-play-state: running !important; /* Примусовий запуск */
+    will-change: transform; /* Оптимізація для GPU */
+}
+
+/* Прибираємо глобальну паузу при фокусі, якщо вона лишилася в кеші */
+:root * {
+    animation-play-state: running !important;
+}
 /* --- ТОТАЛЬНЕ ПЕРЕКРИТТЯ ФОНУ --- */
 html {
     background-color: #ffffff !important;

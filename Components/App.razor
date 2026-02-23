@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <script src="js/constructor.js"></script>
+    <script src="js/animations.js"></script>
 </head>
 
 <body>
@@ -44,11 +45,10 @@
             }
         };
 
-                window.initGooseRain = () => {
+                        window.initGooseRain = () => {
             const banner = document.querySelector('.z-hero-card');
             if (!banner) return;
 
-            // Глобальні змінні для миші, щоб не спамити лісенерами
             let mX = 0;
             let mY = 0;
             window.addEventListener('mousemove', (e) => {
@@ -58,13 +58,17 @@
             });
 
             function createFallingGoose() {
+                // --- ФІКС НАКОПИЧЕННЯ ---
+                // Якщо вкладка неактивна — не створюємо елемент
+                if (document.hidden) return;
+
                 const goose = document.createElement('div');
                 goose.className = 'falling-goose';
                 goose.innerHTML = '🦢';
 
                 let curX = Math.random() * banner.offsetWidth;
                 let curY = -50;
-                let speedY = 0.8 + Math.random() * 1.0; // Повільніше, щоб встигнути "відгодувати"
+                let speedY = 0.8 + Math.random() * 1.0;
                 let scale = 1.0;
                 let targetOffsetX = 0;
                 let targetOffsetY = 0;
@@ -73,30 +77,23 @@
                 banner.appendChild(goose);
 
                 const update = () => {
-                    // Дистанція до миші
                     const dx = (curX + targetOffsetX) - mX;
                     const dy = (curY + targetOffsetY) - mY;
                     const dist = Math.sqrt(dx * dx + dy * dy);
 
-                    if (dist < 180) { // Радіус впливу
+                    if (dist < 180) {
                         const angle = Math.atan2(dy, dx);
                         const force = (180 - dist) / 180;
-
-                        // Гусак тікає
                         targetOffsetX += Math.cos(angle) * 12 * force;
                         targetOffsetY += Math.sin(angle) * 12 * force;
-
-                        // ГУСАК РОСТЕ!
                         scale += 0.03;
-                        if (scale > 6) scale = 6; // Максимальний розмір
+                        if (scale > 6) scale = 6;
                     }
 
                     curY += speedY;
                     targetOffsetX *= 0.92;
                     targetOffsetY *= 0.92;
 
-                    // Ефект "люті": чим більший гусак, тим червоніший
-                    // filter: hue-rotate змінює колір емодзі
                     const anger = Math.min((scale - 1) * 40, 150);
 
                     goose.style.transform = `translate(${targetOffsetX}px, ${targetOffsetY}px) scale(${scale})`;
@@ -106,7 +103,7 @@
                     if (curY < banner.offsetHeight + 100) {
                         requestAnimationFrame(update);
                     } else {
-                        goose.remove();
+                        goose.remove(); // Видаляємо з пам'яті
                     }
                 };
 

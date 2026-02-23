@@ -99,24 +99,40 @@
                         </div>
                     </div>
 
-                    @* КУПІВЛЯ *@
-                    <div class="z-buy-panel p-4 shadow-pixel mb-4 bg-white">
+                    @* КУПІВЛЯ: Оновлено стилі та додано метод *@
+                    <div class="z-buy-panel p-4 shadow-pixel mb-4 bg-white border border-4 border-dark">
                         <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+                            @* СЕКТОР КІЛЬКОСТІ *@
                             <div class="z-qty-selector shadow-pixel">
-                                <button @onclick="() => ChangeQuantity(-1)">-</button>
-                                <span class="fw-black">@quantity</span>
-                                <button @onclick="() => ChangeQuantity(1)">+</button>
+                                <button class="px-3 fw-black" @onclick="() => ChangeQuantity(-1)">-</button>
+                                <span class="fw-black px-3">@quantity</span>
+                                <button class="px-3 fw-black" @onclick="() => ChangeQuantity(1)">+</button>
                             </div>
-                            <div class="fw-black fs-3">РАЗОМ: @((CurrentPrice * quantity).ToString("N0")) ГРН</div>
+
+                            @* ЦІНА *@
+                            <div class="fw-black fs-2 text-uppercase">
+                                РАЗОМ: <span class="text-cyan">@((CurrentPrice * quantity).ToString("N0"))</span> ГРН
+                            </div>
                         </div>
 
                         <div class="d-grid gap-3">
-                            <button class="z-btn z-btn-cyan shadow-pixel py-3 fs-5" @onclick="AddToCart">
-                                В КОШИК 🛒
+                            @* ГОЛОВНА КНОПКА: Додано класи та @onclick *@
+                            <button class="z-btn z-action-btn shadow-pixel py-3 fs-4 fw-black"
+                                    disabled="@(CurrentVariant?.StockQuantity <= 0)"
+                                    @onclick="AddToCart">
+                                @if (CurrentVariant?.StockQuantity > 0)
+                                {
+                                    <span>В КОШИК 🛒</span>
+                                }
+                                else
+                                {
+                                    <span>НЕМАЄ В НАЯВНОСТІ 💀</span>
+                                }
                             </button>
+
                             @if (hasConstructor)
                             {
-                                <button class="z-btn z-btn-yellow shadow-pixel py-3 fs-5" @onclick="GoToConstructor">
+                                <button class="z-btn z-secondary-btn shadow-pixel py-3 fs-5 fw-black" @onclick="GoToConstructor">
                                     СТВОРИТИ СВІЙ ДИЗАЙН 🎨
                                 </button>
                             }
@@ -127,6 +143,40 @@
         </div>
     }
 </div>
+@* БЛОК СУПУТНІХ ТОВАРІВ *@
+@if (relatedProducts != null && relatedProducts.Any())
+{
+    <div class="mt-5 pt-5 border-top border-dark border-2">
+        <h3 class="fw-black text-uppercase mb-4">З ЦИМ ТОВАРОМ КУПУЮТЬ 🔥</h3>
+        <div class="row g-4">
+            @foreach (var p in relatedProducts)
+            {
+                <div class="col-6 col-md-3">
+                    <div class="z-card-simple shadow-pixel p-2">
+                        <a href="/product/@p.Id" class="text-decoration-none text-dark">
+                            <img src="/@p.ImageUrl" class="img-fluid mb-2" alt="@p.Name">
+                            <div class="fw-bold text-truncate">@p.Name</div>
+                            <div class="text-cyan">@p.BasePrice.ToString("N0") ГРН</div>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@* БЛОК ВСІХ КАТЕГОРІЙ *@
+<div class="mt-5 py-4 bg-dark text-white shadow-hard mx-n3 px-3">
+    <div class="container">
+        <h4 class="fw-black mb-3">ДИВИСЬ ТАКОЖ:</h4>
+        <div class="d-flex flex-wrap gap-3">
+            @foreach (var cat in allCategories)
+            {
+                <a href="/?category=@cat.Id" class="z-cat-pill">@cat.Name.ToUpper()</a>
+            }
+        </div>
+    </div>
+</div>
 
 @code {
     [Parameter] public int Id { get; set; }
@@ -134,12 +184,15 @@
     private int quantity = 1;
     private bool hasConstructor = false;
 
+    // Списки для нових блоків
+    private List<Product> relatedProducts = new();
+    private List<Category> allCategories = new();
+
     private string selectedSize = "";
     private string selectedColor = "white";
 
     private readonly string[] AllAvailableColors = { "white", "black", "red", "cyan", "yellow" };
 
-    // Використовуємо StringComparison для надійності
     private bool IsCup => product?.Category?.Name?.Contains("Чашки", StringComparison.OrdinalIgnoreCase) ?? false;
 
     private ProductVariant? CurrentVariant => product?.Variants?
@@ -149,7 +202,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        // Використовуємо OnParametersSetAsync, щоб при переході між товарами дані оновлювались
+        // 1. Завантажуємо основний товар
         product = await DbContext.Products
             .Include(p => p.Category)
             .Include(p => p.Variants)
@@ -159,7 +212,16 @@
         {
             hasConstructor = await DbContext.ProductConstructors.AnyAsync(c => c.ProductId == Id);
 
-            // Якщо selectedSize ще порожній, ініціалізуємо його першим доступним варіантом
+            // 2. Завантажуємо супутні товари (з тієї ж категорії, крім поточного)
+            relatedProducts = await DbContext.Products
+                .Where(p => p.CategoryId == product.CategoryId && p.Id != Id)
+                .Take(4) // Беремо максимум 4 товари
+                .ToListAsync();
+
+            // 3. Завантажуємо всі категорії для швидкої навігації внизу
+            allCategories = await DbContext.Categories.ToListAsync();
+
+            // Ініціалізація вибору варіанта
             if (string.IsNullOrEmpty(selectedSize) || !product.Variants.Any(v => v.Size == selectedSize))
             {
                 var defaultVariant = product.Variants.FirstOrDefault();
@@ -175,13 +237,10 @@
     private void SelectSize(string size)
     {
         selectedSize = size;
-
-        // Перевірка: чи є поточний колір у новому розмірі
         var match = product?.Variants.FirstOrDefault(v => v.Size == size && v.Color == selectedColor);
 
         if (match == null)
         {
-            // Якщо кольору нема, автоматично обираємо перший доступний для цього розміру
             var firstAvailable = product?.Variants.FirstOrDefault(v => v.Size == size);
             if (firstAvailable != null)
             {

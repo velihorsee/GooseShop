@@ -63,6 +63,8 @@ namespace GooseShop.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CityRef");
+
                     b.ToTable("CachedWarehouses");
                 });
 
@@ -99,18 +101,15 @@ namespace GooseShop.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("OrderDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Phone")
@@ -121,10 +120,19 @@ namespace GooseShop.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -307,6 +315,15 @@ namespace GooseShop.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("GooseShop.Models.Order", b =>
+                {
+                    b.HasOne("GooseShop.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("GooseShop.Models.OrderItem", b =>
