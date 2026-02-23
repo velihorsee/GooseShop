@@ -7,14 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. НАЛАШТУВАННЯ БАЗИ ДАНИХ (SQLite)
+// 1. НАЛАШТУВАННЯ БАЗИ ДАНИХ
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? "Data Source=GooseShop.db";
 
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
     options.UseSqlite(connectionString));
 
-// 2. РЕЄСТРАЦІЯ СЕРВІСІВ (DI)
+// 2. РЕЄСТРАЦІЯ СЕРВІСІВ
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<CartService>();
 builder.Services.AddScoped<AdminService>();
@@ -26,7 +26,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents(options =>
     {
-        options.DetailedErrors = true; // Для виведення детальних помилок у консоль
+        options.DetailedErrors = true;
     });
 
 builder.Services.AddHttpClient();
@@ -43,7 +43,6 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAntiforgery();
 
-// Налаштування для коректного відображення 3D-молей (.glb)
 var provider = new FileExtensionContentTypeProvider();
 provider.Mappings[".glb"] = "model/gltf-binary";
 provider.Mappings[".gltf"] = "model/gltf+json";
@@ -53,23 +52,15 @@ app.UseStaticFiles(new StaticFileOptions
     ContentTypeProvider = provider
 });
 
-// 5. SEED DATA - НАПОВНЕННЯ БАЗИ ПРИ СТАРТІ
+// 5. SEED DATA - НАПОВНЕННЯ БАЗИ
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-    // Автоматично накочує міграції (створює таблиці, якщо їх нема)
+    // Автоматично накочує міграції
     context.Database.Migrate();
 
-    // Видалення тестового юзера (якщо потрібно)
-    var userToDelete = context.Users.FirstOrDefault(u => u.Email == "velihorsee@gmail.com");
-    if (userToDelete != null)
-    {
-        context.Users.Remove(userToDelete);
-        context.SaveChanges();
-    }
-
-    // Створення головного адміна
+    // Створення адміна
     if (!context.Users.Any(u => u.Email == "sales.gooseinua@gmail.com"))
     {
         context.Users.Add(new User
@@ -82,50 +73,57 @@ using (var scope = app.Services.CreateScope())
         context.SaveChanges();
     }
 
-    // Створення початкової категорії та товару (якщо база порожня)
-    if (!context.Categories.Any())
+    // --- КАТЕГОРІЯ: ЧАШКИ ---
+    if (!context.Categories.Any(c => c.Name == "Чашки"))
     {
-        var cat = new Category { Name = "Чашки" };
-        context.Categories.Add(cat);
+        var cupCat = new Category { Name = "Чашки" };
+        context.Categories.Add(cupCat);
         context.SaveChanges();
 
-        var prod = new Product
+        var cupProd = new Product
         {
             Name = "Гусь-Гангстер",
-            Description = "Класична чашка з гусаком, який знає собі ціну.",
+            Description = "Класична чашка для справжнього генгу.",
             BasePrice = 250,
-            CategoryId = cat.Id,
-            ImageUrl = "images/mug.jpg" // Переконайтеся, що файл є у wwwroot/images/
+            CategoryId = cupCat.Id,
+            ImageUrl = "images/mug.jpg"
         };
-        context.Products.Add(prod);
+        context.Products.Add(cupProd);
+        context.SaveChanges();
+
+        context.ProductVariants.AddRange(
+            new ProductVariant { ProductId = cupProd.Id, Size = "330", Color = "white", Price = 250, Title = "330мл Біла", StockQuantity = 20 },
+            new ProductVariant { ProductId = cupProd.Id, Size = "440", Color = "white", Price = 320, Title = "440мл Біла", StockQuantity = 10 }
+        );
         context.SaveChanges();
     }
 
-    // Додавання конструктора для першого товару
-    var mainProduct = context.Products.FirstOrDefault();
-    if (mainProduct != null)
+    // --- КАТЕГОРІЯ: ФУТБОЛКИ (ТВІЙ ЗАПИТ) ---
+    if (!context.Categories.Any(c => c.Name == "Футболки"))
     {
-        if (!context.ProductConstructors.Any(c => c.ProductId == mainProduct.Id))
-        {
-            context.ProductConstructors.Add(new ProductConstructor
-            {
-                ProductId = mainProduct.Id,
-                ModelPath = "models/cup.glb",
-                Type = ConstructorType.Cup
-            });
-            context.SaveChanges();
-        }
+        var shirtCat = new Category { Name = "Футболки" };
+        context.Categories.Add(shirtCat);
+        context.SaveChanges();
 
-        // Додавання варіацій (Ціни беремо звідси!)
-        if (!context.ProductVariants.Any(v => v.ProductId == mainProduct.Id))
+        var shirtProd = new Product
         {
-            context.ProductVariants.AddRange(
-                new ProductVariant { ProductId = mainProduct.Id, Size = "330", Color = "white", Price = 250, Title = "330мл Біла", StockQuantity = 20 },
-                new ProductVariant { ProductId = mainProduct.Id, Size = "330", Color = "black", Price = 270, Title = "330мл Чорна", StockQuantity = 15 },
-                new ProductVariant { ProductId = mainProduct.Id, Size = "440", Color = "white", Price = 320, Title = "440мл Біла", StockQuantity = 10 }
-            );
-            context.SaveChanges();
-        }
+            Name = "Футболка Goose-Style",
+            Description = "Оверсайз футболка для зумерів. Якісна бавовна, крутий гусак.",
+            BasePrice = 550,
+            CategoryId = shirtCat.Id,
+            ImageUrl = "images/tshirt.jpg" // Переконайся, що файл є у wwwroot/images/
+        };
+        context.Products.Add(shirtProd);
+        context.SaveChanges();
+
+        // Додаємо варіанти як РОЗМІРИ, а не мілілітри
+        context.ProductVariants.AddRange(
+            new ProductVariant { ProductId = shirtProd.Id, Size = "S", Color = "black", Price = 550, Title = "Black S", StockQuantity = 5 },
+            new ProductVariant { ProductId = shirtProd.Id, Size = "M", Color = "black", Price = 550, Title = "Black M", StockQuantity = 10 },
+            new ProductVariant { ProductId = shirtProd.Id, Size = "L", Color = "black", Price = 580, Title = "Black L (XL style)", StockQuantity = 5 },
+            new ProductVariant { ProductId = shirtProd.Id, Size = "M", Color = "white", Price = 550, Title = "White M", StockQuantity = 7 }
+        );
+        context.SaveChanges();
     }
 }
 

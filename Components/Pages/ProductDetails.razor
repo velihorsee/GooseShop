@@ -26,8 +26,6 @@
             </ol>
         </nav>
 
-        @* ... твій початок файлу ... *@
-
         <div class="row g-5">
             @* ЛІВА ЧАСТИНА: ВІЗУАЛ *@
             <div class="col-lg-6">
@@ -43,54 +41,59 @@
                 </div>
             </div>
 
-            @* ПРАВА ЧАСТИНА: ІНФОРМАЦІЯ ТА КОНФІГУРАТОР *@
+            @* ПРАВА ЧАСТИНА *@
             <div class="col-lg-6">
                 <div class="ps-lg-4">
                     <h1 class="fw-black display-4 text-uppercase mb-1">@product.Name</h1>
 
-                    @* ЦІНА: Тепер пульсує і завжди актуальна з БД *@
                     <div class="z-price-tag shadow-pixel mb-4">@CurrentPrice.ToString("N0") ГРН</div>
 
                     <p class="lead fw-bold text-muted mb-4 border-start border-4 border-dark ps-3">
                         @product.Description
                     </p>
 
-                    @* БЛОК ХАРАКТЕРИСТИК (ДИНАМІЧНИЙ) *@
+                    @* БЛОК ХАРАКТЕРИСТИК (УНІВЕРСАЛЬНИЙ) *@
                     <div class="z-specs-box shadow-pixel p-4 mb-4">
                         <div class="mb-4">
-                            <label class="z-label-spec">ОБ'ЄМ ЧАШКИ:</label>
-                            <div class="d-flex gap-2 mt-2">
-                                @* Виводимо унікальні розміри, які реально є в базі для цього товару *@
-                                @foreach (var vol in product.Variants.Select(v => v.Size).Distinct())
+                            @* Змінюємо назву характеристики залежно від категорії *@
+                            <label class="z-label-spec">
+                                @(IsCup ? "ОБ'ЄМ ЧАШКИ:" : "ОБЕРИ РОЗМІР:")
+                            </label>
+
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                @if (product.Variants != null)
                                 {
-                                    <button class="z-spec-btn @(selectedVolume == vol ? "active" : "")"
-                                            @onclick='() => SelectVolume(vol)'>
-                                        @vol МЛ
-                                    </button>
+                                    @foreach (var size in product.Variants.Select(v => v.Size).Distinct())
+                                    {
+                                        <button class="z-spec-btn @(selectedSize == size ? "active" : "")"
+                                                @onclick='() => SelectSize(size)'>
+                                            @* Для чашок додаємо МЛ, для футболок просто виводимо S, M, L... *@
+                                            @size @(IsCup ? "МЛ" : "")
+                                        </button>
+                                    }
                                 }
                             </div>
                         </div>
 
                         <div class="mb-2">
-                            <label class="z-label-spec">КОЛІР ОСНОВИ:</label>
+                            <label class="z-label-spec">КОЛІР:</label>
                             <div class="d-flex flex-wrap gap-2 mt-2">
                                 @foreach (var color in AllAvailableColors)
                                 {
-                                    @* Перевірка: чи є цей колір доступним для обраного об'єму в таблиці ProductVariants *@
-                                    bool isAvailable = product.Variants.Any(v => v.Size == selectedVolume && v.Color == color);
+                                    bool isAvailable = product.Variants.Any(v => v.Size == selectedSize && v.Color == color);
 
                                     <button class="z-color-dot shadow-pixel @(selectedColor == color ? "active" : "") @(!isAvailable ? "disabled-dot" : "")"
                                             style="background-color: @color"
                                             @onclick='() => { if (isAvailable) selectedColor = color; }'
                                             disabled="@(!isAvailable)"
-                                            title="@(isAvailable? color : "Немає для цього об'єму")">
+                                            title="@(isAvailable? color : "Немає в наявності")">
                                     </button>
                                 }
                             </div>
-                            @if (selectedVolume == "440")
+                            @if (IsCup && selectedSize == "440")
                             {
                                 <small class="z-danger-text fw-bold mt-2 d-block text-uppercase">
-                                    * ВЕЛИКИЙ ГУСЬ ЛЮБИТЬ ТІЛЬКИ БІЛИЙ КОЛІР (ТАК У БАЗІ)
+                                    * ВЕЛИКИЙ ГУСЬ ЛЮБИТЬ ТІЛЬКИ БІЛИЙ КОЛІР
                                 </small>
                             }
                         </div>
@@ -131,23 +134,22 @@
     private int quantity = 1;
     private bool hasConstructor = false;
 
-    // Початкові значення
-    private string selectedVolume = "330";
+    private string selectedSize = "";
     private string selectedColor = "white";
 
     private readonly string[] AllAvailableColors = { "white", "black", "red", "cyan", "yellow" };
 
-    // ШУКАЄМО ВАРІАНТ У БАЗІ:
-    // Знаходимо конкретну варіацію, яка відповідає обраним фільтрам
-    private ProductVariant? CurrentVariant => product?.Variants?
-        .FirstOrDefault(v => v.Size == selectedVolume && v.Color == selectedColor);
+    // Використовуємо StringComparison для надійності
+    private bool IsCup => product?.Category?.Name?.Contains("Чашки", StringComparison.OrdinalIgnoreCase) ?? false;
 
-    // ЦІНА: беремо ціну з варіації. Якщо варіації немає (null) — показуємо базову ціну товару.
+    private ProductVariant? CurrentVariant => product?.Variants?
+        .FirstOrDefault(v => v.Size == selectedSize && v.Color == selectedColor);
+
     private decimal CurrentPrice => CurrentVariant?.Price ?? (product?.BasePrice ?? 0);
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        // ОБОВ'ЯЗКОВО: додаємо .Include(p => p.Variants), щоб підтягнути ціни з бази
+        // Використовуємо OnParametersSetAsync, щоб при переході між товарами дані оновлювались
         product = await DbContext.Products
             .Include(p => p.Category)
             .Include(p => p.Variants)
@@ -157,52 +159,49 @@
         {
             hasConstructor = await DbContext.ProductConstructors.AnyAsync(c => c.ProductId == Id);
 
-            // Якщо в базі вже є варіації, виберемо першу доступну як дефолтну
-            var firstVariant = product.Variants.FirstOrDefault();
-            if (firstVariant != null)
+            // Якщо selectedSize ще порожній, ініціалізуємо його першим доступним варіантом
+            if (string.IsNullOrEmpty(selectedSize) || !product.Variants.Any(v => v.Size == selectedSize))
             {
-                selectedVolume = firstVariant.Size ?? "330";
-                selectedColor = firstVariant.Color ?? "white";
+                var defaultVariant = product.Variants.FirstOrDefault();
+                if (defaultVariant != null)
+                {
+                    selectedSize = defaultVariant.Size;
+                    selectedColor = defaultVariant.Color;
+                }
             }
         }
     }
 
-    private void SelectVolume(string vol)
+    private void SelectSize(string size)
     {
-        selectedVolume = vol;
+        selectedSize = size;
 
-        // Перевірка: чи існує такий колір для цього об'єму в базі?
-        var variantExists = product?.Variants.Any(v => v.Size == vol && v.Color == selectedColor) ?? false;
+        // Перевірка: чи є поточний колір у новому розмірі
+        var match = product?.Variants.FirstOrDefault(v => v.Size == size && v.Color == selectedColor);
 
-        // Якщо для нового об'єму такого кольору немає (наприклад, 440мл + червоний) — скидаємо на білий
-        if (!variantExists)
+        if (match == null)
         {
-            selectedColor = "white";
+            // Якщо кольору нема, автоматично обираємо перший доступний для цього розміру
+            var firstAvailable = product?.Variants.FirstOrDefault(v => v.Size == size);
+            if (firstAvailable != null)
+            {
+                selectedColor = firstAvailable.Color;
+            }
         }
-
         StateHasChanged();
     }
 
-    private void ChangeQuantity(int delta)
-    {
-        quantity = Math.Max(1, quantity + delta);
-    }
+    private void ChangeQuantity(int delta) => quantity = Math.Max(1, quantity + delta);
 
     private void AddToCart()
     {
-        if (product != null)
+        if (product != null && !string.IsNullOrEmpty(selectedSize))
         {
-            // Формуємо опис для замовлення
-            string options = $"Об'єм: {selectedVolume}мл, Колір: {selectedColor}";
+            string label = IsCup ? "Об'єм" : "Розмір";
+            string suffix = IsCup ? "мл" : "";
+            string options = $"{label}: {selectedSize}{suffix}, Колір: {selectedColor}";
 
-            // Передаємо в сервіс ціну, яку знайшли в базі для цієї варіації
-            CartService.AddToCart(
-                product: product,
-                options: options,
-                price: CurrentPrice,
-                quantity: quantity
-            );
-
+            CartService.AddToCart(product, options, CurrentPrice, quantity);
             Nav.NavigateTo("/cart");
         }
     }

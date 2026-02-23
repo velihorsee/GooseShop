@@ -161,11 +161,11 @@
         box-shadow: 6px 6px 0px #000;
     }
 
+    /* Приклад того, як має підсвічуватися обрана кнопка */
     .z-spec-btn.active {
-        background: #000;
+        background-color: #000; /* або твій колір гусака */
         color: #fff;
-        transform: translate(2px, 2px);
-        box-shadow: 0px 0px 0px #000;
+        border-color: #000;
     }
 
 /* ВИБІР КОЛЬОРУ */
