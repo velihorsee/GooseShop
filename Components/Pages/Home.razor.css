@@ -3,12 +3,9 @@
 /* --- КИСЛОТНИЙ ГЕРОЙ-БАНЕР --- */
 /* Контейнер банера (Hero Card) */
 .z-hero-card {
-    position: relative; /* Обов'язково! */
-    min-height: 450px; /* Трохи збільшив, щоб гусаку було де розгулятися */
-    overflow: hidden; /* Щоб гусак не вибігав на поля сайту */
-    background: #fff;
-    border: 6px solid #000;
-    box-shadow: 12px 12px 0px #000;
+    position: relative !important; /* ЦЕ КРИТИЧНО! */
+    overflow: hidden;
+    min-height: 450px;
 }
 
 /* Символи на фоні банера */
@@ -186,4 +183,131 @@
     display: inline-block;
     transform: rotate(-2deg);
     box-shadow: 6px 6px 0px #000;
+}
+
+
+/* ГОЛОВНИЙ КОНТЕЙНЕР */
+.z-guard-goose-v4 {
+    position: absolute;
+    bottom: -20px;
+    right: 50px;
+    width: 250px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* ПЛАШКА КРЯ */
+.goose-krya-badge {
+    position: absolute;
+    top: 0;
+    right: -30px;
+    background: #ff0000;
+    color: #fff;
+    padding: 8px 20px;
+    font-size: 2.2rem;
+    font-weight: 950;
+    border: 5px solid #000;
+    box-shadow: 6px 6px 0px #000;
+    transform: rotate(8deg);
+    z-index: 50;
+    display: none; /* З'явиться через JS клас .aggressive */
+}
+
+.aggressive .goose-krya-badge {
+    display: block;
+}
+
+/* ГОЛОВА ТА ОЧІ */
+.goose-head-v4 {
+    width: 100px;
+    height: 125px;
+    background: #fff;
+    border: 5px solid #000;
+    border-radius: 50% 50% 45% 45%;
+    position: relative;
+    z-index: 20;
+    margin-left: 50px;
+}
+
+.goose-eye-v4 {
+    position: absolute;
+    top: 25px;
+    width: 35px;
+    height: 42px;
+    background: #fff;
+    border: 4px solid #000;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.eye-l {
+    left: 10px;
+}
+
+.eye-r {
+    right: 10px;
+}
+
+.eye-lid-v4 {
+    position: absolute;
+    top: -2px;
+    width: 100%;
+    height: 50%;
+    background: #fff;
+    border-bottom: 3px solid #000;
+    z-index: 2;
+}
+
+.goose-pupil {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background: #000;
+    border-radius: 50%;
+}
+
+/* ДЗЬОБ (ВИГИН ЯК НА ФОТО) */
+.goose-beak-v4 {
+    position: absolute;
+    left: -55px;
+    top: 45px;
+    width: 100px;
+    height: 70px;
+    background: #ff9d00;
+    border: 5px solid #000;
+    border-radius: 60% 20% 30% 70%;
+    transform: rotate(-8deg);
+}
+
+/* ШИЯ ЗІ СКЛАДКАМИ */
+.goose-neck-v4 {
+    width: 60px;
+    height: var(--neck-h, 150px);
+    background: #fff;
+    border-left: 5px solid #000;
+    border-right: 5px solid #000;
+    margin-left: 70px;
+    margin-top: -10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.neck-crease {
+    width: 100%;
+    height: 3px;
+    background: #000;
+    opacity: 0.2;
+}
+
+/* ТІЛО */
+.goose-body-v4 {
+    width: 220px;
+    height: 140px;
+    background: #fff;
+    border: 5px solid #000;
+    border-radius: 110px 110px 30px 30px;
+    margin-top: -30px;
 }

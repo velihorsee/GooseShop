@@ -8,30 +8,44 @@
 @* --- ЕПІЧНИЙ ХАЙП-БАННЕР --- *@
 <div class="container-fluid px-lg-5 mt-4">
     <div class="z-hero-card">
-        <div class="row align-items-center g-0">
-            <div class="col-lg-7 p-4 p-md-5">
+        <div class="row align-items-center g-0" style="height: 100%; min-height: 400px;">
+            @* ЛІВА ЧАСТИНА: КОНТЕНТ *@
+            <div class="col-lg-7 p-4 p-md-5" style="z-index: 2;">
                 <div class="z-badge mb-3 shadow-pixel">#ГУСЬ_ГЕНГ_2026 🦢</div>
                 <h1 class="fw-black display-2 text-uppercase m-0 lh-1">
                     ТВІЙ МЕРЧ — <br /> <span class="text-white outline-hero">ТВІЙ ВАЙБ.</span>
                 </h1>
                 <p class="fs-4 fw-bold mt-3 text-dark">Створи унікальну чашку або футболку за 30 секунд. 🍌</p>
                 <div class="z-hero-actions d-flex gap-3 mt-4 flex-wrap">
-                    <button class="z-btn z-btn-cyan shadow-pixel" @onclick='() => Nav.NavigateTo("/constructor/1")'>
-                        ХОЧУ ЧАШКУ 🔥
-                    </button>
-                    <button class="z-btn z-btn-yellow shadow-pixel" @onclick='() => ScrollTo("product-catalog")'>
-                        КАТАЛОГ 📜
-                    </button>
+                    <button class="z-btn z-btn-cyan shadow-pixel" @onclick='() => Nav.NavigateTo("/constructor/1")'>ХОЧУ ЧАШКУ 🔥</button>
+                    <button class="z-btn z-btn-yellow shadow-pixel" @onclick='() => ScrollTo("product-catalog")'>КАТАЛОГ 📜</button>
                 </div>
             </div>
 
-            <div id="guard-goose" class="z-guard-goose">
-                <div class="goose-wrapper">
-                    <div class="goose-neck">
-                        <span class="goose-head">🦢</span>
-                        <div class="goose-speech">КУСЬ!</div>
+            @* ПРАВА ЧАСТИНА: ГУСАК *@
+            <div class="col-lg-5 position-relative d-none d-lg-block" style="height: 400px;">
+                <div id="guard-goose" class="z-guard-goose-v4">
+                    <div class="goose-krya-badge">КРЯ</div>
+                    <div class="goose-head-v4">
+                        <div class="goose-eye-v4 eye-l">
+                            <div class="eye-lid-v4"></div>
+                            <div class="goose-pupil"></div>
+                        </div>
+                        <div class="goose-eye-v4 eye-r">
+                            <div class="eye-lid-v4"></div>
+                            <div class="goose-pupil"></div>
+                        </div>
+                        <div class="goose-beak-v4">
+                            <div class="beak-nostril-v4"></div>
+                        </div>
                     </div>
-                    <div class="goose-body">☁️</div> @* Тіло-хмаринка для об'єму *@
+                    <div class="goose-neck-v4">
+                        <div class="neck-crease"></div>
+                        <div class="neck-crease"></div>
+                        <div class="neck-crease"></div>
+                        <div class="neck-crease"></div>
+                    </div>
+                    <div class="goose-body-v4"></div>
                 </div>
             </div>
         </div>

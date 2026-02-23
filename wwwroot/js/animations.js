@@ -53,43 +53,62 @@
 
 window.initGuardGoose = () => {
     const goose = document.getElementById('guard-goose');
+    const pupils = goose.querySelectorAll('.goose-pupil');
     const banner = document.querySelector('.z-hero-card');
+
     if (!goose || !banner) return;
 
-    let curX = 75, curY = 50;  // Починаємо з 75% по горизонталі та 50% по вертикалі
-    let targetX = 75, targetY = 50;
-    let isScared = false;
+    let curX = 80, curY = 50;
+    let targetX = 80, targetY = 50;
 
     document.addEventListener('mousemove', (e) => {
         const rect = banner.getBoundingClientRect();
         const mX = ((e.clientX - rect.left) / rect.width) * 100;
         const mY = ((e.clientY - rect.top) / rect.height) * 100;
 
+        // Рух обох зіниць
+        const eyeDX = (e.clientX - (goose.offsetLeft + rect.left + 50)) / 40;
+        const eyeDY = (e.clientY - (goose.offsetTop + rect.top + 30)) / 40;
+        const moveX = Math.max(-8, Math.min(8, eyeDX));
+        const moveY = Math.max(-5, Math.min(8, eyeDY));
+
+        pupils.forEach(p => {
+            p.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+        });
+
+        // Дистанція для агресії
         const dist = Math.sqrt(Math.pow(mX - curX, 2) + Math.pow(mY - curY, 2));
 
-        if (dist < 7 && !isScared) {
-            isScared = true;
-            goose.classList.add('scared');
-            targetX = Math.random() * 80 + 10;
-            targetY = Math.random() * 50 + 20;
-            setTimeout(() => { isScared = false; goose.classList.remove('scared'); }, 1000);
-        }
-        else if (dist < 25 && dist > 8 && !isScared) {
+        if (dist < 35) {
             goose.classList.add('aggressive');
-            targetX += (mX - targetX) * 0.05;
-            targetY += (mY - targetY) * 0.05;
-        }
-        else {
+            targetX += (mX - targetX) * 0.12;
+            targetY += (mY - targetY) * 0.12;
+
+            const dx = mX - curX;
+            const dy = mY - curY;
+            let angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+
+            goose.style.setProperty('--neck-angle', `${Math.max(-45, Math.min(45, angle))}deg`);
+            goose.style.setProperty('--neck-h', `${Math.min(180, (40 - dist) * 10 + 100)}px`);
+        } else {
             goose.classList.remove('aggressive');
+            goose.style.setProperty('--neck-h', '130px');
+            targetX = 80; targetY = 50;
         }
-        goose.style.transform = `scaleX(${mX > curX ? -1 : 1})`;
+
+        const flip = mX > curX ? -1 : 1;
+        goose.dataset.flip = flip;
     });
 
     function loop() {
-        curX += (targetX - curX) * 0.05;
-        curY += (targetY - curY) * 0.05;
+        curX += (targetX - curX) * 0.08;
+        curY += (targetY - curY) * 0.08;
+        const flip = goose.dataset.flip || 1;
+
         goose.style.left = curX + '%';
         goose.style.top = curY + '%';
+        goose.style.transform = `translate(-50%, -50%) scaleX(${flip})`;
+
         requestAnimationFrame(loop);
     }
     loop();

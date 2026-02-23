@@ -11,6 +11,8 @@
     --z-pink: #ff00ff;
     --z-black: #1a1a1a;
     --z-border: 4px solid #000;
+    --goose-white: #ffffff;
+    --goose-orange: #ff9900;
 }
 
 /* Робимо всі анімаційні об'єкти ігноруючими кліки та стійкими до пауз */

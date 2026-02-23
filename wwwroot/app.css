@@ -1,4 +1,13 @@
-/* --- 1. —»—“≈ÃÕ≤ —“»À≤ BLAZOR --- */
+Ôªø/* --- 1. –û–°–ù–û–í–ù–Ü –ó–ú–Ü–ù–ù–Ü --- */
+:root {
+    --z-cyan: #00f3ff;
+    --z-pink: #ff00ff;
+    --z-yellow: #fff200;
+    --z-green: #00ff00;
+    --goose-white: #ffffff;
+}
+
+/* --- 2. –°–ò–°–¢–ï–ú–ù–Ü –°–¢–ò–õ–Ü BLAZOR --- */
 .content {
     padding-top: 1.1rem;
 }
@@ -11,13 +20,8 @@
     color: #e50000;
 }
 
-/* --- 2. √ÀŒ¡¿À‹Õ≤  ÕŒœ » "GOOSE GANG" --- */
-.z-btn,
-.z-action-btn,
-.z-secondary-btn,
-.z-nav-pill,
-.z-cart-btn,
-.z-nav-pill-3d {
+/* --- 3. –ì–õ–û–ë–ê–õ–¨–ù–Ü –ö–ù–û–ü–ö–ò (NEOBRUTALISM) --- */
+.z-btn, .z-action-btn, .z-secondary-btn, .z-cart-btn {
     border: 4px solid #000 !important;
     font-weight: 950 !important;
     text-transform: uppercase !important;
@@ -25,21 +29,15 @@
     transition: 0.05s steps(2) !important;
     cursor: pointer !important;
     background: #fff;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-decoration: none !important;
     color: #000 !important;
     box-shadow: 4px 4px 0px #000 !important;
-    position: relative;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center;
 }
 
-    .z-btn:hover,
-    .z-nav-pill:hover,
-    .z-cart-btn:hover,
-    .z-secondary-btn:hover,
-    .z-action-btn:hover {
-        transform: translate(-2px, -2px) !important;
+    .z-btn:hover {
+        transform: translate(-2px, -2px);
         box-shadow: 8px 8px 0px #000 !important;
     }
 
@@ -51,157 +49,183 @@
         box-shadow: 4px 4px 0px var(--z-pink), 10px 10px 0px #000 !important;
     }
 
-.z-secondary-btn {
-    background: var(--z-yellow) !important;
+.z-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px #000 !important;
 }
 
-    .z-secondary-btn:hover {
-        box-shadow: 4px 4px 0px var(--z-green), 10px 10px 0px #000 !important;
-    }
-
-    .z-btn:active, .z-action-btn:active, .z-secondary-btn:active {
-        transform: translate(2px, 2px) !important;
-        box-shadow: 2px 2px 0px #000 !important;
-    }
-
-/* --- 3. √ÀŒ¡¿À‹Õ≤ «¿œŒ¡≤∆Õ» » ƒÀﬂ ¿Õ≤Ã¿÷≤… --- */
-/* ÷ÂÈ ·ÎÓÍ ‚ËÔ‡‚Îˇ∫ Ú‚Ó˛ ÔÓ·ÎÂÏÛ Á ÁÛÔËÌÍÓ˛ ‡Ì≥Ï‡ˆ≥È ÔË ÍÎ≥Í‡ı */
-.z-running-goose,
-.falling-goose,
-.z-egg,
-.z-goose-track,
-.z-guard-goose {
-    pointer-events: none !important; /*  Î≥ÍË ÔÓıÓ‰ˇÚ¸ Í≥Á¸ ÌËı */
-    user-select: none !important;
-    -webkit-user-drag: none !important;
-    animation-play-state: running !important; /* «‡·ÓÓÌˇ∫ÏÓ Ô‡ÛÁÛ */
-}
-
-/* ¬Ë‰‡Îˇ∫ÏÓ ‡„ÂÒË‚ÌÛ Ô‡ÛÁÛ, ˇÍ‡ ·ÛÎ‡ ‡Ì≥¯Â */
-:root:has(body:not(:focus-within)) .falling-goose {
-    display: none !important;
-}
-
-/* --- 4. ¿Õ≤Ã¿÷≤ﬂ √”—¿ ¿-Œ’Œ–ŒÕ÷ﬂ (¡¿Õ≈–) --- */
-.z-guard-goose {
-    position: absolute;
-    z-index: 100;
-    /* œÓ˜‡ÚÍÓ‚‡ ÚÓ˜Í‡ - ‰ÂÒ¸ Û Ô‡‚≥È ˜‡ÒÚËÌ≥ ·‡ÌÂ‡ */
-    left: 75%;
-    top: 50%;
-    /* ÷ÂÌÚÛ∫ÏÓ Ò‡ÏÓ„Ó „ÛÒ‡Í‡ ‚≥‰ÌÓÒÌÓ ÈÓ„Ó ÍÓÓ‰ËÌ‡Ú */
-    transform: translate(-50%, -50%);
-    will-change: left, top, transform;
-    pointer-events: none !important;
-    user-select: none !important;
-}
-
-.goose-wrapper {
+/* --- 4. –ë–ê–ù–ï–† –¢–ê –ö–û–ù–¢–ï–ô–ù–ï–† –û–•–û–†–û–ù–¶–Ø --- */
+.z-hero-card {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    width: 100%;
+    height: 400px;
+    background: #1a1a1a;
+    border: 6px solid #000;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: crosshair;
 }
 
-.goose-body {
-    font-size: 4rem;
-    filter: drop-shadow(4px 4px 0px #000);
+/* –ì–£–°–ê–ö-–û–•–û–†–û–ù–ï–¶–¨ (–û–ë'–Ñ–ö–¢) */
+.guard-goose {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    z-index: 1000;
+    pointer-events: none;
+    user-select: none;
 }
 
+/* –®–ò–Ø (–ì–Ω—É—á–∫–∞ –ø—ñ–¥ JS) */
 .goose-neck {
     position: absolute;
-    bottom: 25px;
-    font-size: 3.5rem;
+    bottom: 40px;
+    left: 50%;
+    width: 30px;
+    height: var(--neck-h, 60px);
+    background: #fff;
+    border: 4px solid #000;
+    border-bottom: none;
+    transform: translateX(-50%) rotate(var(--neck-angle, 0deg));
     transform-origin: bottom center;
-    /* “≥Î¸ÍË ÚÛÚ ‰ÓÁ‚ÓÎÂÌËÈ ÍÓÓÚÍËÈ transition ‰Îˇ ÂÙÂÍÚÛ ‰Á¸Ó·‡ÌÌˇ */
-    transition: transform 0.1s ease-out;
-    z-index: 2;
+    transition: height 0.05s linear;
+    z-index: 5;
 }
 
-/* —Ú‡Ì ‡„ÂÒ≥ø: ¬ËÚˇ„Û‚‡ÌÌˇ ¯Ëø */
-.z-guard-goose.aggressive .goose-neck {
-    animation: stretch-neck 0.3s infinite;
+/* –ì–û–õ–û–í–ê */
+.goose-head {
+    position: absolute;
+    top: -35px;
+    left: -15px;
+    width: 60px;
+    height: 50px;
+    background: #fff;
+    border: 4px solid #000;
+    border-radius: 30px 40px 15px 20px;
 }
 
-@keyframes stretch-neck {
-    0%, 100% {
-        transform: scaleY(1) translateY(0);
-    }
-
-    50% {
-        transform: scaleY(1.8) translateY(-20px) rotate(-5deg);
-    }
+/* –û–ß–Ü */
+.goose-eye {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    border: 3px solid #000;
+    border-radius: 50%;
+    overflow: hidden;
 }
 
-/* —Ú‡Ì ‚ÚÂ˜≥: —ÚËÒÍ‡ÌÌˇ */
-.z-guard-goose.scared .goose-neck {
-    transform: scaleY(0.5) translateY(20px);
-    transition: transform 0.2s;
+.goose-pupil {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 7px;
+    height: 7px;
+    background: #000;
+    border-radius: 50%;
+    /* –ö–µ—Ä—É—î—Ç—å—Å—è —á–µ—Ä–µ–∑ JS: pupil.style.transform */
+    transform: translate(-50%, -50%);
 }
 
-.z-guard-goose.scared {
-    filter: invert(1) hue-rotate(180deg) !important;
+/* –î–ó–¨–û–ë (–í–µ—Ä—Ö–Ω—è —ñ –Ω–∏–∂–Ω—è —á–∞—Å—Ç–∏–Ω–∏) */
+.goose-beak {
+    position: absolute;
+    right: -25px;
+    top: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
+.beak-top, .beak-bottom {
+    width: 30px;
+    height: 10px;
+    background: #ff9900;
+    border: 3px solid #000;
+    transition: transform 0.1s;
+}
+
+.beak-top {
+    border-radius: 0 10px 5px 0;
+}
+
+.beak-bottom {
+    border-radius: 0 5px 10px 0;
+    margin-top: -3px;
+}
+
+/* –¢–Ü–õ–û */
+.goose-body {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 60px;
+    background: #fff;
+    border: 4px solid #000;
+    border-radius: 40px 40px 30px 30px;
+    box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+/* --- 5. –ê–ù–Ü–ú–ê–¶–Ü–á –¢–ê –°–¢–ê–ù–ò --- */
+
+/* –°—Ç–∞–Ω –∞–≥—Ä–µ—Å—ñ—ó (–ê—Ç–∞–∫–∞) */
+.aggressive .beak-top {
+    transform: rotate(-20deg);
+}
+
+.aggressive .beak-bottom {
+    transform: rotate(20deg);
+}
+
+.aggressive .goose-neck {
+    animation: jitter 0.1s infinite;
+}
+
+/* –•–º–∞—Ä–∞ –¥—ñ–∞–ª–æ–≥—É (–ë–ª–∏—Å–∫–∞–≤–∫–∞) */
 .goose-speech {
     display: none;
     position: absolute;
-    top: -35px;
+    top: -50px;
     left: 50%;
     transform: translateX(-50%);
     background: #ff0000;
-    color: white;
-    padding: 2px 12px;
+    color: #fff;
+    padding: 4px 12px;
     font-weight: 950;
     border: 3px solid #000;
-    font-size: 1.1rem;
     white-space: nowrap;
-    box-shadow: 4px 4px 0px #000;
 }
 
-.z-guard-goose.aggressive .goose-speech {
+.aggressive .goose-speech {
     display: block;
-}
-
-.z-guard-goose.aggressive {
-    animation: jitter 0.1s infinite;
 }
 
 @keyframes jitter {
     0% {
-        transform: translate(0,0);
+        transform: translateX(-50%) rotate(var(--neck-angle)) translate(0,0);
     }
 
     50% {
-        transform: translate(3px, -3px);
+        transform: translateX(-50%) rotate(var(--neck-angle)) translate(2px, -2px);
     }
 
     100% {
-        transform: translate(-1px, 1px);
+        transform: translateX(-50%) rotate(var(--neck-angle)) translate(-2px, 2px);
     }
 }
 
-/* --- 5.  À¿—»◊Õ≤ ¿Õ≤Ã¿÷≤Ø —¿…“” --- */
-@keyframes bannerIntro {
-    0% {
-        transform: scale(0.9) translateY(50px);
-        opacity: 0;
-    }
-
-    100% {
-        transform: scale(1) translateY(0);
-        opacity: 1;
-    }
-}
-
-@keyframes floatSymbols {
-    from {
-        transform: translateX(0%);
-    }
-
-    to {
-        transform: translateX(-50%);
-    }
+/* –ü–∞–¥—ñ–Ω–Ω—è –≥—É—Å–µ–π (Background) */
+.falling-goose {
+    position: absolute;
+    top: -50px;
+    z-index: 1;
+    font-size: 2.5rem;
+    pointer-events: none;
+    animation: fall 5s linear forwards;
 }
 
 @keyframes fall {
@@ -216,15 +240,505 @@
     }
 }
 
-.falling-goose {
-    position: absolute;
-    top: -50px;
-    z-index: 15;
-    font-size: 2.5rem;
-    will-change: transform, top;
-    transform-origin: center center;
+/* –ì–û–õ–û–í–ê (—Ö–∞—Ä–∞–∫—Ç–µ—Ä–Ω–∞ –æ–≤–∞–ª—å–Ω–∞ —Ñ–æ—Ä–º–∞) */
+.goose-head-v2 {
+    width: 100px;
+    height: 120px;
+    background: #fff;
+    border: 5px solid #000;
+    border-radius: 50% 50% 45% 45%;
+    position: relative;
+    z-index: 10;
 }
 
-.text-glitch:hover {
-    text-shadow: 2px 0 var(--z-pink), -2px 0 var(--z-cyan);
+/* –û–ß–Ü (–≤–µ–ª–∏–∫—ñ, —è–∫ –Ω–∞ —Ñ–æ—Ç–æ) */
+.goose-eye-v2 {
+    position: absolute;
+    top: 25px;
+    left: 15px;
+    width: 35px;
+    height: 40px;
+    background: #fff;
+    border: 4px solid #000;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.eye-right {
+    left: auto;
+    right: 15px;
+}
+
+.goose-pupil {
+    width: 12px;
+    height: 12px;
+    background: #000;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* –î–ó–¨–û–ë (–≤–∏–≥–Ω—É—Ç–∞ —Ñ–æ—Ä–º–∞) */
+.goose-beak-v2 {
+    position: absolute;
+    bottom: 5px;
+    left: -35px; /* –í–∏—Å—Ç—É–ø–∞—î –≤–ª—ñ–≤–æ */
+    width: 80px;
+    height: 55px;
+    background: #ff9d00;
+    border: 5px solid #000;
+    border-radius: 40% 10% 30% 60%;
+    transform: rotate(-5deg);
+}
+
+.beak-nostril {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    width: 6px;
+    height: 8px;
+    background: #000;
+    border-radius: 50%;
+    opacity: 0.3;
+}
+
+/* –®–ò–Ø –¢–ê –¢–Ü–õ–û */
+.goose-neck-v2 {
+    width: 45px;
+    height: var(--neck-h, 150px);
+    background: #fff;
+    border-left: 5px solid #000;
+    border-right: 5px solid #000;
+    margin-top: -10px;
+}
+
+.goose-body-v2 {
+    width: 180px;
+    height: 120px;
+    background: #fff;
+    border: 5px solid #000;
+    border-radius: 100px 100px 40px 40px;
+    margin-top: -20px;
+}
+
+/* –ü–õ–ê–®–ö–ê "–ö–†–Ø" (—Ç–æ—á–Ω–æ —è–∫ –Ω–∞ —Ñ–æ—Ç–æ) */
+.goose-speech-v2 {
+    position: absolute;
+    top: -20px;
+    right: -60px;
+    background: #ff0000; /* –Ø—Å–∫—Ä–∞–≤–æ —á–µ—Ä–≤–æ–Ω–∏–π */
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 2rem;
+    font-weight: 900;
+    border: 5px solid #000;
+    box-shadow: 6px 6px 0px #000;
+    transform: rotate(5deg);
+    z-index: 20;
+}
+
+/* –ï—Ñ–µ–∫—Ç –∞–≥—Ä–µ—Å—ñ—ó (–∫–æ–ª–∏ –º–∏—à–∫–∞ –±–ª–∏–∑—å–∫–æ) */
+.aggressive .goose-beak-v2 {
+    transform: rotate(-15deg) scaleY(1.1);
+    background: #ff4500;
+}
+
+/* –ì–û–õ–û–í–ù–ò–ô –ö–û–ù–¢–ï–ô–ù–ï–† */
+.guard-goose {
+    position: absolute;
+    width: 200px;
+    height: 250px;
+    z-index: 100;
+    pointer-events: none;
+    transition: transform 0.1s ease-out;
+}
+
+/* –ü–õ–ê–®–ö–ê –ö–†–Ø */
+.goose-krya-badge {
+    position: absolute;
+    top: -20px;
+    right: -40px;
+    background: #ff0000;
+    color: white;
+    padding: 8px 15px;
+    font-size: 24px;
+    font-weight: 900;
+    border: 4px solid #000;
+    box-shadow: 5px 5px 0px #000;
+    transform: rotate(10deg);
+    opacity: 0; /* –ó'—è–≤–∏—Ç—å—Å—è –ø—Ä–∏ –∞–≥—Ä–µ—Å—ñ—ó */
+    transition: opacity 0.2s ease-in-out;
+}
+
+.aggressive .goose-krya-badge {
+    opacity: 1;
+}
+
+/* –ì–û–õ–û–í–ê –¢–ê –®–ò–Ø */
+.goose-head {
+    position: absolute;
+    top: -45px;
+    left: -10px;
+    width: 75px;
+    height: 90px;
+    background: #fff;
+    border: 4px solid #000;
+    border-radius: 45% 45% 40% 40%;
+}
+
+.goose-neck {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    width: 40px;
+    height: var(--neck-h, 100px);
+    background: white;
+    border-left: 4px solid #000;
+    border-right: 4px solid #000;
+    transform: translateX(-50%) rotate(var(--neck-angle, 0deg));
+    transform-origin: bottom center;
+}
+
+/* –û–ß–Ü (–í–µ–ª–∏–∫—ñ —Ç–∞ –æ–≤–∞–ª—å–Ω—ñ) */
+.goose-eye {
+    position: absolute;
+    top: 15px;
+    left: 8px;
+    width: 28px;
+    height: 35px;
+    background: white;
+    border: 3px solid #000;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.eye-right {
+    left: auto;
+    right: 8px;
+}
+
+.goose-pupil {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background: black;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* –î–ó–¨–û–ë (–Ø–∫ –Ω–∞ –º–∞–ª—é–Ω–∫—É) */
+.goose-beak-wrap {
+    position: absolute;
+    left: -35px;
+    top: 35px;
+    width: 60px;
+    height: 45px;
+}
+
+.beak-main {
+    width: 100%;
+    height: 100%;
+    background: #ff9d00;
+    border: 4px solid #000;
+    border-radius: 50% 10% 20% 50%; /* –°—Ç–≤–æ—Ä—é—î –≤–∏–≥–∏–Ω –¥–∑—å–æ–±–∞ */
+}
+
+.beak-nostril {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    width: 6px;
+    height: 6px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 50%;
+}
+
+/* –¢–Ü–õ–û (–ù–∏–∂–Ω—è —á–∞—Å—Ç–∏–Ω–∞) */
+.goose-body {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 80px;
+    background: white;
+    border: 4px solid #000;
+    border-radius: 60px 60px 20px 20px;
+}
+.z-egg {
+    position: absolute;
+    font-size: 20px;
+    z-index: 5;
+    pointer-events: none;
+    user-select: none;
+    filter: drop-shadow(2px 2px 0px #000);
+    transition: opacity 0.3s;
+}
+
+.z-goose-track {
+    position: relative;
+    /* –¢–≤–æ—è –¥–æ—Ä—ñ–∂–∫–∞, –ø–æ —è–∫—ñ–π –±—ñ–≥–∞—î –≥—É—Å–∞–∫ */
+    height: 60px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 30px;
+    margin-top: 20px;
+}
+
+/* –ü–õ–ê–®–ö–ê –ö–†–Ø (—Å—Ç–∏–ª—å Neobrutalism) */
+.goose-speech-bubble {
+    position: absolute;
+    top: -20px;
+    right: -50px;
+    background: #ff0000;
+    color: white;
+    padding: 8px 18px;
+    font-size: 2rem;
+    font-weight: 950;
+    border: 5px solid #000;
+    box-shadow: 6px 6px 0px #000;
+    transform: rotate(10deg);
+    z-index: 50;
+    display: none;
+}
+
+.aggressive .goose-speech-bubble {
+    display: block;
+}
+
+/* –ì–û–õ–û–í–ê */
+.goose-head-v3 {
+    width: 90px;
+    height: 110px;
+    background: #fff;
+    border: 5px solid #000;
+    border-radius: 50% 50% 45% 45%;
+    position: relative;
+    z-index: 10;
+}
+
+/* –û–ß–Ü (–í—Ç–æ–º–ª–µ–Ω–∏–π –ø–æ–≥–ª—è–¥ –∑ –ø–æ–≤—ñ–∫–∞–º–∏) */
+.goose-eye-v3 {
+    position: absolute;
+    top: 20px;
+    width: 32px;
+    height: 38px;
+    background: #fff;
+    border: 4px solid #000;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.left-eye {
+    left: 10px;
+}
+
+.right-eye {
+    right: 10px;
+}
+
+.eye-lid {
+    position: absolute;
+    top: -5px;
+    width: 100%;
+    height: 50%;
+    background: #fff;
+    border-bottom: 3px solid #000;
+    z-index: 2;
+}
+
+/* –î–ó–¨–û–ë (—è–∫ –Ω–∞ –º–∞–ª—é–Ω–∫—É) */
+.goose-beak-v3 {
+    position: absolute;
+    left: -45px;
+    top: 35px;
+    width: 85px;
+    height: 60px;
+    background: #ff9d00;
+    border: 5px solid #000;
+    border-radius: 60% 20% 40% 70%;
+    transform: rotate(-10deg);
+}
+
+.beak-nostril-v3 {
+    position: absolute;
+    top: 18px;
+    right: 25px;
+    width: 8px;
+    height: 8px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 50%;
+}
+
+/* –®–ò–Ø –ó–Ü –°–ö–õ–ê–î–ö–ê–ú–ò */
+.goose-neck-v3 {
+    width: 50px;
+    height: var(--neck-h, 120px);
+    background: #fff;
+    border-left: 5px solid #000;
+    border-right: 5px solid #000;
+    position: relative;
+    margin-top: -10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.neck-crease {
+    width: 100%;
+    height: 4px;
+    background: rgba(0,0,0,0.1); /* –°–∫–ª–∞–¥–∫–∏ —è–∫ –Ω–∞ —Ñ–æ—Ç–æ */
+    border-bottom: 2px solid #000;
+}
+
+/* –¢–Ü–õ–û */
+.goose-body-v3 {
+    width: 160px;
+    height: 100px;
+    background: #fff;
+    border: 5px solid #000;
+    border-radius: 80px 80px 40px 40px;
+    margin-top: -20px;
+    box-shadow: 8px 8px 0px rgba(0,0,0,0.2);
+}
+
+/* –ì–û–õ–û–í–ù–ò–ô –ö–û–ù–¢–ï–ô–ù–ï–† */
+.z-guard-goose {
+    position: absolute;
+    width: 250px;
+    height: 350px;
+    z-index: 100;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+}
+
+/* –ü–õ–ê–®–ö–ê –ö–†–Ø */
+.goose-krya-badge {
+    position: absolute;
+    top: 20px;
+    right: -20px;
+    background: #ff0000;
+    color: #fff;
+    padding: 10px 25px;
+    font-size: 2.5rem;
+    font-weight: 950;
+    border: 5px solid #000;
+    box-shadow: 6px 6px 0px #000;
+    transform: rotate(8deg);
+    z-index: 60;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.aggressive .goose-krya-badge {
+    opacity: 1;
+}
+
+/* –ì–û–õ–û–í–ê */
+.goose-head-v4 {
+    width: 100px;
+    height: 120px;
+    background: #fff;
+    border: 5px solid #000;
+    border-radius: 50% 50% 48% 48%;
+    position: relative;
+    z-index: 10;
+}
+
+/* –û–ß–Ü (–í—Ç–æ–º–ª–µ–Ω—ñ –∑ –ø–æ–≤—ñ–∫–∞–º–∏) */
+.goose-eye-v4 {
+    position: absolute;
+    top: 30px;
+    width: 34px;
+    height: 40px;
+    background: #fff;
+    border: 4px solid #000;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.eye-l {
+    left: 12px;
+}
+
+.eye-r {
+    right: 12px;
+}
+
+.eye-lid-v4 {
+    position: absolute;
+    top: -5px;
+    width: 100%;
+    height: 50%;
+    background: #fff;
+    border-bottom: 3px solid #000;
+    z-index: 2;
+}
+
+.goose-pupil {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background: #000;
+    border-radius: 50%;
+}
+
+/* –î–ó–¨–û–ë (–§–æ—Ä–º–∞ –∑—ñ —Å–∫—Ä—ñ–Ω—à–æ—Ç—É) */
+.goose-beak-v4 {
+    position: absolute;
+    left: -55px;
+    top: 45px;
+    width: 95px;
+    height: 65px;
+    background: #ff9d00;
+    border: 5px solid #000;
+    border-radius: 60% 20% 40% 75%;
+    transform: rotate(-5deg);
+}
+
+.beak-nostril-v4 {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    width: 8px;
+    height: 8px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 50%;
+}
+
+/* –®–ò–Ø –ó–Ü –°–ö–õ–ê–î–ö–ê–ú–ò (Lines) */
+.goose-neck-v4 {
+    width: 55px;
+    height: var(--neck-h, 150px);
+    background: #fff;
+    border-left: 5px solid #000;
+    border-right: 5px solid #000;
+    margin-top: -10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.neck-line {
+    width: 100%;
+    height: 2px;
+    background: #000;
+    opacity: 0.8;
+}
+
+/* –¢–Ü–õ–û */
+.goose-body-v4 {
+    width: 200px;
+    height: 120px;
+    background: #fff;
+    border: 5px solid #000;
+    border-radius: 100px 100px 40px 40px;
+    margin-top: -25px;
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.1);
 }
